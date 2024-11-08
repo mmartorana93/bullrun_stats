@@ -36,7 +36,7 @@ function App() {
         return;
       }
       
-      const response = await api.get('/api/transactions');
+      const response = await api.get('/api/logs');  // Modificato da /api/transactions a /api/logs
       setTransactions(response.data);
     } catch (error) {
       console.error('Error fetching transactions:', error);
