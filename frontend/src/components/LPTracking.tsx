@@ -17,15 +17,18 @@ import {
     Stack,
     InputAdornment,
     Badge,
-    CircularProgress
+    CircularProgress,
+    Tooltip
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import WarningIcon from '@mui/icons-material/Warning';
+import LockIcon from '@mui/icons-material/Lock';
+import EditIcon from '@mui/icons-material/Edit';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import { useWebSocket } from '../contexts/WebSocketContext';
 import { rugcheckService } from '../services/rugcheckService';
 import { dextoolsService } from '../services/dextoolsService';
-import LPAnalytics from './LPAnalytics';
 import { useLPHistory } from '../hooks/useLPHistory';
 
 interface Pool {
@@ -61,7 +64,7 @@ const FILTER_SETTINGS_KEY = 'lptracking_filters';
 
 const LPTracking: React.FC = () => {
     const { socket, isConnected } = useWebSocket();
-    const { poolsHistory, hourlyStats, addPool, calculateRiskDistribution } = useLPHistory();
+    const { addPool } = useLPHistory();
     const [pools, setPools] = useState<Pool[]>([]);
     const [newPoolsCount, setNewPoolsCount] = useState(0);
     const [filters, setFilters] = useState<FilterSettings>(() => {
@@ -73,10 +76,8 @@ const LPTracking: React.FC = () => {
             return DEFAULT_FILTERS;
         }
     });
-    const [priceHistory, setPriceHistory] = useState<{ price: number; timestamp: number; }[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Salva i filtri nel localStorage quando cambiano
     useEffect(() => {
         try {
             localStorage.setItem(FILTER_SETTINGS_KEY, JSON.stringify(filters));
@@ -91,10 +92,6 @@ const LPTracking: React.FC = () => {
                 rugcheckService.analyzeToken(tokenAddress),
                 dextoolsService.getTokenPrice(tokenAddress)
             ]);
-
-            if (tokenPrice) {
-                setPriceHistory(prev => [...prev, { price: tokenPrice, timestamp: Date.now() }].slice(-50));
-            }
 
             return riskAnalysis;
         } catch (error) {
@@ -210,41 +207,63 @@ const LPTracking: React.FC = () => {
         if (!riskAnalysis) return null;
 
         const { flags, isSafeToBuy } = riskAnalysis;
-        const activeFlags = Object.entries(flags).filter(([_, value]) => value);
 
-        if (isSafeToBuy) {
-            return (
-                <Chip
-                    icon={<CheckCircleIcon />}
-                    label="Sicuro"
-                    color="success"
-                    size="small"
-                />
-            );
-        } else {
-            return (
-                <Box>
-                    <Chip
-                        icon={<ErrorIcon />}
-                        label="Rischio"
-                        color="error"
-                        size="small"
-                    />
-                    <Box sx={{ mt: 1 }}>
-                        {activeFlags.map(([flag]) => (
-                            <Chip
-                                key={flag}
-                                icon={<WarningIcon />}
-                                label={flag.replace(/_/g, ' ')}
-                                color="warning"
-                                size="small"
-                                sx={{ m: 0.5 }}
-                            />
-                        ))}
-                    </Box>
-                </Box>
-            );
-        }
+        return (
+            <Stack direction="row" spacing={1} flexWrap="wrap">
+                {isSafeToBuy ? (
+                    <Tooltip title="Token Sicuro">
+                        <Chip
+                            icon={<CheckCircleIcon />}
+                            label="Sicuro"
+                            color="success"
+                            size="small"
+                        />
+                    </Tooltip>
+                ) : (
+                    <Tooltip title="Token Rischioso">
+                        <Chip
+                            icon={<ErrorIcon />}
+                            label="Rischio"
+                            color="error"
+                            size="small"
+                        />
+                    </Tooltip>
+                )}
+                
+                {flags.mutable_metadata && (
+                    <Tooltip title="I metadata del token possono essere modificati">
+                        <Chip
+                            icon={<EditIcon />}
+                            label="Metadata Mutabile"
+                            color="warning"
+                            size="small"
+                        />
+                    </Tooltip>
+                )}
+                
+                {flags.freeze_authority_enabled && (
+                    <Tooltip title="L'autorità di congelamento è ancora abilitata">
+                        <Chip
+                            icon={<LockIcon />}
+                            label="Freeze Authority"
+                            color="warning"
+                            size="small"
+                        />
+                    </Tooltip>
+                )}
+                
+                {flags.mint_authority_enabled && (
+                    <Tooltip title="L'autorità di conio è ancora abilitata">
+                        <Chip
+                            icon={<LocalAtmIcon />}
+                            label="Mint Authority"
+                            color="warning"
+                            size="small"
+                        />
+                    </Tooltip>
+                )}
+            </Stack>
+        );
     };
 
     return (
@@ -309,13 +328,7 @@ const LPTracking: React.FC = () => {
                 </Stack>
             </Paper>
 
-            <LPAnalytics 
-                priceHistory={priceHistory}
-                hourlyStats={hourlyStats}
-                riskDistribution={calculateRiskDistribution()}
-            />
-
-            <TableContainer component={Paper} sx={{ maxHeight: 600, mt: 2 }}>
+            <TableContainer component={Paper} sx={{ maxHeight: 600 }}>
                 <Table stickyHeader size="small">
                     <TableHead>
                         <TableRow>

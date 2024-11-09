@@ -1,17 +1,23 @@
 import React from 'react';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import LPAnalytics from './LPAnalytics';
+import { useLPHistory } from '../hooks/useLPHistory';
 
 const Analytics: React.FC = () => {
+    const { hourlyStats, calculateRiskDistribution } = useLPHistory();
+    const [priceHistory, setPriceHistory] = React.useState<{ price: number; timestamp: number; }[]>([]);
+
     return (
-        <Box sx={{ width: '100%', p: 2 }}>
-            <Typography variant="h6" component="div" gutterBottom>
-                Analytics
+        <Box sx={{ p: 3 }}>
+            <Typography variant="h5" gutterBottom>
+                Analytics Dashboard
             </Typography>
-            <Paper sx={{ p: 3, minHeight: '400px' }}>
-                <Typography variant="body1" color="textSecondary" align="center">
-                    Grafici e indicatori in arrivo...
-                </Typography>
-            </Paper>
+            
+            <LPAnalytics 
+                priceHistory={priceHistory}
+                hourlyStats={hourlyStats}
+                riskDistribution={calculateRiskDistribution()}
+            />
         </Box>
     );
 };
