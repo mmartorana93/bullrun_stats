@@ -6,7 +6,7 @@ require('dotenv').config();
 
 // Configurazione del logger
 const logger = winston.createLogger({
-    level: 'info',
+    level: 'debug', // Cambiato a debug per più dettagli
     format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json()
@@ -22,6 +22,8 @@ if (process.env.NODE_ENV !== 'production') {
         format: winston.format.simple()
     }));
 }
+
+const WRAPPED_SOL_ADDRESS = "So11111111111111111111111111111111111111112";
 
 class LPTracker {
     constructor(io) {
@@ -124,7 +126,7 @@ class LPTracker {
                 return;
             }
 
-            logger.info(`Nuova pool rilevata: ${signature}`);
+            logger.debug(`Processing transaction: ${signature}`);
 
             const tx = await this.connection.getTransaction(signature, {
                 commitment: 'confirmed',
@@ -136,30 +138,44 @@ class LPTracker {
             }
 
             const postTokenBalances = tx.meta.postTokenBalances;
-            let tokenAccount, solanaAccount, tokenAmount, solanaAmount;
+            let tokenData = null;
+            let solanaData = null;
 
             for (const balance of postTokenBalances) {
-                if (balance.accountIndex === 5) {
-                    tokenAccount = balance.mint;
-                    tokenAmount = parseFloat(balance.uiTokenAmount.uiAmountString);
-                } else if (balance.accountIndex === 6) {
-                    solanaAccount = balance.mint;
-                    solanaAmount = parseFloat(balance.uiTokenAmount.uiAmountString);
+                if (balance.mint === WRAPPED_SOL_ADDRESS) {
+                    solanaData = {
+                        account: balance.mint,
+                        amount: parseFloat(balance.uiTokenAmount.uiAmountString)
+                    };
+                    logger.debug(`Solana data found: ${balance.mint}, Amount: ${balance.uiTokenAmount.uiAmountString}`);
+                } else {
+                    tokenData = {
+                        account: balance.mint,
+                        amount: parseFloat(balance.uiTokenAmount.uiAmountString)
+                    };
+                    logger.debug(`Token data found: ${balance.mint}, Amount: ${balance.uiTokenAmount.uiAmountString}`);
                 }
             }
 
-            if (!tokenAccount || !solanaAccount) {
+            // Se non abbiamo trovato entrambi i dati, usciamo
+            if (!tokenData || !solanaData) {
+                logger.debug('Missing token or solana data, skipping...');
                 return;
             }
 
-            const metadata = await this.fetchTokenMetadata(tokenAccount);
             const solPrice = process.env.SOLANA_PRICE || 140.71;
-            const usdValue = solanaAmount * solPrice;
+            const usdValue = solanaData.amount * solPrice;
 
+            logger.info(`New pool detected - USD Value: $${usdValue}`);
+
+            // Analisi dei rischi
+            logger.debug(`Checking Rugcheck for contract: ${tokenData.account}`);
+            const metadata = await this.fetchTokenMetadata(tokenData.account);
+            
             const poolData = {
-                tokenAccount,
-                tokenAmount,
-                solanaAmount,
+                tokenAccount: tokenData.account,
+                tokenAmount: tokenData.amount,
+                solanaAmount: solanaData.amount,
                 usdValue,
                 timestamp: new Date().toISOString(),
                 txId: signature,
@@ -167,8 +183,8 @@ class LPTracker {
             };
 
             this.pools.set(signature, poolData);
+            logger.info(`Emitting new pool data to ${this.io.engine.clientsCount} clients`);
             this.io.emit('newPool', poolData);
-            logger.info(`Pool emessa: ${JSON.stringify(poolData)}`);
 
         } catch (error) {
             logger.error('Errore nella gestione della notifica:', error);

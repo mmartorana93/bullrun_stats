@@ -23,8 +23,8 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import WarningIcon from '@mui/icons-material/Warning';
-import LockIcon from '@mui/icons-material/Lock';
 import EditIcon from '@mui/icons-material/Edit';
+import LockIcon from '@mui/icons-material/Lock';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import { useWebSocket } from '../contexts/WebSocketContext';
 import { rugcheckService } from '../services/rugcheckService';
@@ -207,60 +207,72 @@ const LPTracking: React.FC = () => {
         if (!riskAnalysis) return null;
 
         const { flags, isSafeToBuy } = riskAnalysis;
+        const activeFlags = Object.entries(flags).filter(([_, value]) => value);
 
         return (
-            <Stack direction="row" spacing={1} flexWrap="wrap">
-                {isSafeToBuy ? (
-                    <Tooltip title="Token Sicuro">
-                        <Chip
-                            icon={<CheckCircleIcon />}
-                            label="Sicuro"
-                            color="success"
-                            size="small"
-                        />
-                    </Tooltip>
-                ) : (
-                    <Tooltip title="Token Rischioso">
-                        <Chip
-                            icon={<ErrorIcon />}
-                            label="Rischio"
-                            color="error"
-                            size="small"
-                        />
-                    </Tooltip>
-                )}
+            <Stack direction="column" spacing={1}>
+                <Stack direction="row" spacing={1}>
+                    {isSafeToBuy ? (
+                        <Tooltip title="Nessun rischio rilevato">
+                            <Chip
+                                icon={<CheckCircleIcon />}
+                                label="Sicuro"
+                                color="success"
+                                size="small"
+                                sx={{ fontWeight: 'bold' }}
+                            />
+                        </Tooltip>
+                    ) : (
+                        <Tooltip title={`${activeFlags.length} rischi rilevati`}>
+                            <Chip
+                                icon={<ErrorIcon />}
+                                label={`${activeFlags.length} Rischi`}
+                                color="error"
+                                size="small"
+                                sx={{ fontWeight: 'bold' }}
+                            />
+                        </Tooltip>
+                    )}
+                </Stack>
                 
-                {flags.mutable_metadata && (
-                    <Tooltip title="I metadata del token possono essere modificati">
-                        <Chip
-                            icon={<EditIcon />}
-                            label="Metadata Mutabile"
-                            color="warning"
-                            size="small"
-                        />
-                    </Tooltip>
-                )}
-                
-                {flags.freeze_authority_enabled && (
-                    <Tooltip title="L'autorità di congelamento è ancora abilitata">
-                        <Chip
-                            icon={<LockIcon />}
-                            label="Freeze Authority"
-                            color="warning"
-                            size="small"
-                        />
-                    </Tooltip>
-                )}
-                
-                {flags.mint_authority_enabled && (
-                    <Tooltip title="L'autorità di conio è ancora abilitata">
-                        <Chip
-                            icon={<LocalAtmIcon />}
-                            label="Mint Authority"
-                            color="warning"
-                            size="small"
-                        />
-                    </Tooltip>
+                {activeFlags.length > 0 && (
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                        {flags.mutable_metadata && (
+                            <Tooltip title="I metadata del token possono essere modificati dal creatore. Questo potrebbe permettere cambiamenti nel nome, simbolo o altri dettagli del token.">
+                                <Chip
+                                    icon={<EditIcon />}
+                                    label="Metadata Mutabile"
+                                    color="warning"
+                                    size="small"
+                                    variant="outlined"
+                                />
+                            </Tooltip>
+                        )}
+                        
+                        {flags.freeze_authority_enabled && (
+                            <Tooltip title="L'autorità di congelamento è ancora attiva. Il creatore può bloccare il trasferimento dei token.">
+                                <Chip
+                                    icon={<LockIcon />}
+                                    label="Freeze Authority"
+                                    color="warning"
+                                    size="small"
+                                    variant="outlined"
+                                />
+                            </Tooltip>
+                        )}
+                        
+                        {flags.mint_authority_enabled && (
+                            <Tooltip title="L'autorità di conio è ancora attiva. Il creatore può emettere nuovi token a piacimento.">
+                                <Chip
+                                    icon={<LocalAtmIcon />}
+                                    label="Mint Authority"
+                                    color="warning"
+                                    size="small"
+                                    variant="outlined"
+                                />
+                            </Tooltip>
+                        )}
+                    </Stack>
                 )}
             </Stack>
         );
