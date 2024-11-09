@@ -16,12 +16,17 @@ import {
     FormControlLabel,
     Stack,
     InputAdornment,
-    Badge
+    Badge,
+    CircularProgress
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useWebSocket } from '../contexts/WebSocketContext';
+import { rugcheckService } from '../services/rugcheckService';
+import { dextoolsService } from '../services/dextoolsService';
+import LPAnalytics from './LPAnalytics';
+import { useLPHistory } from '../hooks/useLPHistory';
 
 interface Pool {
     tokenAccount: string;
@@ -46,27 +51,19 @@ interface FilterSettings {
     showOnlyInRange: boolean;
 }
 
-const STORAGE_KEY = 'lptracking_pools';
-const FILTER_SETTINGS_KEY = 'lptracking_filters';
-
 const DEFAULT_FILTERS: FilterSettings = {
     minUsd: 1000,
     maxUsd: 30000,
     showOnlyInRange: false
 };
 
+const FILTER_SETTINGS_KEY = 'lptracking_filters';
+
 const LPTracking: React.FC = () => {
     const { socket, isConnected } = useWebSocket();
-    const [pools, setPools] = useState<Pool[]>(() => {
-        try {
-            const savedPools = localStorage.getItem(STORAGE_KEY);
-            return savedPools ? JSON.parse(savedPools) : [];
-        } catch (error) {
-            console.error('Errore nel parsing dei pool salvati:', error);
-            return [];
-        }
-    });
-
+    const { poolsHistory, hourlyStats, addPool, calculateRiskDistribution } = useLPHistory();
+    const [pools, setPools] = useState<Pool[]>([]);
+    const [newPoolsCount, setNewPoolsCount] = useState(0);
     const [filters, setFilters] = useState<FilterSettings>(() => {
         try {
             const savedFilters = localStorage.getItem(FILTER_SETTINGS_KEY);
@@ -76,17 +73,8 @@ const LPTracking: React.FC = () => {
             return DEFAULT_FILTERS;
         }
     });
-
-    const [newPoolsCount, setNewPoolsCount] = useState(0);
-
-    // Salva i pool nel localStorage quando cambiano
-    useEffect(() => {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(pools));
-        } catch (error) {
-            console.error('Errore nel salvataggio dei pool:', error);
-        }
-    }, [pools]);
+    const [priceHistory, setPriceHistory] = useState<{ price: number; timestamp: number; }[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Salva i filtri nel localStorage quando cambiano
     useEffect(() => {
@@ -97,21 +85,53 @@ const LPTracking: React.FC = () => {
         }
     }, [filters]);
 
-    const handleNewPool = useCallback((poolData: Pool) => {
-        console.log('Ricevuto nuovo pool:', poolData);
-        setPools(prevPools => {
-            const newPools = [poolData, ...prevPools];
-            const updatedPools = newPools.slice(0, 100);
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPools));
-            } catch (error) {
-                console.error('Errore nel salvataggio dei pool:', error);
+    const analyzeToken = useCallback(async (tokenAddress: string) => {
+        try {
+            const [riskAnalysis, tokenPrice] = await Promise.all([
+                rugcheckService.analyzeToken(tokenAddress),
+                dextoolsService.getTokenPrice(tokenAddress)
+            ]);
+
+            if (tokenPrice) {
+                setPriceHistory(prev => [...prev, { price: tokenPrice, timestamp: Date.now() }].slice(-50));
             }
-            return updatedPools;
-        });
-        // Incrementa il contatore dei nuovi pool
-        setNewPoolsCount(prev => prev + 1);
+
+            return riskAnalysis;
+        } catch (error) {
+            console.error('Errore nell\'analisi del token:', error);
+            return {
+                flags: {
+                    mutable_metadata: false,
+                    freeze_authority_enabled: false,
+                    mint_authority_enabled: false
+                },
+                isSafeToBuy: false
+            };
+        }
     }, []);
+
+    const handleNewPool = useCallback(async (poolData: Pool) => {
+        setIsLoading(true);
+        try {
+            const riskAnalysis = await analyzeToken(poolData.tokenAccount);
+            const enrichedPool = {
+                ...poolData,
+                riskAnalysis
+            };
+
+            setPools(prevPools => {
+                const newPools = [enrichedPool, ...prevPools].slice(0, 100);
+                return newPools;
+            });
+
+            addPool(enrichedPool);
+            setNewPoolsCount(prev => prev + 1);
+        } catch (error) {
+            console.error('Errore nella gestione del nuovo pool:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [addPool, analyzeToken]);
 
     useEffect(() => {
         if (!socket) return;
@@ -120,13 +140,20 @@ const LPTracking: React.FC = () => {
             socket.emit('getPools');
         }
 
-        const handleExistingPools = (existingPools: Pool[]) => {
-            console.log('Ricevuti pool esistenti:', existingPools);
-            setPools(existingPools);
+        const handleExistingPools = async (existingPools: Pool[]) => {
+            setIsLoading(true);
             try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(existingPools));
+                const enrichedPools = await Promise.all(
+                    existingPools.map(async pool => ({
+                        ...pool,
+                        riskAnalysis: await analyzeToken(pool.tokenAccount)
+                    }))
+                );
+                setPools(enrichedPools);
             } catch (error) {
-                console.error('Errore nel salvataggio dei pool:', error);
+                console.error('Errore nel caricamento dei pool esistenti:', error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -137,9 +164,8 @@ const LPTracking: React.FC = () => {
             socket.off('newPool', handleNewPool);
             socket.off('existingPools', handleExistingPools);
         };
-    }, [socket, isConnected, handleNewPool]);
+    }, [socket, isConnected, handleNewPool, analyzeToken]);
 
-    // Reset del contatore quando il componente diventa visibile
     useEffect(() => {
         const handleVisibilityChange = () => {
             if (!document.hidden) {
@@ -228,6 +254,7 @@ const LPTracking: React.FC = () => {
                     Nuove Pool di Liquidità
                 </Typography>
                 <Stack direction="row" spacing={2} alignItems="center">
+                    {isLoading && <CircularProgress size={24} />}
                     {newPoolsCount > 0 && (
                         <Badge badgeContent={newPoolsCount} color="primary">
                             <Chip
@@ -282,7 +309,13 @@ const LPTracking: React.FC = () => {
                 </Stack>
             </Paper>
 
-            <TableContainer component={Paper} sx={{ maxHeight: 600 }}>
+            <LPAnalytics 
+                priceHistory={priceHistory}
+                hourlyStats={hourlyStats}
+                riskDistribution={calculateRiskDistribution()}
+            />
+
+            <TableContainer component={Paper} sx={{ maxHeight: 600, mt: 2 }}>
                 <Table stickyHeader size="small">
                     <TableHead>
                         <TableRow>
