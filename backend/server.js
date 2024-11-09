@@ -5,6 +5,9 @@ const fs = require('fs').promises;
 const path = require('path');
 const { Keypair } = require('@solana/web3.js');
 const base58 = require('bs58');
+const http = require('http');
+const socketIo = require('socket.io');
+const LPTracker = require('./lpTracker');
 require('dotenv').config();
 
 // Configurazione logger
@@ -17,51 +20,162 @@ const logger = winston.createLogger({
         })
     ),
     transports: [
-        new winston.transports.Console()
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: 'error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'combined.log' })
     ]
 });
 
-const app = express();
+// Middleware per il logging delle richieste HTTP
+const requestLogger = (req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+        const duration = Date.now() - start;
+        logger.info(`${req.method} ${req.url} ${res.statusCode} - ${duration}ms`);
+    });
+    next();
+};
 
+const app = express();
+const server = http.createServer(app);
+
+// Configurazione Socket.IO con gestione degli errori e timeout
+const io = socketIo(server, {
+    cors: {
+        origin: process.env.FRONTEND_URL || "http://localhost:3000",
+        methods: ["GET", "POST"]
+    },
+    pingTimeout: 60000,
+    pingInterval: 25000,
+    connectTimeout: 10000,
+    transports: ['websocket']
+});
+
+// Inizializza LP Tracker
+const lpTracker = new LPTracker(io);
+
+// Configurazione CORS
 app.use(cors({
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    optionsSuccessStatus: 200
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    methods: ['GET', 'POST', 'DELETE'],
+    credentials: true
 }));
 
 app.use(express.json());
+app.use(requestLogger);
 
-// Middleware per logging delle richieste
-app.use((req, res, next) => {
-    logger.debug('=== Nuova Richiesta ===');
-    logger.debug(`Metodo: ${req.method}`);
-    logger.debug(`URL: ${req.url}`);
-    logger.debug(`Headers: ${JSON.stringify(req.headers)}`);
-    if (req.body) {
-        logger.debug(`Body: ${JSON.stringify(req.body)}`);
-    }
-    logger.debug('===================');
-    next();
-});
-
-app.options('*', cors());
-
-// Gestione errori globale
+// Error handling middleware
 app.use((err, req, res, next) => {
-    logger.error('=== Errore ===');
-    logger.error(`Tipo: ${err.name}`);
-    logger.error(`Messaggio: ${err.message}`);
-    logger.error(`Stack: ${err.stack}`);
-    logger.error('=============');
-    res.status(500).json({ error: err.message });
+    logger.error('Errore non gestito:', err);
+    res.status(500).json({ 
+        error: 'Errore interno del server',
+        message: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    const health = {
+        uptime: process.uptime(),
+        timestamp: Date.now(),
+        status: 'OK',
+        socketConnections: io.engine.clientsCount,
+        memoryUsage: process.memoryUsage()
+    };
+    res.json(health);
+});
+
+// Routes
+app.get('/api/solana-price', (req, res) => {
+    try {
+        const price = lpTracker.solPrice || 0;
+        logger.info(`Sending Solana price: $${price}`);
+        res.json({ price });
+    } catch (error) {
+        logger.error('Error getting Solana price:', error);
+        res.status(500).json({ error: 'Failed to get Solana price' });
+    }
+});
+
+app.get('/api/wallets', async (req, res) => {
+    try {
+        const wallets = await loadWallets();
+        res.json(wallets);
+    } catch (error) {
+        logger.error('Error getting wallets:', error);
+        res.status(500).json({ error: 'Failed to get wallets' });
+    }
+});
+
+app.get('/api/logs', (req, res) => {
+    try {
+        const logs = [...transactionLogs];
+        transactionLogs.length = 0;
+        res.json(logs);
+    } catch (error) {
+        logger.error('Error getting logs:', error);
+        res.status(500).json({ error: 'Failed to get logs' });
+    }
+});
+
+app.get('/api/my-wallet', async (req, res) => {
+    try {
+        if (!process.env.SOLANA_PRIVATE_KEY) {
+            throw new Error('SOLANA_PRIVATE_KEY non trovata nel file .env');
+        }
+
+        const wallet = new SolanaWallet(process.env.SOLANA_PRIVATE_KEY);
+        const balance = await wallet.getBalance();
+        
+        res.json({
+            address: wallet.getWalletAddress(),
+            balance: balance
+        });
+    } catch (error) {
+        logger.error('Error getting personal wallet info:', error);
+        res.status(500).json({ error: 'Failed to get wallet info' });
+    }
+});
+
+app.post('/api/wallets', async (req, res) => {
+    try {
+        const { wallet } = req.body;
+        
+        if (!wallet) {
+            return res.status(400).json({ error: "Wallet address required" });
+        }
+
+        if (await startMonitoring(wallet)) {
+            return res.json({ message: "Wallet added successfully" });
+        }
+
+        res.status(400).json({ error: "Wallet already monitored" });
+    } catch (error) {
+        logger.error('Error adding wallet:', error);
+        res.status(500).json({ error: 'Failed to add wallet' });
+    }
+});
+
+app.delete('/api/wallets/:wallet', async (req, res) => {
+    try {
+        const { wallet } = req.params;
+
+        if (await stopMonitoring(wallet)) {
+            return res.json({ message: "Wallet removed successfully" });
+        }
+
+        res.status(404).json({ error: "Wallet not found" });
+    } catch (error) {
+        logger.error('Error removing wallet:', error);
+        res.status(500).json({ error: 'Failed to remove wallet' });
+    }
+});
+
+// Variabili globali e classi
 class SolanaWallet {
     constructor(privateKey) {
         this.wallet = Keypair.fromSecretKey(base58.decode(privateKey));
-        this.endpoint = "https://api.mainnet-beta.solana.com";
+        this.endpoint = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
     }
 
     async makeRpcCall(method, params) {
@@ -81,8 +195,8 @@ class SolanaWallet {
             const data = await response.json();
             return data;
         } catch (error) {
-            logger.error(`Errore nella chiamata RPC: ${error}`);
-            return null;
+            logger.error('Errore nella chiamata RPC:', error);
+            throw error;
         }
     }
 
@@ -91,12 +205,12 @@ class SolanaWallet {
             const params = [this.wallet.publicKey.toBase58(), { commitment: "confirmed" }];
             const response = await this.makeRpcCall("getBalance", params);
             if (response && response.result && response.result.value) {
-                return response.result.value / 10**9; // Converti da lamports a SOL
+                return response.result.value / 10**9;
             }
             return 0;
         } catch (error) {
-            logger.error(`Errore nel recupero del saldo: ${error}`);
-            return 0;
+            logger.error('Errore nel recupero del saldo:', error);
+            throw error;
         }
     }
 
@@ -105,7 +219,6 @@ class SolanaWallet {
     }
 }
 
-// Variabili globali
 const transactionLogs = [];
 const monitorThreads = new Map();
 const monitoredWallets = new Set();
@@ -113,16 +226,13 @@ const monitoredWallets = new Set();
 async function loadWallets() {
     try {
         const data = await fs.readFile(path.join(__dirname, 'wallets.json'), 'utf8');
-        const wallets = JSON.parse(data);
-        for (const wallet of wallets) {
-            await startMonitoring(wallet);
-        }
+        return JSON.parse(data);
     } catch (error) {
         if (error.code === 'ENOENT') {
             await fs.writeFile(path.join(__dirname, 'wallets.json'), '[]');
-        } else {
-            throw error;
+            return [];
         }
+        throw error;
     }
 }
 
@@ -153,99 +263,40 @@ async function stopMonitoring(wallet) {
     return false;
 }
 
-// Routes
-app.get('/api/wallets', (req, res) => {
-    logger.info("GET /api/wallets richiesto");
-    res.json(Array.from(monitoredWallets));
-});
-
-app.post('/api/wallets', async (req, res) => {
-    logger.info(`POST /api/wallets richiesto con dati: ${JSON.stringify(req.body)}`);
-    const { wallet } = req.body;
-    
-    if (!wallet) {
-        logger.error("Tentativo di aggiungere wallet senza indirizzo");
-        return res.status(400).json({ error: "Wallet address required" });
-    }
-
-    if (await startMonitoring(wallet)) {
-        logger.info(`Wallet ${wallet} aggiunto con successo`);
-        return res.json({ message: "Wallet added successfully" });
-    }
-
-    logger.warning(`Tentativo di aggiungere wallet ${wallet} già monitorato`);
-    res.status(400).json({ error: "Wallet already monitored" });
-});
-
-app.delete('/api/wallets/:wallet', async (req, res) => {
-    const { wallet } = req.params;
-    logger.info(`DELETE /api/wallets/${wallet} richiesto`);
-
-    if (await stopMonitoring(wallet)) {
-        logger.info(`Wallet ${wallet} rimosso con successo`);
-        return res.json({ message: "Wallet removed successfully" });
-    }
-
-    logger.warning(`Tentativo di rimuovere wallet ${wallet} non trovato`);
-    res.status(404).json({ error: "Wallet not found" });
-});
-
-app.get('/api/logs', (req, res) => {
-    logger.info("GET /api/logs richiesto");
-    const logs = [...transactionLogs];
-    transactionLogs.length = 0;
-    res.json(logs);
-});
-
-app.get('/api/my-wallet', async (req, res) => {
-    logger.info("GET /api/my-wallet richiesto");
-    try {
-        if (!process.env.SOLANA_PRIVATE_KEY) {
-            throw new Error('SOLANA_PRIVATE_KEY non trovata nel file .env');
-        }
-
-        const wallet = new SolanaWallet(process.env.SOLANA_PRIVATE_KEY);
-        const balance = await wallet.getBalance();
-        
-        res.json({
-            address: wallet.getWalletAddress(),
-            balance: balance
-        });
-    } catch (error) {
-        logger.error(`Error getting personal wallet info: ${error}`);
-        res.status(500).json({ error: 'Failed to get wallet info' });
-    }
-});
-
 // Gestione graceful shutdown
-function setupGracefulShutdown(server) {
-    async function shutdown() {
-        logger.info('Avvio shutdown graceful...');
-        
-        // Ferma il monitoraggio di tutti i wallet
-        for (const wallet of monitoredWallets) {
-            await stopMonitoring(wallet);
-        }
-        
-        // Chiudi il server
-        server.close(() => {
-            logger.info('Server HTTP chiuso.');
-            process.exit(0);
-        });
-        
-        // Se il server non si chiude entro 10 secondi, forza la chiusura
-        setTimeout(() => {
-            logger.error('Shutdown forzato dopo timeout');
-            process.exit(1);
-        }, 10000);
-    }
+process.on('SIGTERM', () => {
+    logger.info('SIGTERM ricevuto. Avvio shutdown graceful...');
+    lpTracker.stop();
+    server.close(() => {
+        logger.info('Server HTTP chiuso.');
+        process.exit(0);
+    });
+});
 
-    process.on('SIGTERM', shutdown);
-    process.on('SIGINT', shutdown);
-}
+process.on('SIGINT', () => {
+    logger.info('SIGINT ricevuto. Avvio shutdown graceful...');
+    lpTracker.stop();
+    server.close(() => {
+        logger.info('Server HTTP chiuso.');
+        process.exit(0);
+    });
+});
+
+process.on('uncaughtException', (error) => {
+    logger.error('Eccezione non gestita:', error);
+    lpTracker.stop();
+    server.close(() => {
+        logger.info('Server HTTP chiuso dopo eccezione non gestita.');
+        process.exit(1);
+    });
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Rejection non gestita:', reason);
+});
 
 // Avvio del server
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 
 async function startServer() {
     try {
@@ -254,13 +305,12 @@ async function startServer() {
         }
         await loadWallets();
         
-        const server = app.listen(PORT, () => {
+        server.listen(PORT, () => {
             logger.info(`Server in esecuzione sulla porta ${PORT}`);
+            lpTracker.start();
         });
-        
-        setupGracefulShutdown(server);
     } catch (error) {
-        logger.error(`Errore durante l'avvio del server: ${error}`);
+        logger.error('Errore durante l\'avvio del server:', error);
         process.exit(1);
     }
 }

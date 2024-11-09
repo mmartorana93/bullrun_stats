@@ -1,11 +1,16 @@
 import React from 'react';
-import { Box, CssBaseline, ThemeProvider, createTheme, Tabs, Tab } from '@mui/material';
+import { Box, CssBaseline, ThemeProvider, createTheme, Tabs, Tab, Stack } from '@mui/material';
 import WalletManager from './components/WalletManager';
 import TransactionLog from './components/TransactionLog';
+import TokenRanking from './components/TokenRanking';
+import LPTracking from './components/LPTracking';
+import Analytics from './components/Analytics';
+import BetaIcon from '@mui/icons-material/NewReleases';
 import { useState, useEffect } from 'react';
 import { Transaction } from './types';
 import api from './api/config';
 import Header from './components/Header';
+import { WebSocketProvider } from './contexts/WebSocketContext';
 
 const darkTheme = createTheme({
   palette: {
@@ -46,7 +51,8 @@ function App() {
   const [wallets, setWallets] = useState<string[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [myWallet, setMyWallet] = useState({ address: '', balance: 0 });
-  const [tabValue, setTabValue] = useState(1); // Impostiamo la tab delle transazioni come default
+  const [solanaPrice, setSolanaPrice] = useState<number | null>(null);
+  const [tabValue, setTabValue] = useState(1);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -85,61 +91,114 @@ function App() {
     }
   };
 
+  const fetchSolanaPrice = async () => {
+    try {
+      const { data } = await api.get('/api/solana-price');
+      if (data && typeof data.price === 'number' && data.price > 0) {
+        setSolanaPrice(data.price);
+      }
+    } catch (error) {
+      console.error('Error fetching Solana price:', error);
+    }
+  };
+
   useEffect(() => {
-    fetchWallets();
-    fetchTransactions();
-    fetchMyWalletInfo();
+    const fetchInitialData = async () => {
+      await fetchSolanaPrice();
+      await fetchWallets();
+      await fetchTransactions();
+      await fetchMyWalletInfo();
+    };
+
+    fetchInitialData();
     
-    const intervalId = window.setInterval(() => {
+    const priceInterval = setInterval(fetchSolanaPrice, 30000);
+    const dataInterval = setInterval(() => {
+      fetchWallets();
       fetchTransactions();
       fetchMyWalletInfo();
     }, 30000);
     
-    return () => window.clearInterval(intervalId);
+    return () => {
+      clearInterval(priceInterval);
+      clearInterval(dataInterval);
+    };
   }, []);
 
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <Box sx={{ 
-        minHeight: '100vh',
-        bgcolor: 'background.default',
-        position: 'relative'
-      }}>
-        <Header address={myWallet.address} balance={myWallet.balance} />
-        
-        <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs 
-              value={tabValue} 
-              onChange={handleTabChange} 
-              centered
-              sx={{
-                '& .MuiTab-root': {
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  py: 2
-                }
-              }}
-            >
-              <Tab label="Gestione Wallet" />
-              <Tab label="Log Transazioni" />
-            </Tabs>
-          </Box>
+      <WebSocketProvider>
+        <Box sx={{ 
+          minHeight: '100vh',
+          bgcolor: 'background.default',
+          position: 'relative'
+        }}>
+          <Header 
+            address={myWallet.address} 
+            balance={myWallet.balance} 
+            solPrice={solanaPrice}
+          />
+          
+          <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs 
+                value={tabValue} 
+                onChange={handleTabChange} 
+                centered
+                sx={{
+                  '& .MuiTab-root': {
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    py: 2
+                  }
+                }}
+              >
+                <Tab label="Gestione Wallet" />
+                <Tab label="Log Transazioni" />
+                <Tab label="Token Ranking" />
+                <Tab 
+                  icon={
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <span>LP Tracking</span>
+                      <BetaIcon color="warning" fontSize="small" />
+                    </Stack>
+                  }
+                />
+                <Tab 
+                  icon={
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <span>Analytics</span>
+                      <BetaIcon color="warning" fontSize="small" />
+                    </Stack>
+                  }
+                />
+              </Tabs>
+            </Box>
 
-          <Box sx={{ p: 3 }}>
-            <TabPanel value={tabValue} index={0}>
-              <WalletManager
-                wallets={wallets}
-                onWalletsUpdate={fetchWallets}
-              />
-            </TabPanel>
-            <TabPanel value={tabValue} index={1}>
-              <TransactionLog transactions={transactions} />
-            </TabPanel>
+            <Box sx={{ p: 3 }}>
+              <TabPanel value={tabValue} index={0}>
+                <WalletManager
+                  wallets={wallets}
+                  onWalletsUpdate={fetchWallets}
+                />
+              </TabPanel>
+              <TabPanel value={tabValue} index={1}>
+                <TransactionLog transactions={transactions} />
+              </TabPanel>
+              <TabPanel value={tabValue} index={2}>
+                <TokenRanking />
+              </TabPanel>
+              <TabPanel value={tabValue} index={3}>
+                <LPTracking />
+              </TabPanel>
+              <TabPanel value={tabValue} index={4}>
+                <Analytics />
+              </TabPanel>
+            </Box>
           </Box>
         </Box>
-      </Box>
+      </WebSocketProvider>
     </ThemeProvider>
   );
 }
