@@ -18,7 +18,9 @@ import {
     InputAdornment,
     Badge,
     CircularProgress,
-    Tooltip
+    Tooltip,
+    Collapse,
+    IconButton
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
@@ -26,6 +28,8 @@ import WarningIcon from '@mui/icons-material/Warning';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useWebSocket } from '../contexts/WebSocketContext';
 import { rugcheckService } from '../services/rugcheckService';
 import { dextoolsService } from '../services/dextoolsService';
@@ -53,6 +57,116 @@ interface FilterSettings {
     maxUsd: number;
     showOnlyInRange: boolean;
 }
+
+interface ExpandableRowProps {
+    pool: Pool;
+    isInRange: boolean;
+    formatTime: (timestamp: string) => string;
+    formatUSD: (value: number) => string;
+    getRiskStatus: (riskAnalysis: Pool['riskAnalysis']) => React.ReactNode;
+}
+
+const ExpandableRow: React.FC<ExpandableRowProps> = ({ pool, isInRange, formatTime, formatUSD, getRiskStatus }) => {
+    const [open, setOpen] = useState(false);
+
+    const getRiskDetails = (riskAnalysis: Pool['riskAnalysis']) => {
+        const { flags } = riskAnalysis;
+        return (
+            <Box sx={{ p: 2, bgcolor: 'background.paper' }}>
+                <Typography variant="subtitle2" gutterBottom>
+                    Dettagli Analisi Rischi:
+                </Typography>
+                <Stack spacing={1}>
+                    <Box>
+                        <Typography variant="body2" color="textSecondary">
+                            Metadata Mutabile:
+                        </Typography>
+                        <Chip
+                            icon={flags.mutable_metadata ? <WarningIcon /> : <CheckCircleIcon />}
+                            label={flags.mutable_metadata ? "Sì" : "No"}
+                            color={flags.mutable_metadata ? "warning" : "success"}
+                            size="small"
+                        />
+                    </Box>
+                    <Box>
+                        <Typography variant="body2" color="textSecondary">
+                            Freeze Authority:
+                        </Typography>
+                        <Chip
+                            icon={flags.freeze_authority_enabled ? <WarningIcon /> : <CheckCircleIcon />}
+                            label={flags.freeze_authority_enabled ? "Abilitato" : "Disabilitato"}
+                            color={flags.freeze_authority_enabled ? "warning" : "success"}
+                            size="small"
+                        />
+                    </Box>
+                    <Box>
+                        <Typography variant="body2" color="textSecondary">
+                            Mint Authority:
+                        </Typography>
+                        <Chip
+                            icon={flags.mint_authority_enabled ? <WarningIcon /> : <CheckCircleIcon />}
+                            label={flags.mint_authority_enabled ? "Abilitato" : "Disabilitato"}
+                            color={flags.mint_authority_enabled ? "warning" : "success"}
+                            size="small"
+                        />
+                    </Box>
+                </Stack>
+            </Box>
+        );
+    };
+
+    return (
+        <>
+            <TableRow 
+                hover
+                sx={{
+                    backgroundColor: isInRange ? 'inherit' : 'action.hover',
+                    '& > *': { borderBottom: 'unset' }
+                }}
+            >
+                <TableCell>
+                    <IconButton
+                        aria-label="expand row"
+                        size="small"
+                        onClick={() => setOpen(!open)}
+                    >
+                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </IconButton>
+                </TableCell>
+                <TableCell>{formatTime(pool.timestamp)}</TableCell>
+                <TableCell>
+                    <Link 
+                        href={`https://solscan.io/token/${pool.tokenAccount}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {`${pool.tokenAccount.slice(0, 4)}...${pool.tokenAccount.slice(-4)}`}
+                    </Link>
+                </TableCell>
+                <TableCell align="right">{pool.tokenAmount.toLocaleString()}</TableCell>
+                <TableCell align="right">{pool.solanaAmount.toFixed(2)}</TableCell>
+                <TableCell align="right">{formatUSD(pool.usdValue)}</TableCell>
+                <TableCell>{getRiskStatus(pool.riskAnalysis)}</TableCell>
+                <TableCell>
+                    <Link 
+                        href={`https://solscan.io/tx/${pool.txId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        View
+                    </Link>
+                </TableCell>
+            </TableRow>
+            <TableRow>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        {getRiskDetails(pool.riskAnalysis)}
+                    </Collapse>
+                </TableCell>
+            </TableRow>
+        </>
+    );
+};
 
 const DEFAULT_FILTERS: FilterSettings = {
     minUsd: 1000,
@@ -210,69 +324,27 @@ const LPTracking: React.FC = () => {
         const activeFlags = Object.entries(flags).filter(([_, value]) => value);
 
         return (
-            <Stack direction="column" spacing={1}>
-                <Stack direction="row" spacing={1}>
-                    {isSafeToBuy ? (
-                        <Tooltip title="Nessun rischio rilevato">
-                            <Chip
-                                icon={<CheckCircleIcon />}
-                                label="Sicuro"
-                                color="success"
-                                size="small"
-                                sx={{ fontWeight: 'bold' }}
-                            />
-                        </Tooltip>
-                    ) : (
-                        <Tooltip title={`${activeFlags.length} rischi rilevati`}>
-                            <Chip
-                                icon={<ErrorIcon />}
-                                label={`${activeFlags.length} Rischi`}
-                                color="error"
-                                size="small"
-                                sx={{ fontWeight: 'bold' }}
-                            />
-                        </Tooltip>
-                    )}
-                </Stack>
-                
-                {activeFlags.length > 0 && (
-                    <Stack direction="row" spacing={1} flexWrap="wrap">
-                        {flags.mutable_metadata && (
-                            <Tooltip title="I metadata del token possono essere modificati dal creatore. Questo potrebbe permettere cambiamenti nel nome, simbolo o altri dettagli del token.">
-                                <Chip
-                                    icon={<EditIcon />}
-                                    label="Metadata Mutabile"
-                                    color="warning"
-                                    size="small"
-                                    variant="outlined"
-                                />
-                            </Tooltip>
-                        )}
-                        
-                        {flags.freeze_authority_enabled && (
-                            <Tooltip title="L'autorità di congelamento è ancora attiva. Il creatore può bloccare il trasferimento dei token.">
-                                <Chip
-                                    icon={<LockIcon />}
-                                    label="Freeze Authority"
-                                    color="warning"
-                                    size="small"
-                                    variant="outlined"
-                                />
-                            </Tooltip>
-                        )}
-                        
-                        {flags.mint_authority_enabled && (
-                            <Tooltip title="L'autorità di conio è ancora attiva. Il creatore può emettere nuovi token a piacimento.">
-                                <Chip
-                                    icon={<LocalAtmIcon />}
-                                    label="Mint Authority"
-                                    color="warning"
-                                    size="small"
-                                    variant="outlined"
-                                />
-                            </Tooltip>
-                        )}
-                    </Stack>
+            <Stack direction="row" spacing={1}>
+                {isSafeToBuy ? (
+                    <Tooltip title="Nessun rischio rilevato">
+                        <Chip
+                            icon={<CheckCircleIcon />}
+                            label="Sicuro"
+                            color="success"
+                            size="small"
+                            sx={{ fontWeight: 'bold' }}
+                        />
+                    </Tooltip>
+                ) : (
+                    <Tooltip title={`${activeFlags.length} rischi rilevati`}>
+                        <Chip
+                            icon={<ErrorIcon />}
+                            label={`${activeFlags.length} Rischi`}
+                            color="error"
+                            size="small"
+                            sx={{ fontWeight: 'bold' }}
+                        />
+                    </Tooltip>
                 )}
             </Stack>
         );
@@ -344,6 +416,7 @@ const LPTracking: React.FC = () => {
                 <Table stickyHeader size="small">
                     <TableHead>
                         <TableRow>
+                            <TableCell style={{ width: 50 }} /> {/* Colonna per l'icona di espansione */}
                             <TableCell>Orario</TableCell>
                             <TableCell>Token</TableCell>
                             <TableCell align="right">Quantità Token</TableCell>
@@ -355,41 +428,18 @@ const LPTracking: React.FC = () => {
                     </TableHead>
                     <TableBody>
                         {filteredPools.map((pool) => (
-                            <TableRow 
-                                key={pool.txId} 
-                                hover
-                                sx={{
-                                    backgroundColor: isInRange(pool) ? 'inherit' : 'action.hover'
-                                }}
-                            >
-                                <TableCell>{formatTime(pool.timestamp)}</TableCell>
-                                <TableCell>
-                                    <Link 
-                                        href={`https://solscan.io/token/${pool.tokenAccount}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {`${pool.tokenAccount.slice(0, 4)}...${pool.tokenAccount.slice(-4)}`}
-                                    </Link>
-                                </TableCell>
-                                <TableCell align="right">{pool.tokenAmount.toLocaleString()}</TableCell>
-                                <TableCell align="right">{pool.solanaAmount.toFixed(2)}</TableCell>
-                                <TableCell align="right">{formatUSD(pool.usdValue)}</TableCell>
-                                <TableCell>{getRiskStatus(pool.riskAnalysis)}</TableCell>
-                                <TableCell>
-                                    <Link 
-                                        href={`https://solscan.io/tx/${pool.txId}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        View
-                                    </Link>
-                                </TableCell>
-                            </TableRow>
+                            <ExpandableRow
+                                key={pool.txId}
+                                pool={pool}
+                                isInRange={isInRange(pool)}
+                                formatTime={formatTime}
+                                formatUSD={formatUSD}
+                                getRiskStatus={getRiskStatus}
+                            />
                         ))}
                         {filteredPools.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={7} align="center">
+                                <TableCell colSpan={8} align="center">
                                     Nessun pool di liquidità trovato
                                 </TableCell>
                             </TableRow>
