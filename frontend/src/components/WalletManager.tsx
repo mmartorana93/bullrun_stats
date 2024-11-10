@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -22,10 +22,21 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import AddIcon from '@mui/icons-material/Add';
 import { WalletResponse } from '../types';
 import api from '../api/config';
+import { useWebSocket } from '../contexts/WebSocketContext';
 
 interface WalletManagerProps {
   wallets: string[];
   onWalletsUpdate: () => void;
+}
+
+interface WalletData {
+  balance: number;
+  lastTransaction?: {
+    signature: string;
+    timestamp: number;
+    amount: number;
+    type: 'credit' | 'debit';
+  };
 }
 
 const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate }) => {
@@ -33,9 +44,58 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
+  const [walletData, setWalletData] = useState<Record<string, WalletData>>({});
+  const { socket, isConnected } = useWebSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleWalletUpdate = (data: {
+      wallet: string;
+      type: 'balance' | 'transaction';
+      balance?: number;
+      transaction?: {
+        signature: string;
+        timestamp: number;
+        amount: number;
+        type: 'credit' | 'debit';
+      };
+    }) => {
+      setWalletData(prev => {
+        const current = prev[data.wallet] || { balance: 0 };
+        
+        if (data.type === 'balance' && typeof data.balance === 'number') {
+          return {
+            ...prev,
+            [data.wallet]: {
+              ...current,
+              balance: data.balance
+            }
+          };
+        }
+        
+        if (data.type === 'transaction' && data.transaction) {
+          return {
+            ...prev,
+            [data.wallet]: {
+              ...current,
+              lastTransaction: data.transaction
+            }
+          };
+        }
+        
+        return prev;
+      });
+    };
+
+    socket.on('walletUpdate', handleWalletUpdate);
+
+    return () => {
+      socket.off('walletUpdate', handleWalletUpdate);
+    };
+  }, [socket]);
 
   const validateSolanaAddress = (address: string): boolean => {
-    // Validazione base di un indirizzo Solana (44 caratteri, inizia con una lettera o un numero)
     return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address);
   };
 
@@ -73,6 +133,28 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
   const handleCopyAddress = (address: string) => {
     navigator.clipboard.writeText(address);
     setSuccess('Indirizzo copiato negli appunti');
+  };
+
+  const formatBalance = (balance: number) => {
+    return balance.toFixed(4);
+  };
+
+  const formatTimestamp = (timestamp: number) => {
+    return new Date(timestamp * 1000).toLocaleString();
+  };
+
+  const renderLastTransaction = (wallet: string) => {
+    const data = walletData[wallet];
+    if (!data?.lastTransaction) return null;
+
+    const { timestamp, type, amount } = data.lastTransaction;
+    return (
+      <Typography variant="body2" color="text.secondary">
+        Ultima Transazione: {formatTimestamp(timestamp)}
+        ({type === 'credit' ? '+' : '-'}
+        {formatBalance(Math.abs(amount) / 10**9)} SOL)
+      </Typography>
+    );
   };
 
   return (
@@ -135,11 +217,19 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
                             {wallet}
                           </Typography>
                           <Chip 
-                            label="Attivo" 
+                            label={isConnected ? "Connesso" : "Disconnesso"} 
                             size="small" 
-                            color="success"
+                            color={isConnected ? "success" : "error"}
                             sx={{ ml: 1 }}
                           />
+                        </Box>
+                      }
+                      secondary={
+                        <Box sx={{ mt: 1 }}>
+                          <Typography variant="body2" color="text.secondary">
+                            Saldo: {formatBalance(walletData[wallet]?.balance || 0)} SOL
+                          </Typography>
+                          {renderLastTransaction(wallet)}
                         </Box>
                       }
                     />

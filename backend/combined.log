@@ -1,0 +1,1502 @@
+2024-11-09T07:59:38.712Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T08:00:08.780Z [INFO] Sending Solana price: $200.26
+2024-11-09T08:00:08.782Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T08:00:08.785Z [INFO] Sending Solana price: $200.26
+2024-11-09T08:00:08.789Z [INFO] GET /api/solana-price 304 - 5ms
+2024-11-09T08:00:08.796Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:00:08.798Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:00:08.814Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:00:08.816Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:00:09.036Z [INFO] GET /api/my-wallet 304 - 212ms
+2024-11-09T08:00:09.087Z [INFO] GET /api/my-wallet 304 - 50ms
+2024-11-09T08:00:38.782Z [INFO] Sending Solana price: $200.26
+2024-11-09T08:00:38.784Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T08:00:38.791Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T08:00:38.793Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:00:38.912Z [INFO] GET /api/my-wallet 304 - 126ms
+2024-11-09T08:01:08.782Z [INFO] Sending Solana price: $200.26
+2024-11-09T08:01:08.783Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:01:08.788Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:01:08.789Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:01:08.945Z [INFO] GET /api/my-wallet 304 - 162ms
+2024-11-09T08:01:38.780Z [INFO] Sending Solana price: $200.26
+2024-11-09T08:01:38.781Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:01:38.787Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:01:38.790Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:01:38.904Z [INFO] GET /api/my-wallet 304 - 122ms
+2024-11-09T08:02:08.782Z [INFO] Sending Solana price: $200.26
+2024-11-09T08:02:08.784Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T08:02:08.794Z [INFO] GET /api/wallets 304 - 10ms
+2024-11-09T08:02:08.795Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:02:08.954Z [INFO] GET /api/my-wallet 304 - 169ms
+2024-11-09T08:02:38.782Z [INFO] Sending Solana price: $200.26
+2024-11-09T08:02:38.783Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:02:38.788Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:02:38.789Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:02:38.910Z [INFO] GET /api/my-wallet 304 - 127ms
+2024-11-09T08:03:08.779Z [INFO] Sending Solana price: $200.26
+2024-11-09T08:03:08.779Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:03:08.782Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:03:08.783Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:03:08.926Z [INFO] GET /api/my-wallet 304 - 146ms
+2024-11-09T08:03:38.781Z [INFO] Sending Solana price: $200.26
+2024-11-09T08:03:38.782Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:03:38.790Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:03:38.792Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:03:38.904Z [INFO] GET /api/my-wallet 304 - 121ms
+2024-11-09T08:03:39.216Z [INFO] Sending Solana price: $200.26
+2024-11-09T08:03:39.216Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:03:39.217Z [INFO] Sending Solana price: $200.26
+2024-11-09T08:03:39.217Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:03:39.225Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:03:39.227Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:03:39.244Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:03:39.246Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:03:39.301Z [INFO] GET /api/my-wallet 304 - 44ms
+2024-11-09T08:03:39.346Z [INFO] GET /api/my-wallet 304 - 44ms
+2024-11-09T08:04:04.120Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T08:04:04.122Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T08:04:14.711Z [INFO] Server HTTP chiuso.
+2024-11-09T08:04:38.677Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T08:04:41.714Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:04:41.718Z [INFO] GET /api/solana-price 200 - 4ms
+2024-11-09T08:04:41.720Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:04:41.721Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:04:41.724Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:04:41.739Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:04:41.740Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:04:41.791Z [INFO] GET /api/wallets 304 - 42ms
+2024-11-09T08:04:41.929Z [INFO] GET /api/my-wallet 304 - 180ms
+2024-11-09T08:04:41.972Z [INFO] GET /api/my-wallet 304 - 41ms
+2024-11-09T08:05:11.719Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:05:11.721Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T08:05:11.729Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T08:05:11.732Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:05:11.887Z [INFO] GET /api/my-wallet 304 - 165ms
+2024-11-09T08:05:41.701Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:05:41.702Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:05:41.710Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T08:05:41.713Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:05:41.825Z [INFO] GET /api/my-wallet 304 - 121ms
+2024-11-09T08:06:11.695Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:06:11.695Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:06:11.700Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:06:11.703Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:06:11.854Z [INFO] GET /api/my-wallet 304 - 157ms
+2024-11-09T08:06:41.687Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:06:41.687Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:06:41.691Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T08:06:41.692Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:06:41.806Z [INFO] GET /api/my-wallet 304 - 117ms
+2024-11-09T08:07:11.686Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:07:11.687Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:07:11.689Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:07:11.690Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:07:11.867Z [INFO] GET /api/my-wallet 304 - 180ms
+2024-11-09T08:07:20.506Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:07:20.506Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:07:20.517Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T08:07:20.523Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:07:20.667Z [INFO] GET /api/my-wallet 304 - 141ms
+2024-11-09T08:07:50.509Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:07:50.510Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:07:50.512Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:07:50.514Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:07:50.630Z [INFO] GET /api/my-wallet 304 - 120ms
+2024-11-09T08:08:19.606Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:08:19.606Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:08:19.612Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T08:08:19.617Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:08:19.738Z [INFO] GET /api/my-wallet 304 - 116ms
+2024-11-09T08:08:49.608Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:08:49.608Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:08:49.609Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:08:49.610Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:08:49.758Z [INFO] GET /api/my-wallet 304 - 149ms
+2024-11-09T08:09:19.608Z [INFO] Sending Solana price: $200.5
+2024-11-09T08:09:19.608Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:09:19.610Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:09:19.612Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:09:19.790Z [INFO] GET /api/my-wallet 304 - 182ms
+2024-11-09T08:09:49.608Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:09:49.609Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T08:09:49.612Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T08:09:49.618Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:09:49.730Z [INFO] GET /api/my-wallet 304 - 120ms
+2024-11-09T08:09:58.858Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:09:58.859Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:09:58.859Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:09:58.860Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:09:58.874Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:09:58.876Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:09:58.893Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:09:58.895Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:09:59.024Z [INFO] GET /api/my-wallet 304 - 117ms
+2024-11-09T08:09:59.062Z [INFO] GET /api/my-wallet 304 - 37ms
+2024-11-09T08:10:28.869Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:10:28.869Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:10:28.873Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T08:10:28.874Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:10:29.032Z [INFO] GET /api/my-wallet 304 - 162ms
+2024-11-09T08:10:58.867Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:10:58.868Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:10:58.875Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:10:58.876Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:10:58.994Z [INFO] GET /api/my-wallet 304 - 124ms
+2024-11-09T08:11:28.865Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:11:28.866Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:11:28.870Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:11:28.873Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:11:29.032Z [INFO] GET /api/my-wallet 304 - 165ms
+2024-11-09T08:11:58.865Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:11:58.865Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:11:58.871Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:11:58.874Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:11:58.992Z [INFO] GET /api/my-wallet 304 - 125ms
+2024-11-09T08:12:28.864Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:12:28.865Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:12:28.871Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:12:28.873Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:12:29.042Z [INFO] GET /api/my-wallet 304 - 176ms
+2024-11-09T08:12:58.864Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:12:58.865Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:12:58.870Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:12:58.873Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:12:58.995Z [INFO] GET /api/my-wallet 304 - 129ms
+2024-11-09T08:13:28.862Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:13:28.863Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:13:28.868Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:13:28.870Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:13:29.025Z [INFO] GET /api/my-wallet 304 - 160ms
+2024-11-09T08:13:58.863Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:13:58.864Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:13:58.870Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:13:58.872Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:13:58.997Z [INFO] GET /api/my-wallet 304 - 132ms
+2024-11-09T08:14:28.862Z [INFO] Sending Solana price: $200.45
+2024-11-09T08:14:28.862Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:14:28.865Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:14:28.866Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:14:29.010Z [INFO] GET /api/my-wallet 304 - 147ms
+2024-11-09T08:14:58.862Z [INFO] Sending Solana price: $200.39
+2024-11-09T08:14:58.863Z [INFO] GET /api/solana-price 200 - 2ms
+2024-11-09T08:14:58.868Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:14:58.870Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:14:58.996Z [INFO] GET /api/my-wallet 304 - 132ms
+2024-11-09T08:15:28.858Z [INFO] Sending Solana price: $200.39
+2024-11-09T08:15:28.858Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:15:28.860Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:15:28.861Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:15:29.010Z [INFO] GET /api/my-wallet 304 - 151ms
+2024-11-09T08:15:58.859Z [INFO] Sending Solana price: $200.39
+2024-11-09T08:15:58.859Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:15:58.861Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:15:58.862Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:15:58.973Z [INFO] GET /api/my-wallet 304 - 113ms
+2024-11-09T08:16:28.864Z [INFO] Sending Solana price: $200.39
+2024-11-09T08:16:28.865Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:16:28.865Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:16:28.868Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:16:29.047Z [INFO] GET /api/my-wallet 304 - 186ms
+2024-11-09T08:16:58.859Z [INFO] Sending Solana price: $200.39
+2024-11-09T08:16:58.860Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:16:58.865Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:16:58.867Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:16:58.996Z [INFO] GET /api/my-wallet 304 - 134ms
+2024-11-09T08:17:26.930Z [INFO] Sending Solana price: $200.39
+2024-11-09T08:17:26.930Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:17:26.931Z [INFO] Sending Solana price: $200.39
+2024-11-09T08:17:26.931Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:17:26.944Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:17:26.945Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:17:26.962Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:17:26.966Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:17:27.148Z [INFO] GET /api/my-wallet 304 - 171ms
+2024-11-09T08:17:27.189Z [INFO] GET /api/my-wallet 304 - 40ms
+2024-11-09T08:17:56.938Z [INFO] Sending Solana price: $200.39
+2024-11-09T08:17:56.939Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:17:56.943Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:17:56.944Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:17:57.069Z [INFO] GET /api/my-wallet 304 - 129ms
+2024-11-09T08:18:26.936Z [INFO] Sending Solana price: $200.39
+2024-11-09T08:18:26.937Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:18:26.941Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T08:18:26.943Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:18:27.087Z [INFO] GET /api/my-wallet 304 - 149ms
+2024-11-09T08:18:56.933Z [INFO] Sending Solana price: $200.39
+2024-11-09T08:18:56.934Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:18:56.937Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T08:18:56.939Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:18:57.059Z [INFO] GET /api/my-wallet 304 - 125ms
+2024-11-09T08:19:26.931Z [INFO] Sending Solana price: $200.39
+2024-11-09T08:19:26.932Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:19:26.963Z [INFO] GET /api/wallets 304 - 31ms
+2024-11-09T08:19:26.964Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:19:27.113Z [INFO] GET /api/my-wallet 304 - 181ms
+2024-11-09T08:19:56.930Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:19:56.931Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T08:19:56.932Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:19:56.934Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:19:57.046Z [INFO] GET /api/my-wallet 304 - 115ms
+2024-11-09T08:20:26.929Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:20:26.929Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:20:26.934Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:20:26.939Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T08:20:27.149Z [INFO] GET /api/my-wallet 304 - 218ms
+2024-11-09T08:20:43.960Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:20:43.960Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:20:43.961Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:20:43.961Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:20:43.973Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:20:43.974Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:20:43.992Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:20:43.993Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:20:44.131Z [INFO] GET /api/my-wallet 304 - 125ms
+2024-11-09T08:20:44.183Z [INFO] GET /api/my-wallet 304 - 51ms
+2024-11-09T08:21:13.967Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:21:13.968Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:21:13.971Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T08:21:13.973Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:21:14.132Z [INFO] GET /api/my-wallet 304 - 164ms
+2024-11-09T08:21:35.348Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T08:21:37.336Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T08:21:43.568Z [INFO] Server HTTP chiuso.
+2024-11-09T08:21:50.534Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T08:22:07.291Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:22:07.295Z [INFO] GET /api/solana-price 304 - 4ms
+2024-11-09T08:22:07.296Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:22:07.297Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:22:07.301Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:22:07.321Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T08:22:07.322Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:22:07.381Z [INFO] GET /api/wallets 304 - 51ms
+2024-11-09T08:22:07.596Z [INFO] GET /api/my-wallet 304 - 266ms
+2024-11-09T08:22:07.641Z [INFO] GET /api/my-wallet 304 - 43ms
+2024-11-09T08:22:37.292Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:22:37.295Z [INFO] GET /api/solana-price 304 - 3ms
+2024-11-09T08:22:37.303Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T08:22:37.305Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:22:37.430Z [INFO] GET /api/my-wallet 304 - 134ms
+2024-11-09T08:23:07.288Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:23:07.289Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:23:07.296Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T08:23:07.299Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:23:07.441Z [INFO] GET /api/my-wallet 304 - 151ms
+2024-11-09T08:23:37.287Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:23:37.288Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:23:37.295Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T08:23:37.297Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:23:37.423Z [INFO] GET /api/my-wallet 304 - 134ms
+2024-11-09T08:24:07.287Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:24:07.288Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:24:07.298Z [INFO] GET /api/wallets 304 - 9ms
+2024-11-09T08:24:07.299Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:24:07.459Z [INFO] GET /api/my-wallet 304 - 170ms
+2024-11-09T08:24:37.286Z [INFO] Sending Solana price: $200.4
+2024-11-09T08:24:37.287Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:24:37.294Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T08:24:37.296Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:24:37.411Z [INFO] GET /api/my-wallet 304 - 123ms
+2024-11-09T08:25:07.286Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:25:07.288Z [INFO] GET /api/solana-price 200 - 2ms
+2024-11-09T08:25:07.296Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T08:25:07.298Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:25:07.495Z [INFO] GET /api/my-wallet 304 - 205ms
+2024-11-09T08:25:37.286Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:25:37.287Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:25:37.296Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:25:37.297Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:25:37.419Z [INFO] GET /api/my-wallet 304 - 131ms
+2024-11-09T08:25:46.933Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:25:46.933Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:25:46.934Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:25:46.935Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:25:46.939Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:25:46.953Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:25:46.955Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:25:46.970Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:25:47.120Z [INFO] GET /api/my-wallet 304 - 154ms
+2024-11-09T08:25:47.159Z [INFO] GET /api/my-wallet 304 - 39ms
+2024-11-09T08:26:16.934Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:26:16.935Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:26:16.940Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:26:16.941Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:26:17.081Z [INFO] GET /api/my-wallet 304 - 145ms
+2024-11-09T08:26:46.937Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:26:46.938Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:26:46.943Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:26:46.946Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:26:47.064Z [INFO] GET /api/my-wallet 304 - 125ms
+2024-11-09T08:27:17.244Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:27:17.244Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:27:17.248Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:27:17.248Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:27:17.393Z [INFO] GET /api/my-wallet 304 - 148ms
+2024-11-09T08:27:46.940Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:27:46.941Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:27:46.943Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T08:27:46.945Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:27:47.055Z [INFO] GET /api/my-wallet 304 - 119ms
+2024-11-09T08:28:17.243Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:28:17.244Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:28:17.248Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:28:17.250Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:28:17.364Z [INFO] GET /api/my-wallet 304 - 120ms
+2024-11-09T08:28:46.936Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:28:46.937Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:28:46.942Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T08:28:46.944Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:28:48.073Z [INFO] GET /api/my-wallet 304 - 1135ms
+2024-11-09T08:29:16.935Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:29:16.936Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:29:16.941Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:29:16.945Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:29:17.061Z [INFO] GET /api/my-wallet 304 - 124ms
+2024-11-09T08:29:46.935Z [INFO] Sending Solana price: $200.93
+2024-11-09T08:29:46.936Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:29:46.942Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T08:29:46.944Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:29:47.101Z [INFO] GET /api/my-wallet 304 - 164ms
+2024-11-09T08:30:16.937Z [INFO] Sending Solana price: $201.24
+2024-11-09T08:30:16.939Z [INFO] GET /api/solana-price 200 - 2ms
+2024-11-09T08:30:16.944Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:30:16.945Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:30:17.076Z [INFO] GET /api/my-wallet 304 - 136ms
+2024-11-09T08:30:46.942Z [INFO] Sending Solana price: $201.24
+2024-11-09T08:30:46.943Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:30:46.948Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:30:46.951Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:30:47.108Z [INFO] GET /api/my-wallet 304 - 164ms
+2024-11-09T08:31:16.943Z [INFO] Sending Solana price: $201.24
+2024-11-09T08:31:16.944Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T08:31:16.949Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:31:16.952Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:31:17.073Z [INFO] GET /api/my-wallet 304 - 128ms
+2024-11-09T08:31:46.942Z [INFO] Sending Solana price: $201.24
+2024-11-09T08:31:46.943Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:31:46.948Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:31:46.951Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:31:47.113Z [INFO] GET /api/my-wallet 304 - 169ms
+2024-11-09T08:32:16.941Z [INFO] Sending Solana price: $201.24
+2024-11-09T08:32:16.942Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:32:16.947Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:32:16.951Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:32:17.072Z [INFO] GET /api/my-wallet 304 - 128ms
+2024-11-09T08:32:46.941Z [INFO] Sending Solana price: $201.24
+2024-11-09T08:32:46.942Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:32:46.947Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:32:46.950Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:32:47.074Z [INFO] GET /api/my-wallet 304 - 131ms
+2024-11-09T08:33:17.248Z [INFO] Sending Solana price: $201.24
+2024-11-09T08:33:17.249Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:33:17.252Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:33:17.253Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:33:17.414Z [INFO] GET /api/my-wallet 304 - 165ms
+2024-11-09T08:33:47.247Z [INFO] Sending Solana price: $201.24
+2024-11-09T08:33:47.248Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:33:47.253Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:33:47.254Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:33:47.366Z [INFO] GET /api/my-wallet 304 - 117ms
+2024-11-09T08:34:29.249Z [INFO] Sending Solana price: $201.24
+2024-11-09T08:34:29.250Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:34:29.257Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:34:29.259Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:34:29.415Z [INFO] GET /api/my-wallet 304 - 163ms
+2024-11-09T08:35:29.250Z [INFO] Sending Solana price: $201.48
+2024-11-09T08:35:29.251Z [INFO] GET /api/solana-price 200 - 2ms
+2024-11-09T08:35:29.257Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:35:29.260Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:35:29.406Z [INFO] GET /api/my-wallet 304 - 153ms
+2024-11-09T08:35:53.625Z [INFO] Sending Solana price: $201.48
+2024-11-09T08:35:53.625Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T08:35:53.630Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:35:53.634Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:35:53.745Z [INFO] GET /api/my-wallet 304 - 118ms
+2024-11-09T08:36:16.939Z [INFO] Sending Solana price: $201.48
+2024-11-09T08:36:16.940Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:36:16.945Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:36:16.947Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:36:17.162Z [INFO] GET /api/my-wallet 304 - 221ms
+2024-11-09T08:36:46.938Z [INFO] Sending Solana price: $201.48
+2024-11-09T08:36:46.939Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:36:46.945Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T08:36:46.948Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:36:47.068Z [INFO] GET /api/my-wallet 304 - 128ms
+2024-11-09T08:37:16.938Z [INFO] Sending Solana price: $201.48
+2024-11-09T08:37:16.939Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:37:16.945Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:37:16.947Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T08:37:17.097Z [INFO] GET /api/my-wallet 304 - 157ms
+2024-11-09T08:37:46.938Z [INFO] Sending Solana price: $201.48
+2024-11-09T08:37:46.939Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T08:37:46.945Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T08:37:46.947Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T08:37:47.056Z [INFO] GET /api/my-wallet 304 - 116ms
+2024-11-09T08:38:16.937Z [INFO] Sending Solana price: $201.48
+2024-11-09T08:38:16.938Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T08:38:16.943Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T08:38:16.946Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T08:38:17.023Z [INFO] GET /api/my-wallet 304 - 84ms
+2024-11-09T08:38:21.272Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T08:38:21.275Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T08:38:24.301Z [INFO] Server HTTP chiuso.
+2024-11-09T11:27:51.872Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T11:28:03.287Z [INFO] Sending Solana price: $202.6
+2024-11-09T11:28:03.289Z [INFO] GET /api/solana-price 200 - 2ms
+2024-11-09T11:28:03.289Z [INFO] Sending Solana price: $202.6
+2024-11-09T11:28:03.290Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:28:03.303Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:28:03.305Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:28:03.320Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:28:03.321Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:28:03.535Z [INFO] GET /api/my-wallet 304 - 203ms
+2024-11-09T11:28:03.580Z [INFO] GET /api/my-wallet 304 - 43ms
+2024-11-09T11:28:33.293Z [INFO] Sending Solana price: $202.6
+2024-11-09T11:28:33.296Z [INFO] GET /api/solana-price 304 - 3ms
+2024-11-09T11:28:33.304Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T11:28:33.305Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:28:33.478Z [INFO] GET /api/my-wallet 304 - 181ms
+2024-11-09T11:29:03.288Z [INFO] Sending Solana price: $202.6
+2024-11-09T11:29:03.289Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:29:03.295Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:29:03.298Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:29:03.414Z [INFO] GET /api/my-wallet 304 - 124ms
+2024-11-09T11:29:33.290Z [INFO] Sending Solana price: $202.6
+2024-11-09T11:29:33.291Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:29:33.296Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:29:33.297Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:29:33.695Z [INFO] GET /api/my-wallet 304 - 404ms
+2024-11-09T11:30:03.290Z [INFO] Sending Solana price: $202.6
+2024-11-09T11:30:03.291Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:30:03.300Z [INFO] GET /api/wallets 304 - 8ms
+2024-11-09T11:30:03.301Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:30:03.488Z [INFO] GET /api/my-wallet 304 - 196ms
+2024-11-09T11:30:33.289Z [INFO] Sending Solana price: $202.6
+2024-11-09T11:30:33.290Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:30:33.299Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T11:30:33.301Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:30:33.443Z [INFO] GET /api/my-wallet 304 - 151ms
+2024-11-09T11:31:03.289Z [INFO] Sending Solana price: $202.47
+2024-11-09T11:31:03.290Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T11:31:03.297Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T11:31:03.299Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:31:03.415Z [INFO] GET /api/my-wallet 304 - 123ms
+2024-11-09T11:31:33.289Z [INFO] Sending Solana price: $202.47
+2024-11-09T11:31:33.289Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:31:33.298Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T11:31:33.300Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:31:33.454Z [INFO] GET /api/my-wallet 304 - 163ms
+2024-11-09T11:32:03.287Z [INFO] Sending Solana price: $202.47
+2024-11-09T11:32:03.300Z [INFO] GET /api/solana-price 304 - 13ms
+2024-11-09T11:32:03.304Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T11:32:03.305Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:32:03.439Z [INFO] GET /api/my-wallet 304 - 138ms
+2024-11-09T11:32:33.288Z [INFO] Sending Solana price: $202.47
+2024-11-09T11:32:33.289Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:32:33.295Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:32:33.297Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:32:33.457Z [INFO] GET /api/my-wallet 304 - 167ms
+2024-11-09T11:33:03.289Z [INFO] Sending Solana price: $202.47
+2024-11-09T11:33:03.290Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:33:03.296Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:33:03.298Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:33:03.416Z [INFO] GET /api/my-wallet 304 - 125ms
+2024-11-09T11:33:33.287Z [INFO] Sending Solana price: $202.47
+2024-11-09T11:33:33.288Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:33:33.293Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:33:33.296Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:33:33.481Z [INFO] GET /api/my-wallet 304 - 192ms
+2024-11-09T11:34:03.289Z [INFO] Sending Solana price: $202.47
+2024-11-09T11:34:03.290Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T11:34:03.296Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:34:03.298Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:34:03.459Z [INFO] GET /api/my-wallet 304 - 167ms
+2024-11-09T11:34:33.287Z [INFO] Sending Solana price: $202.47
+2024-11-09T11:34:33.288Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:34:33.292Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:34:33.294Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:34:33.410Z [INFO] GET /api/my-wallet 304 - 122ms
+2024-11-09T11:35:03.286Z [INFO] Sending Solana price: $202.47
+2024-11-09T11:35:03.286Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:35:03.290Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:35:03.291Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:35:03.454Z [INFO] GET /api/my-wallet 304 - 167ms
+2024-11-09T11:35:33.288Z [INFO] Sending Solana price: $202.47
+2024-11-09T11:35:33.289Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T11:35:33.295Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T11:35:33.297Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:35:33.442Z [INFO] GET /api/my-wallet 304 - 152ms
+2024-11-09T11:36:03.285Z [INFO] Sending Solana price: $202.27
+2024-11-09T11:36:03.285Z [INFO] GET /api/solana-price 200 - 0ms
+2024-11-09T11:36:03.291Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:36:03.293Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:36:04.491Z [INFO] GET /api/my-wallet 304 - 1204ms
+2024-11-09T11:36:33.285Z [INFO] Sending Solana price: $202.27
+2024-11-09T11:36:33.286Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:36:33.291Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:36:33.292Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:36:33.417Z [INFO] GET /api/my-wallet 304 - 130ms
+2024-11-09T11:37:03.286Z [INFO] Sending Solana price: $202.27
+2024-11-09T11:37:03.287Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:37:03.313Z [INFO] GET /api/wallets 304 - 25ms
+2024-11-09T11:37:03.328Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:37:03.461Z [INFO] GET /api/my-wallet 304 - 172ms
+2024-11-09T11:37:33.284Z [INFO] Sending Solana price: $202.27
+2024-11-09T11:37:33.285Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:37:33.287Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T11:37:33.289Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:37:33.340Z [INFO] GET /api/my-wallet 304 - 55ms
+2024-11-09T11:38:03.284Z [INFO] Sending Solana price: $202.27
+2024-11-09T11:38:03.284Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:38:03.285Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:38:03.287Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:38:03.522Z [INFO] GET /api/my-wallet 304 - 237ms
+2024-11-09T11:38:33.285Z [INFO] Sending Solana price: $202.27
+2024-11-09T11:38:33.286Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:38:33.290Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:38:33.292Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:38:33.406Z [INFO] GET /api/my-wallet 304 - 119ms
+2024-11-09T11:39:03.280Z [INFO] Sending Solana price: $202.27
+2024-11-09T11:39:03.281Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:39:03.283Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T11:39:03.284Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:39:03.424Z [INFO] GET /api/my-wallet 304 - 143ms
+2024-11-09T11:39:33.282Z [INFO] Sending Solana price: $202.27
+2024-11-09T11:39:33.282Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:39:33.284Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T11:39:33.286Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:39:33.414Z [INFO] GET /api/my-wallet 304 - 132ms
+2024-11-09T11:40:03.283Z [INFO] Sending Solana price: $202.27
+2024-11-09T11:40:03.283Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:40:03.285Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T11:40:03.286Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:40:03.457Z [INFO] GET /api/my-wallet 304 - 174ms
+2024-11-09T11:40:33.282Z [INFO] Sending Solana price: $202.27
+2024-11-09T11:40:33.282Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:40:33.282Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:40:33.284Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:40:33.403Z [INFO] GET /api/my-wallet 304 - 120ms
+2024-11-09T11:41:03.282Z [INFO] Sending Solana price: $201.96
+2024-11-09T11:41:03.283Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T11:41:03.284Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:41:03.286Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:41:03.422Z [INFO] GET /api/my-wallet 304 - 139ms
+2024-11-09T11:41:33.282Z [INFO] Sending Solana price: $201.96
+2024-11-09T11:41:33.282Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:41:33.285Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T11:41:33.286Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:41:33.411Z [INFO] GET /api/my-wallet 304 - 128ms
+2024-11-09T11:42:03.283Z [INFO] Sending Solana price: $201.96
+2024-11-09T11:42:03.283Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:42:03.289Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:42:03.292Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T11:42:03.406Z [INFO] GET /api/my-wallet 304 - 121ms
+2024-11-09T11:42:33.283Z [INFO] Sending Solana price: $201.96
+2024-11-09T11:42:33.284Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:42:33.290Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:42:33.293Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:42:33.451Z [INFO] GET /api/my-wallet 304 - 166ms
+2024-11-09T11:43:03.282Z [INFO] Sending Solana price: $201.96
+2024-11-09T11:43:03.283Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:43:03.287Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T11:43:03.289Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:43:03.331Z [INFO] GET /api/my-wallet 304 - 47ms
+2024-11-09T11:43:33.281Z [INFO] Sending Solana price: $201.96
+2024-11-09T11:43:33.281Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:43:33.284Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T11:43:33.286Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:43:33.425Z [INFO] GET /api/my-wallet 304 - 143ms
+2024-11-09T11:44:03.283Z [INFO] Sending Solana price: $201.96
+2024-11-09T11:44:03.284Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:44:03.290Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:44:03.292Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:44:03.446Z [INFO] GET /api/my-wallet 304 - 161ms
+2024-11-09T11:44:33.281Z [INFO] Sending Solana price: $201.96
+2024-11-09T11:44:33.281Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:44:33.287Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:44:33.288Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:44:33.456Z [INFO] GET /api/my-wallet 304 - 174ms
+2024-11-09T11:45:03.282Z [INFO] Sending Solana price: $201.96
+2024-11-09T11:45:03.283Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:45:03.288Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:45:03.291Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:45:03.416Z [INFO] GET /api/my-wallet 304 - 132ms
+2024-11-09T11:45:33.280Z [INFO] Sending Solana price: $201.96
+2024-11-09T11:45:33.281Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:45:33.286Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:45:33.288Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:45:33.427Z [INFO] GET /api/my-wallet 304 - 144ms
+2024-11-09T11:46:03.282Z [INFO] Sending Solana price: $201.79
+2024-11-09T11:46:03.283Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T11:46:03.290Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T11:46:03.291Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:46:03.410Z [INFO] GET /api/my-wallet 304 - 125ms
+2024-11-09T11:46:33.280Z [INFO] Sending Solana price: $201.79
+2024-11-09T11:46:33.281Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:46:33.286Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:46:33.290Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:46:33.431Z [INFO] GET /api/my-wallet 304 - 148ms
+2024-11-09T11:47:03.280Z [INFO] Sending Solana price: $201.79
+2024-11-09T11:47:03.281Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:47:03.285Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:47:03.289Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:47:03.437Z [INFO] GET /api/my-wallet 304 - 155ms
+2024-11-09T11:47:33.281Z [INFO] Sending Solana price: $201.79
+2024-11-09T11:47:33.282Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T11:47:33.288Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T11:47:33.290Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:47:33.448Z [INFO] GET /api/my-wallet 304 - 166ms
+2024-11-09T11:48:03.280Z [INFO] Sending Solana price: $201.79
+2024-11-09T11:48:03.281Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:48:03.286Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:48:03.288Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:48:03.403Z [INFO] GET /api/my-wallet 304 - 121ms
+2024-11-09T11:48:33.277Z [INFO] Sending Solana price: $201.79
+2024-11-09T11:48:33.278Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:48:33.282Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T11:48:33.284Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:48:33.474Z [INFO] GET /api/my-wallet 304 - 195ms
+2024-11-09T11:49:03.280Z [INFO] Sending Solana price: $201.79
+2024-11-09T11:49:03.281Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:49:03.286Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:49:03.288Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:49:03.399Z [INFO] GET /api/my-wallet 304 - 117ms
+2024-11-09T11:49:33.276Z [INFO] Sending Solana price: $201.79
+2024-11-09T11:49:33.276Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:49:33.278Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:49:33.280Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:49:33.412Z [INFO] GET /api/my-wallet 304 - 135ms
+2024-11-09T11:50:03.276Z [INFO] Sending Solana price: $201.79
+2024-11-09T11:50:03.277Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:50:03.278Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:50:03.280Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:50:03.399Z [INFO] GET /api/my-wallet 304 - 122ms
+2024-11-09T11:50:33.278Z [INFO] Sending Solana price: $201.79
+2024-11-09T11:50:33.279Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:50:33.283Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:50:33.285Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:50:33.398Z [INFO] GET /api/my-wallet 304 - 119ms
+2024-11-09T11:51:03.278Z [INFO] Sending Solana price: $201.85
+2024-11-09T11:51:03.278Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T11:51:03.281Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T11:51:03.283Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:51:03.434Z [INFO] GET /api/my-wallet 304 - 155ms
+2024-11-09T11:51:33.280Z [INFO] Sending Solana price: $201.85
+2024-11-09T11:51:33.281Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:51:33.286Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:51:33.289Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:51:33.404Z [INFO] GET /api/my-wallet 304 - 122ms
+2024-11-09T11:52:03.279Z [INFO] Sending Solana price: $201.85
+2024-11-09T11:52:03.280Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:52:03.283Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T11:52:03.285Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:52:03.437Z [INFO] GET /api/my-wallet 304 - 157ms
+2024-11-09T11:52:33.278Z [INFO] Sending Solana price: $201.85
+2024-11-09T11:52:33.279Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:52:33.284Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:52:33.288Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T11:52:33.413Z [INFO] GET /api/my-wallet 304 - 133ms
+2024-11-09T11:53:03.279Z [INFO] Sending Solana price: $201.85
+2024-11-09T11:53:03.280Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:53:03.286Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:53:03.288Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:53:03.399Z [INFO] GET /api/my-wallet 304 - 118ms
+2024-11-09T11:53:33.278Z [INFO] Sending Solana price: $201.85
+2024-11-09T11:53:33.280Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:53:33.285Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T11:53:33.288Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:53:33.453Z [INFO] GET /api/my-wallet 304 - 172ms
+2024-11-09T11:54:03.501Z [INFO] Sending Solana price: $201.85
+2024-11-09T11:54:03.501Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:54:03.507Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:54:03.510Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:54:03.633Z [INFO] GET /api/my-wallet 304 - 130ms
+2024-11-09T11:54:33.508Z [INFO] Sending Solana price: $201.85
+2024-11-09T11:54:33.508Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:54:33.510Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T11:54:33.515Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T11:54:33.695Z [INFO] GET /api/my-wallet 304 - 186ms
+2024-11-09T11:55:34.501Z [INFO] Sending Solana price: $201.85
+2024-11-09T11:55:34.501Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:55:34.502Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:55:34.503Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:55:34.621Z [INFO] GET /api/my-wallet 304 - 120ms
+2024-11-09T11:56:35.500Z [INFO] Sending Solana price: $201.97
+2024-11-09T11:56:35.501Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T11:56:35.506Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:56:35.508Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:56:35.651Z [INFO] GET /api/my-wallet 304 - 148ms
+2024-11-09T11:57:36.501Z [INFO] Sending Solana price: $201.97
+2024-11-09T11:57:36.501Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:57:36.503Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T11:57:36.504Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:57:36.665Z [INFO] GET /api/my-wallet 304 - 163ms
+2024-11-09T11:58:03.273Z [INFO] Sending Solana price: $201.97
+2024-11-09T11:58:03.274Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:58:03.275Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:58:03.276Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:58:03.388Z [INFO] GET /api/my-wallet 304 - 114ms
+2024-11-09T11:58:33.274Z [INFO] Sending Solana price: $201.97
+2024-11-09T11:58:33.274Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:58:33.278Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T11:58:33.280Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T11:58:34.257Z [INFO] GET /api/my-wallet 304 - 982ms
+2024-11-09T11:59:03.273Z [INFO] Sending Solana price: $201.97
+2024-11-09T11:59:03.273Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T11:59:03.276Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T11:59:03.278Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:59:03.390Z [INFO] GET /api/my-wallet 304 - 116ms
+2024-11-09T11:59:33.274Z [INFO] Sending Solana price: $201.97
+2024-11-09T11:59:33.275Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T11:59:33.281Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T11:59:33.282Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T11:59:33.430Z [INFO] GET /api/my-wallet 304 - 154ms
+2024-11-09T12:00:03.275Z [INFO] Sending Solana price: $201.97
+2024-11-09T12:00:03.276Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T12:00:03.282Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T12:00:03.285Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T12:00:04.393Z [INFO] GET /api/my-wallet 304 - 1116ms
+2024-11-09T12:00:33.276Z [INFO] Sending Solana price: $201.97
+2024-11-09T12:00:33.277Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T12:00:33.283Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T12:00:33.285Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T12:00:34.531Z [INFO] GET /api/my-wallet 304 - 1253ms
+2024-11-09T12:01:03.274Z [INFO] Sending Solana price: $202.26
+2024-11-09T12:01:03.275Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T12:01:03.281Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T12:01:03.283Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T12:01:03.410Z [INFO] GET /api/my-wallet 304 - 133ms
+2024-11-09T12:01:33.273Z [INFO] Sending Solana price: $202.26
+2024-11-09T12:01:33.273Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T12:01:33.277Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T12:01:33.278Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T12:01:33.433Z [INFO] GET /api/my-wallet 304 - 159ms
+2024-11-09T12:02:03.271Z [INFO] Sending Solana price: $202.26
+2024-11-09T12:02:03.271Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T12:02:03.273Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T12:02:03.274Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T12:02:03.394Z [INFO] GET /api/my-wallet 304 - 122ms
+2024-11-09T12:02:25.121Z [INFO] Sending Solana price: $202.26
+2024-11-09T12:02:25.122Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T12:02:25.123Z [INFO] Sending Solana price: $202.26
+2024-11-09T12:02:25.124Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T12:02:25.134Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T12:02:25.137Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T12:02:25.165Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T12:02:25.169Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T12:02:25.346Z [INFO] GET /api/my-wallet 304 - 173ms
+2024-11-09T12:02:25.386Z [INFO] GET /api/my-wallet 304 - 39ms
+2024-11-09T12:02:55.149Z [INFO] Sending Solana price: $202.26
+2024-11-09T12:02:55.149Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T12:02:55.151Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T12:02:55.151Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T12:02:55.186Z [INFO] GET /api/my-wallet 304 - 36ms
+2024-11-09T12:03:25.126Z [INFO] Sending Solana price: $202.26
+2024-11-09T12:03:25.126Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T12:03:25.131Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T12:03:25.133Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T12:03:25.167Z [INFO] GET /api/my-wallet 304 - 40ms
+2024-11-09T12:03:55.495Z [INFO] Sending Solana price: $202.26
+2024-11-09T12:03:55.496Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T12:03:55.500Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T12:03:55.502Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T12:03:55.638Z [INFO] GET /api/my-wallet 304 - 142ms
+2024-11-09T12:04:25.128Z [INFO] Sending Solana price: $202.26
+2024-11-09T12:04:25.128Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T12:04:25.135Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T12:04:25.137Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T12:04:25.295Z [INFO] GET /api/my-wallet 304 - 165ms
+2024-11-09T12:04:55.127Z [INFO] Sending Solana price: $202.26
+2024-11-09T12:04:55.128Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T12:04:55.135Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T12:04:55.137Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T12:04:55.248Z [INFO] GET /api/my-wallet 304 - 118ms
+2024-11-09T12:05:25.124Z [INFO] Sending Solana price: $202.26
+2024-11-09T12:05:25.124Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T12:05:25.130Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T12:05:25.131Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T12:05:25.279Z [INFO] GET /api/my-wallet 304 - 153ms
+2024-11-09T12:05:55.127Z [INFO] Sending Solana price: $202.21
+2024-11-09T12:05:55.128Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T12:05:55.133Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T12:05:55.136Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T12:05:55.265Z [INFO] GET /api/my-wallet 304 - 136ms
+2024-11-09T12:06:25.127Z [INFO] Sending Solana price: $202.21
+2024-11-09T12:06:25.128Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T12:06:25.135Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T12:06:25.137Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T12:06:25.299Z [INFO] GET /api/my-wallet 304 - 170ms
+2024-11-09T17:01:13.073Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:01:31.844Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:02:41.304Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:05:24.659Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:07:20.936Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:07:25.469Z [INFO] Sending Solana price: $0
+2024-11-09T17:07:25.475Z [INFO] GET /api/solana-price 200 - 7ms
+2024-11-09T17:07:25.477Z [INFO] Sending Solana price: $0
+2024-11-09T17:07:25.478Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:07:25.482Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:07:25.485Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:07:25.487Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:07:25.537Z [INFO] GET /api/wallets 304 - 40ms
+2024-11-09T17:07:25.659Z [INFO] GET /api/my-wallet 304 - 162ms
+2024-11-09T17:07:25.701Z [INFO] GET /api/my-wallet 304 - 40ms
+2024-11-09T17:07:44.233Z [INFO] Sending Solana price: $0
+2024-11-09T17:07:44.235Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T17:07:44.235Z [INFO] Sending Solana price: $0
+2024-11-09T17:07:44.236Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:07:44.241Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:07:44.242Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:07:44.244Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:07:44.258Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T17:07:44.384Z [INFO] GET /api/my-wallet 304 - 129ms
+2024-11-09T17:07:44.428Z [INFO] GET /api/my-wallet 304 - 43ms
+2024-11-09T17:08:14.240Z [INFO] Sending Solana price: $0
+2024-11-09T17:08:14.241Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:08:14.251Z [INFO] GET /api/wallets 304 - 8ms
+2024-11-09T17:08:14.253Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:08:14.396Z [INFO] GET /api/my-wallet 304 - 151ms
+2024-11-09T17:08:44.238Z [INFO] Sending Solana price: $0
+2024-11-09T17:08:44.239Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:08:44.247Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T17:08:44.249Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:08:44.429Z [INFO] GET /api/my-wallet 304 - 186ms
+2024-11-09T17:09:14.236Z [INFO] Sending Solana price: $0
+2024-11-09T17:09:14.237Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:09:14.242Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T17:09:14.243Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:09:14.399Z [INFO] GET /api/my-wallet 304 - 162ms
+2024-11-09T17:09:44.238Z [INFO] Sending Solana price: $0
+2024-11-09T17:09:44.239Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:09:44.244Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T17:09:44.247Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:09:44.357Z [INFO] GET /api/my-wallet 304 - 117ms
+2024-11-09T17:10:14.237Z [INFO] Sending Solana price: $0
+2024-11-09T17:10:14.238Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:10:14.242Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T17:10:14.246Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:10:14.359Z [INFO] GET /api/my-wallet 304 - 121ms
+2024-11-09T17:10:35.785Z [INFO] Sending Solana price: $0
+2024-11-09T17:10:35.786Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:10:35.787Z [INFO] Sending Solana price: $0
+2024-11-09T17:10:35.788Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:10:35.799Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:10:35.809Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T17:10:35.816Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T17:10:35.838Z [INFO] GET /api/wallets 304 - 9ms
+2024-11-09T17:10:35.961Z [INFO] GET /api/my-wallet 304 - 132ms
+2024-11-09T17:10:36.002Z [INFO] GET /api/my-wallet 304 - 40ms
+2024-11-09T17:11:05.790Z [INFO] Sending Solana price: $0
+2024-11-09T17:11:05.791Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:11:05.798Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T17:11:05.800Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:11:05.952Z [INFO] GET /api/my-wallet 304 - 160ms
+2024-11-09T17:11:18.550Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T17:11:23.011Z [INFO] Server HTTP chiuso.
+2024-11-09T17:15:34.737Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:15:42.217Z [INFO] Sending Solana price: $0
+2024-11-09T17:15:42.223Z [INFO] GET /api/solana-price 304 - 6ms
+2024-11-09T17:15:42.227Z [INFO] Sending Solana price: $0
+2024-11-09T17:15:42.231Z [INFO] GET /api/solana-price 304 - 5ms
+2024-11-09T17:15:42.234Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:15:42.241Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T17:15:42.243Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:15:42.309Z [INFO] GET /api/wallets 304 - 58ms
+2024-11-09T17:15:42.451Z [INFO] GET /api/my-wallet 304 - 199ms
+2024-11-09T17:15:42.506Z [INFO] GET /api/my-wallet 304 - 53ms
+2024-11-09T17:16:12.217Z [INFO] Sending Solana price: $0
+2024-11-09T17:16:12.219Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T17:16:12.227Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T17:16:12.229Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:16:13.522Z [INFO] GET /api/my-wallet 304 - 1302ms
+2024-11-09T17:16:42.217Z [INFO] Sending Solana price: $0
+2024-11-09T17:16:42.218Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:16:42.225Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T17:16:42.227Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:16:42.760Z [INFO] GET /api/my-wallet 304 - 540ms
+2024-11-09T17:17:12.218Z [INFO] Sending Solana price: $0
+2024-11-09T17:17:12.219Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T17:17:12.226Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T17:17:12.227Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:17:12.376Z [INFO] GET /api/my-wallet 304 - 156ms
+2024-11-09T17:17:42.217Z [INFO] Sending Solana price: $0
+2024-11-09T17:17:42.217Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:17:42.225Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T17:17:42.227Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:17:42.382Z [INFO] GET /api/my-wallet 304 - 162ms
+2024-11-09T17:18:12.216Z [INFO] Sending Solana price: $0
+2024-11-09T17:18:12.217Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:18:12.225Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T17:18:12.226Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:18:12.351Z [INFO] GET /api/my-wallet 304 - 133ms
+2024-11-09T17:18:17.679Z [INFO] Sending Solana price: $0
+2024-11-09T17:18:17.680Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:18:17.681Z [INFO] Sending Solana price: $0
+2024-11-09T17:18:17.681Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T17:18:17.685Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:18:17.691Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:18:17.694Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:18:17.705Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T17:18:17.827Z [INFO] GET /api/my-wallet 304 - 124ms
+2024-11-09T17:18:17.874Z [INFO] GET /api/my-wallet 304 - 46ms
+2024-11-09T17:18:47.681Z [INFO] Sending Solana price: $0
+2024-11-09T17:18:47.681Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T17:18:47.690Z [INFO] GET /api/wallets 304 - 8ms
+2024-11-09T17:18:47.692Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:18:47.858Z [INFO] GET /api/my-wallet 304 - 176ms
+2024-11-09T17:18:57.859Z [INFO] Sending Solana price: $0
+2024-11-09T17:18:57.860Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:18:57.861Z [INFO] Sending Solana price: $0
+2024-11-09T17:18:57.862Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:18:57.865Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:18:57.871Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:18:57.873Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:18:57.886Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T17:18:57.997Z [INFO] GET /api/my-wallet 304 - 114ms
+2024-11-09T17:18:58.038Z [INFO] GET /api/my-wallet 304 - 40ms
+2024-11-09T17:19:07.722Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T17:19:07.874Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T17:19:12.529Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T17:19:15.197Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T17:19:32.856Z [INFO] Server HTTP chiuso.
+2024-11-09T17:19:36.888Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:20:03.060Z [INFO] Sending Solana price: $0
+2024-11-09T17:20:03.064Z [INFO] GET /api/solana-price 304 - 5ms
+2024-11-09T17:20:03.130Z [INFO] GET /api/wallets 304 - 64ms
+2024-11-09T17:20:03.132Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:20:03.285Z [INFO] GET /api/my-wallet 304 - 218ms
+2024-11-09T17:20:33.052Z [INFO] Sending Solana price: $0
+2024-11-09T17:20:33.054Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T17:20:33.063Z [INFO] GET /api/wallets 304 - 8ms
+2024-11-09T17:20:33.066Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:20:33.273Z [INFO] GET /api/my-wallet 304 - 217ms
+2024-11-09T17:21:03.052Z [INFO] Sending Solana price: $0
+2024-11-09T17:21:03.054Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T17:21:03.064Z [INFO] GET /api/wallets 304 - 9ms
+2024-11-09T17:21:03.065Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:21:03.229Z [INFO] GET /api/my-wallet 304 - 173ms
+2024-11-09T17:21:09.007Z [INFO] Sending Solana price: $0
+2024-11-09T17:21:09.009Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T17:21:09.010Z [INFO] Sending Solana price: $0
+2024-11-09T17:21:09.011Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:21:09.018Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T17:21:09.020Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:21:09.020Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:21:09.036Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:21:09.605Z [INFO] GET /api/my-wallet 304 - 573ms
+2024-11-09T17:21:09.685Z [INFO] GET /api/my-wallet 304 - 79ms
+2024-11-09T17:25:10.565Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:25:19.807Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:27:25.103Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:29:45.808Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:31:35.194Z [INFO] Sending Solana price: $0
+2024-11-09T17:31:35.196Z [INFO] GET /api/solana-price 304 - 3ms
+2024-11-09T17:31:35.197Z [INFO] Sending Solana price: $0
+2024-11-09T17:31:35.199Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T17:31:35.206Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:31:35.209Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:31:35.210Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:31:35.261Z [INFO] GET /api/wallets 304 - 38ms
+2024-11-09T17:31:36.468Z [INFO] GET /api/my-wallet 304 - 1245ms
+2024-11-09T17:31:36.510Z [INFO] GET /api/my-wallet 304 - 41ms
+2024-11-09T17:32:05.199Z [INFO] Sending Solana price: $0
+2024-11-09T17:32:05.202Z [INFO] GET /api/solana-price 304 - 3ms
+2024-11-09T17:32:05.210Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T17:32:05.212Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:32:07.150Z [INFO] GET /api/my-wallet 304 - 1946ms
+2024-11-09T17:32:35.200Z [INFO] Sending Solana price: $0
+2024-11-09T17:32:35.201Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T17:32:35.208Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T17:32:35.210Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:32:36.138Z [ERROR] Errore nella chiamata RPC: fetch failed
+2024-11-09T17:32:36.138Z [ERROR] Errore nel recupero del saldo: fetch failed
+2024-11-09T17:32:36.138Z [ERROR] Error getting personal wallet info: fetch failed
+2024-11-09T17:32:36.140Z [INFO] GET /api/my-wallet 500 - 938ms
+2024-11-09T17:33:05.204Z [INFO] Sending Solana price: $0
+2024-11-09T17:33:05.205Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:33:05.206Z [ERROR] Errore nella chiamata RPC: fetch failed
+2024-11-09T17:33:05.206Z [ERROR] Errore nel recupero del saldo: fetch failed
+2024-11-09T17:33:05.206Z [ERROR] Error getting personal wallet info: fetch failed
+2024-11-09T17:33:05.207Z [INFO] GET /api/my-wallet 500 - 8ms
+2024-11-09T17:33:05.210Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:33:05.211Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:33:35.203Z [INFO] Sending Solana price: $0
+2024-11-09T17:33:35.204Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:33:35.207Z [ERROR] Errore nella chiamata RPC: fetch failed
+2024-11-09T17:33:35.207Z [ERROR] Errore nel recupero del saldo: fetch failed
+2024-11-09T17:33:35.207Z [ERROR] Error getting personal wallet info: fetch failed
+2024-11-09T17:33:35.209Z [INFO] GET /api/my-wallet 500 - 11ms
+2024-11-09T17:33:35.211Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T17:33:35.212Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:34:05.204Z [INFO] Sending Solana price: $0
+2024-11-09T17:34:05.205Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:34:05.207Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:34:05.209Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:34:05.330Z [INFO] GET /api/my-wallet 200 - 132ms
+2024-11-09T17:34:35.198Z [INFO] Sending Solana price: $0
+2024-11-09T17:34:35.199Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:34:35.206Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T17:34:35.208Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:34:35.334Z [INFO] GET /api/my-wallet 304 - 134ms
+2024-11-09T17:34:49.613Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T17:34:49.974Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T17:34:50.340Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T17:35:01.010Z [INFO] Server HTTP chiuso.
+2024-11-09T17:35:43.660Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:35:47.007Z [ERROR] Eccezione non gestita: listen EADDRINUSE: address already in use :::5001
+2024-11-09T17:36:30.272Z [INFO] Sending Solana price: $196.94
+2024-11-09T17:36:30.279Z [INFO] GET /api/solana-price 200 - 7ms
+2024-11-09T17:36:30.280Z [INFO] Sending Solana price: $196.94
+2024-11-09T17:36:30.282Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T17:36:30.285Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:36:30.304Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:36:30.306Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:36:30.359Z [INFO] GET /api/wallets 304 - 45ms
+2024-11-09T17:36:30.516Z [INFO] GET /api/my-wallet 304 - 201ms
+2024-11-09T17:36:30.560Z [INFO] GET /api/my-wallet 304 - 42ms
+2024-11-09T17:37:00.272Z [INFO] Sending Solana price: $196.94
+2024-11-09T17:37:00.274Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T17:37:00.280Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T17:37:00.282Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:37:00.411Z [INFO] GET /api/my-wallet 304 - 136ms
+2024-11-09T17:37:30.273Z [INFO] Sending Solana price: $196.94
+2024-11-09T17:37:30.274Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:37:30.283Z [INFO] GET /api/wallets 304 - 8ms
+2024-11-09T17:37:30.285Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:37:30.453Z [INFO] GET /api/my-wallet 304 - 178ms
+2024-11-09T17:38:00.270Z [INFO] Sending Solana price: $196.94
+2024-11-09T17:38:00.270Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T17:38:00.272Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:38:00.273Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:38:00.388Z [INFO] GET /api/my-wallet 304 - 118ms
+2024-11-09T17:38:30.273Z [INFO] Sending Solana price: $197.06
+2024-11-09T17:38:30.274Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T17:38:30.284Z [INFO] GET /api/wallets 304 - 9ms
+2024-11-09T17:38:30.286Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:38:30.405Z [INFO] GET /api/my-wallet 304 - 129ms
+2024-11-09T17:39:00.270Z [INFO] Sending Solana price: $196.94
+2024-11-09T17:39:00.270Z [INFO] GET /api/solana-price 200 - 0ms
+2024-11-09T17:39:00.273Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-09T17:39:00.274Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:39:00.427Z [INFO] GET /api/my-wallet 304 - 157ms
+2024-11-09T17:39:30.272Z [INFO] Sending Solana price: $196.94
+2024-11-09T17:39:30.272Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:39:30.277Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T17:39:30.279Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:39:30.636Z [INFO] GET /api/my-wallet 304 - 363ms
+2024-11-09T17:40:00.270Z [INFO] Sending Solana price: $197.06
+2024-11-09T17:40:00.272Z [INFO] GET /api/solana-price 200 - 2ms
+2024-11-09T17:40:00.282Z [INFO] GET /api/wallets 304 - 8ms
+2024-11-09T17:40:00.284Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:40:00.448Z [INFO] GET /api/my-wallet 304 - 173ms
+2024-11-09T17:40:30.271Z [INFO] Sending Solana price: $197.06
+2024-11-09T17:40:30.272Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:40:30.279Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T17:40:30.281Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:40:30.415Z [INFO] GET /api/my-wallet 304 - 142ms
+2024-11-09T17:41:00.269Z [INFO] Sending Solana price: $197.06
+2024-11-09T17:41:00.269Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-09T17:41:00.272Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:41:00.273Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:41:00.412Z [INFO] GET /api/my-wallet 304 - 142ms
+2024-11-09T17:41:30.269Z [INFO] Sending Solana price: $197.06
+2024-11-09T17:41:30.270Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:41:30.277Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T17:41:30.279Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:41:30.548Z [INFO] GET /api/my-wallet 304 - 276ms
+2024-11-09T17:42:00.270Z [INFO] Sending Solana price: $197.06
+2024-11-09T17:42:00.271Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:42:00.277Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T17:42:00.279Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:42:00.447Z [INFO] GET /api/my-wallet 304 - 175ms
+2024-11-09T17:42:30.267Z [INFO] Sending Solana price: $197.06
+2024-11-09T17:42:30.268Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:42:30.272Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T17:42:30.274Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:42:30.424Z [INFO] GET /api/my-wallet 304 - 156ms
+2024-11-09T17:43:01.251Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T17:43:03.666Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-09T17:43:10.550Z [INFO] Sending Solana price: $197.19
+2024-11-09T17:43:10.554Z [INFO] GET /api/solana-price 200 - 4ms
+2024-11-09T17:43:10.558Z [INFO] Sending Solana price: $197.19
+2024-11-09T17:43:10.560Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T17:43:10.563Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:43:10.584Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-09T17:43:10.586Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:43:10.640Z [INFO] GET /api/wallets 304 - 48ms
+2024-11-09T17:43:10.760Z [INFO] GET /api/my-wallet 304 - 167ms
+2024-11-09T17:43:10.803Z [INFO] GET /api/my-wallet 304 - 41ms
+2024-11-09T17:43:40.551Z [INFO] Sending Solana price: $197.06
+2024-11-09T17:43:40.552Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T17:43:40.558Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T17:43:40.561Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:43:40.693Z [INFO] GET /api/my-wallet 304 - 140ms
+2024-11-09T17:44:10.551Z [INFO] Sending Solana price: $197.06
+2024-11-09T17:44:10.553Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-09T17:44:10.561Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T17:44:10.563Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:44:10.749Z [INFO] GET /api/my-wallet 304 - 194ms
+2024-11-09T17:44:40.551Z [INFO] Sending Solana price: $197.19
+2024-11-09T17:44:40.552Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-09T17:44:40.562Z [INFO] GET /api/wallets 304 - 10ms
+2024-11-09T17:44:40.564Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:44:40.673Z [INFO] GET /api/my-wallet 304 - 120ms
+2024-11-09T17:45:10.549Z [INFO] Sending Solana price: $197.19
+2024-11-09T17:45:10.550Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:45:10.558Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-09T17:45:10.560Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:45:10.745Z [INFO] GET /api/my-wallet 304 - 193ms
+2024-11-09T17:45:40.550Z [INFO] Sending Solana price: $197.19
+2024-11-09T17:45:40.551Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:45:40.559Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T17:45:40.562Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-09T17:45:40.678Z [INFO] GET /api/my-wallet 304 - 126ms
+2024-11-09T17:46:10.550Z [INFO] Sending Solana price: $197.19
+2024-11-09T17:46:10.550Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:46:10.558Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-09T17:46:10.560Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:46:10.715Z [INFO] GET /api/my-wallet 304 - 164ms
+2024-11-09T17:46:40.549Z [INFO] Sending Solana price: $197.19
+2024-11-09T17:46:40.550Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:46:40.558Z [INFO] GET /api/wallets 304 - 8ms
+2024-11-09T17:46:40.559Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-09T17:46:40.681Z [INFO] GET /api/my-wallet 304 - 130ms
+2024-11-09T17:47:10.548Z [INFO] Sending Solana price: $197.19
+2024-11-09T17:47:10.549Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:47:10.555Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T17:47:10.558Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:47:10.829Z [INFO] GET /api/my-wallet 304 - 279ms
+2024-11-09T17:47:40.549Z [INFO] Sending Solana price: $197.12
+2024-11-09T17:47:40.551Z [INFO] GET /api/solana-price 200 - 2ms
+2024-11-09T17:47:40.560Z [INFO] GET /api/wallets 304 - 9ms
+2024-11-09T17:47:40.562Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:47:40.687Z [INFO] GET /api/my-wallet 304 - 135ms
+2024-11-09T17:48:10.548Z [INFO] Sending Solana price: $197.12
+2024-11-09T17:48:10.549Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-09T17:48:10.554Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-09T17:48:10.557Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-09T17:48:10.928Z [INFO] GET /api/my-wallet 304 - 378ms
+2024-11-09T17:48:20.559Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T17:48:20.694Z [INFO] SIGINT ricevuto. Avvio shutdown graceful...
+2024-11-09T17:48:26.462Z [INFO] Server HTTP chiuso.
+2024-11-10T07:50:22.385Z [INFO] Server in esecuzione sulla porta 5001
+2024-11-10T07:50:31.404Z [INFO] Sending Solana price: $205.45
+2024-11-10T07:50:31.409Z [INFO] GET /api/solana-price 200 - 6ms
+2024-11-10T07:50:31.410Z [INFO] Sending Solana price: $205.45
+2024-11-10T07:50:31.413Z [INFO] GET /api/solana-price 304 - 3ms
+2024-11-10T07:50:31.431Z [INFO] GET /api/wallets 304 - 13ms
+2024-11-10T07:50:31.440Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-10T07:50:31.445Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-10T07:50:31.536Z [INFO] GET /api/wallets 304 - 87ms
+2024-11-10T07:50:31.734Z [INFO] GET /api/my-wallet 304 - 284ms
+2024-11-10T07:50:31.786Z [INFO] GET /api/my-wallet 304 - 51ms
+2024-11-10T07:51:01.402Z [INFO] Sending Solana price: $205.45
+2024-11-10T07:51:01.403Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T07:51:01.411Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-10T07:51:01.413Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:51:01.531Z [INFO] GET /api/my-wallet 304 - 126ms
+2024-11-10T07:51:31.402Z [INFO] Sending Solana price: $205.45
+2024-11-10T07:51:31.403Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T07:51:31.410Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T07:51:31.412Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:51:31.522Z [INFO] GET /api/my-wallet 304 - 117ms
+2024-11-10T07:52:01.402Z [INFO] Sending Solana price: $205.2
+2024-11-10T07:52:01.402Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-10T07:52:01.409Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T07:52:01.410Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T07:52:01.576Z [INFO] GET /api/my-wallet 304 - 172ms
+2024-11-10T07:52:31.399Z [INFO] Sending Solana price: $205.2
+2024-11-10T07:52:31.400Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T07:52:31.409Z [INFO] GET /api/wallets 304 - 8ms
+2024-11-10T07:52:31.411Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:52:31.530Z [INFO] GET /api/my-wallet 304 - 128ms
+2024-11-10T07:53:01.408Z [INFO] Sending Solana price: $205.2
+2024-11-10T07:53:01.409Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T07:53:01.411Z [INFO] GET /api/wallets 304 - 9ms
+2024-11-10T07:53:01.412Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T07:53:01.573Z [INFO] GET /api/my-wallet 304 - 170ms
+2024-11-10T07:53:31.402Z [INFO] Sending Solana price: $205.2
+2024-11-10T07:53:31.403Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T07:53:31.413Z [INFO] GET /api/wallets 304 - 9ms
+2024-11-10T07:53:31.415Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:53:31.573Z [INFO] GET /api/my-wallet 304 - 168ms
+2024-11-10T07:54:01.400Z [INFO] Sending Solana price: $205.2
+2024-11-10T07:54:01.401Z [INFO] GET /api/solana-price 304 - 2ms
+2024-11-10T07:54:01.407Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T07:54:01.409Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:54:01.520Z [INFO] GET /api/my-wallet 304 - 118ms
+2024-11-10T07:54:31.398Z [INFO] Sending Solana price: $205.2
+2024-11-10T07:54:31.399Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T07:54:31.403Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-10T07:54:31.404Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:54:31.441Z [INFO] GET /api/my-wallet 304 - 41ms
+2024-11-10T07:55:01.399Z [INFO] Sending Solana price: $205.2
+2024-11-10T07:55:01.399Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T07:55:01.403Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-10T07:55:01.405Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T07:55:01.526Z [INFO] GET /api/my-wallet 304 - 126ms
+2024-11-10T07:55:31.399Z [INFO] Sending Solana price: $205.2
+2024-11-10T07:55:31.400Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T07:55:31.404Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-10T07:55:31.406Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:55:31.561Z [INFO] GET /api/my-wallet 304 - 160ms
+2024-11-10T07:56:01.397Z [INFO] Sending Solana price: $205.2
+2024-11-10T07:56:01.398Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T07:56:01.399Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:56:01.400Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T07:56:01.517Z [INFO] GET /api/my-wallet 304 - 119ms
+2024-11-10T07:56:31.398Z [INFO] Sending Solana price: $205.2
+2024-11-10T07:56:31.398Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T07:56:31.400Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T07:56:31.401Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:56:31.547Z [INFO] GET /api/my-wallet 304 - 149ms
+2024-11-10T07:57:01.396Z [INFO] Sending Solana price: $205.69
+2024-11-10T07:57:01.397Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-10T07:57:01.398Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:57:01.400Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:57:01.519Z [INFO] GET /api/my-wallet 304 - 122ms
+2024-11-10T07:57:31.397Z [INFO] Sending Solana price: $205.69
+2024-11-10T07:57:31.397Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T07:57:31.399Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T07:57:31.401Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T07:57:31.562Z [INFO] GET /api/my-wallet 304 - 165ms
+2024-11-10T07:58:01.394Z [INFO] Sending Solana price: $205.69
+2024-11-10T07:58:01.395Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T07:58:01.399Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-10T07:58:01.400Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:58:01.518Z [INFO] GET /api/my-wallet 304 - 122ms
+2024-11-10T07:58:31.396Z [INFO] Sending Solana price: $205.69
+2024-11-10T07:58:31.396Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T07:58:31.397Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:58:31.400Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:58:31.542Z [INFO] GET /api/my-wallet 304 - 146ms
+2024-11-10T07:59:01.396Z [INFO] Sending Solana price: $205.69
+2024-11-10T07:59:01.397Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T07:59:01.402Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-10T07:59:01.405Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T07:59:01.515Z [INFO] GET /api/my-wallet 304 - 117ms
+2024-11-10T07:59:31.395Z [INFO] Sending Solana price: $205.69
+2024-11-10T07:59:31.396Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T07:59:31.397Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T07:59:31.399Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T07:59:31.721Z [INFO] GET /api/my-wallet 304 - 325ms
+2024-11-10T08:00:01.405Z [INFO] Sending Solana price: $205.69
+2024-11-10T08:00:01.415Z [INFO] GET /api/solana-price 304 - 11ms
+2024-11-10T08:00:01.425Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-10T08:00:01.427Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:00:01.611Z [INFO] GET /api/my-wallet 304 - 189ms
+2024-11-10T08:00:31.397Z [INFO] Sending Solana price: $205.69
+2024-11-10T08:00:31.397Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:00:31.403Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-10T08:00:31.405Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:00:31.549Z [INFO] GET /api/my-wallet 304 - 151ms
+2024-11-10T08:01:01.397Z [INFO] Sending Solana price: $205.69
+2024-11-10T08:01:01.398Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:01:01.404Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:01:01.407Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:01:01.554Z [INFO] GET /api/my-wallet 304 - 154ms
+2024-11-10T08:01:31.396Z [INFO] Sending Solana price: $205.69
+2024-11-10T08:01:31.397Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:01:31.404Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:01:31.406Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:01:31.553Z [INFO] GET /api/my-wallet 304 - 153ms
+2024-11-10T08:02:01.396Z [INFO] Sending Solana price: $205.37
+2024-11-10T08:02:01.397Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-10T08:02:01.403Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:02:01.406Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:02:01.532Z [INFO] GET /api/my-wallet 304 - 133ms
+2024-11-10T08:02:31.378Z [INFO] Sending Solana price: $205.37
+2024-11-10T08:02:31.379Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:02:31.381Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T08:02:31.382Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:02:31.544Z [INFO] GET /api/my-wallet 304 - 165ms
+2024-11-10T08:03:01.365Z [INFO] Sending Solana price: $205.37
+2024-11-10T08:03:01.366Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:03:01.367Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:03:01.368Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:03:01.481Z [INFO] GET /api/my-wallet 304 - 115ms
+2024-11-10T08:03:31.367Z [INFO] Sending Solana price: $205.37
+2024-11-10T08:03:31.367Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:03:31.368Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:03:31.370Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:03:31.650Z [INFO] GET /api/my-wallet 304 - 284ms
+2024-11-10T08:04:01.366Z [INFO] Sending Solana price: $205.37
+2024-11-10T08:04:01.367Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:04:01.370Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-10T08:04:01.371Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:04:01.509Z [INFO] GET /api/my-wallet 304 - 142ms
+2024-11-10T08:04:31.364Z [INFO] Sending Solana price: $205.37
+2024-11-10T08:04:31.364Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:04:31.367Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-10T08:04:31.369Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:04:31.521Z [INFO] GET /api/my-wallet 304 - 157ms
+2024-11-10T08:05:01.362Z [INFO] Sending Solana price: $205.37
+2024-11-10T08:05:01.362Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:05:01.364Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T08:05:01.367Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T08:05:01.519Z [INFO] GET /api/my-wallet 304 - 156ms
+2024-11-10T08:05:31.364Z [INFO] Sending Solana price: $205.37
+2024-11-10T08:05:31.367Z [INFO] GET /api/solana-price 304 - 3ms
+2024-11-10T08:05:31.373Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:05:31.374Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:05:31.541Z [INFO] GET /api/my-wallet 304 - 173ms
+2024-11-10T08:06:01.363Z [INFO] Sending Solana price: $205.37
+2024-11-10T08:06:01.364Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:06:01.367Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-10T08:06:01.369Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:06:01.504Z [INFO] GET /api/my-wallet 304 - 140ms
+2024-11-10T08:06:31.362Z [INFO] Sending Solana price: $205.37
+2024-11-10T08:06:31.363Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:06:31.367Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-10T08:06:31.368Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:06:31.511Z [INFO] GET /api/my-wallet 304 - 148ms
+2024-11-10T08:07:01.360Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:07:01.361Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-10T08:07:01.365Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-10T08:07:01.366Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:07:01.478Z [INFO] GET /api/my-wallet 304 - 117ms
+2024-11-10T08:07:31.359Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:07:31.359Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:07:31.364Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-10T08:07:31.366Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:07:31.516Z [INFO] GET /api/my-wallet 304 - 156ms
+2024-11-10T08:08:01.359Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:08:01.359Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:08:01.365Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:08:01.367Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:08:01.502Z [INFO] GET /api/my-wallet 304 - 142ms
+2024-11-10T08:08:31.358Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:08:31.358Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:08:31.360Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T08:08:31.361Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:08:31.499Z [INFO] GET /api/my-wallet 304 - 140ms
+2024-11-10T08:09:01.361Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:09:01.361Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:09:01.368Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:09:01.370Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:09:01.498Z [INFO] GET /api/my-wallet 304 - 135ms
+2024-11-10T08:09:31.358Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:09:31.359Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:09:31.365Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:09:31.368Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:09:31.510Z [INFO] GET /api/my-wallet 304 - 150ms
+2024-11-10T08:10:01.357Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:10:01.357Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:10:01.359Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T08:10:01.360Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:10:01.478Z [INFO] GET /api/my-wallet 304 - 121ms
+2024-11-10T08:10:31.358Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:10:31.358Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:10:31.363Z [INFO] GET /api/wallets 304 - 4ms
+2024-11-10T08:10:31.366Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:10:31.513Z [INFO] GET /api/my-wallet 304 - 154ms
+2024-11-10T08:11:01.353Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:11:01.354Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:11:01.355Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:11:01.357Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:11:01.472Z [INFO] GET /api/my-wallet 304 - 118ms
+2024-11-10T08:11:31.353Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:11:31.354Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:11:31.356Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:11:31.357Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:11:31.503Z [INFO] GET /api/my-wallet 304 - 148ms
+2024-11-10T08:14:23.940Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:14:23.941Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:14:23.941Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:14:23.941Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:14:23.951Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:14:23.952Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:14:23.964Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:14:23.965Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:14:24.084Z [INFO] GET /api/my-wallet 304 - 109ms
+2024-11-10T08:14:24.123Z [INFO] GET /api/my-wallet 304 - 38ms
+2024-11-10T08:14:41.708Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:14:41.708Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:14:41.709Z [INFO] Sending Solana price: $205.42
+2024-11-10T08:14:41.709Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:14:41.717Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:14:41.718Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:14:41.734Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:14:41.736Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:14:41.917Z [INFO] GET /api/my-wallet 304 - 168ms
+2024-11-10T08:14:41.965Z [INFO] GET /api/my-wallet 304 - 39ms
+2024-11-10T08:23:31.100Z [INFO] Sending Solana price: $205.11
+2024-11-10T08:23:31.100Z [INFO] GET /api/solana-price 200 - 0ms
+2024-11-10T08:23:31.101Z [INFO] Sending Solana price: $205.11
+2024-11-10T08:23:31.101Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:23:31.115Z [INFO] GET /api/wallets 304 - 11ms
+2024-11-10T08:23:31.117Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:23:31.118Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:23:31.128Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:23:31.275Z [INFO] GET /api/my-wallet 304 - 147ms
+2024-11-10T08:23:31.320Z [INFO] GET /api/my-wallet 304 - 44ms
+2024-11-10T08:24:01.092Z [INFO] Sending Solana price: $205.11
+2024-11-10T08:24:01.092Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:24:01.094Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T08:24:01.095Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:24:01.216Z [INFO] GET /api/my-wallet 304 - 124ms
+2024-11-10T08:24:31.092Z [INFO] Sending Solana price: $205.11
+2024-11-10T08:24:31.092Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:24:31.094Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T08:24:31.095Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:24:31.275Z [INFO] GET /api/my-wallet 304 - 183ms
+2024-11-10T08:25:01.711Z [INFO] Sending Solana price: $205.11
+2024-11-10T08:25:01.712Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:25:01.716Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:25:01.717Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:25:01.837Z [INFO] GET /api/my-wallet 304 - 125ms
+2024-11-10T08:25:31.710Z [INFO] Sending Solana price: $205.11
+2024-11-10T08:25:31.710Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:25:31.712Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T08:25:31.713Z [INFO] GET /api/wallets 304 - 0ms
+2024-11-10T08:25:31.868Z [INFO] GET /api/my-wallet 304 - 158ms
+2024-11-10T08:26:01.092Z [INFO] Sending Solana price: $205.11
+2024-11-10T08:26:01.093Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:26:01.097Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-10T08:26:01.099Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:26:01.208Z [INFO] GET /api/my-wallet 304 - 114ms
+2024-11-10T08:26:31.710Z [INFO] Sending Solana price: $205.11
+2024-11-10T08:26:31.711Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:26:31.714Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-10T08:26:31.716Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:26:31.774Z [INFO] GET /api/my-wallet 304 - 63ms
+2024-11-10T08:27:01.713Z [INFO] Sending Solana price: $205.11
+2024-11-10T08:27:01.713Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:27:01.719Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:27:01.721Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:27:01.866Z [INFO] GET /api/my-wallet 304 - 152ms
+2024-11-10T08:27:31.088Z [INFO] Sending Solana price: $204.87
+2024-11-10T08:27:31.089Z [INFO] GET /api/solana-price 200 - 1ms
+2024-11-10T08:27:31.096Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:27:31.099Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T08:27:31.257Z [INFO] GET /api/my-wallet 304 - 166ms
+2024-11-10T08:28:01.089Z [INFO] Sending Solana price: $204.87
+2024-11-10T08:28:01.090Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:28:01.096Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:28:01.099Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:28:01.253Z [INFO] GET /api/my-wallet 304 - 161ms
+2024-11-10T08:28:31.089Z [INFO] Sending Solana price: $204.87
+2024-11-10T08:28:31.089Z [INFO] GET /api/solana-price 304 - 0ms
+2024-11-10T08:28:31.093Z [INFO] GET /api/wallets 304 - 3ms
+2024-11-10T08:28:31.095Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:28:31.267Z [INFO] GET /api/my-wallet 304 - 177ms
+2024-11-10T08:29:01.086Z [INFO] Sending Solana price: $204.87
+2024-11-10T08:29:01.087Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:29:01.095Z [INFO] GET /api/wallets 304 - 6ms
+2024-11-10T08:29:01.097Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:29:01.281Z [INFO] GET /api/my-wallet 304 - 191ms
+2024-11-10T08:29:31.087Z [INFO] Sending Solana price: $204.87
+2024-11-10T08:29:31.088Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:29:31.094Z [INFO] GET /api/wallets 304 - 5ms
+2024-11-10T08:29:31.097Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:29:31.210Z [INFO] GET /api/my-wallet 304 - 120ms
+2024-11-10T08:30:01.086Z [INFO] Sending Solana price: $204.87
+2024-11-10T08:30:01.087Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:30:01.095Z [INFO] GET /api/wallets 304 - 7ms
+2024-11-10T08:30:01.097Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:30:01.245Z [INFO] GET /api/my-wallet 304 - 155ms
+2024-11-10T08:30:31.086Z [INFO] Sending Solana price: $204.87
+2024-11-10T08:30:31.087Z [INFO] GET /api/solana-price 304 - 1ms
+2024-11-10T08:30:31.092Z [INFO] GET /api/wallets 304 - 1ms
+2024-11-10T08:30:31.095Z [INFO] GET /api/wallets 304 - 2ms
+2024-11-10T08:30:31.333Z [INFO] GET /api/my-wallet 304 - 246ms

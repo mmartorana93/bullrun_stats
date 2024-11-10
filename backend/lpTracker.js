@@ -6,19 +6,32 @@ require('dotenv').config();
 
 // Configurazione del logger
 const logger = winston.createLogger({
-    level: 'debug', // Cambiato a debug per più dettagli
+    level: 'info',
     format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.json()
+        winston.format.printf(({ timestamp, level, message, ...meta }) => {
+            let logMessage = `${timestamp} [${level.toUpperCase()}] ${message}`;
+            if (Object.keys(meta).length > 0) {
+                logMessage += `\nMetadata: ${JSON.stringify(meta, null, 2)}`;
+            }
+            return logMessage;
+        })
     ),
     transports: [
-        new winston.transports.File({ filename: 'lptracker-error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'lptracker.log' })
+        new winston.transports.File({ 
+            filename: 'lptracker.log',
+            level: 'info'
+        }),
+        new winston.transports.File({ 
+            filename: 'lptracker-error.log', 
+            level: 'error' 
+        })
     ]
 });
 
 if (process.env.NODE_ENV !== 'production') {
     logger.add(new winston.transports.Console({
+        level: 'debug',
         format: winston.format.simple()
     }));
 }
@@ -36,7 +49,28 @@ class LPTracker {
         this.reconnectAttempts = 0;
         this.maxReconnectAttempts = 10;
         this.reconnectDelay = 1000;
-        this.setupWebSocket();
+        this.isRunning = false;
+        this.solPrice = 0;
+        this.poolMetrics = new Map();
+        this.startPriceUpdates();
+    }
+
+    start() {
+        if (!this.isRunning) {
+            this.isRunning = true;
+            this.setupWebSocket();
+        }
+    }
+
+    stop() {
+        this.isRunning = false;
+        if (this.pingInterval) {
+            clearInterval(this.pingInterval);
+        }
+        if (this.ws) {
+            this.ws.terminate();
+            this.ws = null;
+        }
     }
 
     async setupWebSocket() {
@@ -46,6 +80,16 @@ class LPTracker {
             }
 
             this.ws = new WebSocket(this.wsEndpoint);
+            
+            // Ping interval
+            this.pingInterval = setInterval(() => {
+                if (this.ws.readyState === WebSocket.OPEN) {
+                    this.ws.ping();
+                }
+            }, 30000);
+
+            this.ws.on('pong', () => {
+            });
 
             this.ws.on('open', () => {
                 logger.info('WebSocket connesso');
@@ -71,17 +115,23 @@ class LPTracker {
 
             this.ws.on('close', () => {
                 logger.warn('Connessione WebSocket chiusa');
+                if (this.pingInterval) {
+                    clearInterval(this.pingInterval);
+                }
                 this.handleReconnect();
             });
 
         } catch (error) {
+            if (this.pingInterval) {
+                clearInterval(this.pingInterval);
+            }
             logger.error('Errore nella configurazione WebSocket:', error);
             this.handleReconnect();
         }
     }
 
     handleReconnect() {
-        if (this.reconnectAttempts < this.maxReconnectAttempts) {
+        if (this.reconnectAttempts < this.maxReconnectAttempts && this.isRunning) {
             this.reconnectAttempts++;
             const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
             logger.info(`Tentativo di riconnessione ${this.reconnectAttempts} in ${delay}ms`);
@@ -116,6 +166,67 @@ class LPTracker {
             logger.error(`Errore nel recupero dei metadata per ${tokenAddress}:`, error);
             return null;
         }
+    }
+
+    calculatePoolMetrics(poolData) {
+        const { tokenAmount, solanaAmount, usdValue } = poolData;
+        
+        // Calcolo prezzo per token in SOL e USD
+        const pricePerTokenSOL = solanaAmount / tokenAmount;
+        const pricePerTokenUSD = usdValue / tokenAmount;
+
+        // Calcolo della profondità della pool
+        const poolDepth = Math.sqrt(tokenAmount * solanaAmount);
+
+        // Calcolo della liquidità normalizzata
+        const normalizedLiquidity = usdValue / poolDepth;
+
+        return {
+            pricePerTokenSOL,
+            pricePerTokenUSD,
+            poolDepth,
+            normalizedLiquidity,
+            timestamp: Date.now()
+        };
+    }
+
+    updatePoolMetrics(poolId, newMetrics) {
+        const existingMetrics = this.poolMetrics.get(poolId) || [];
+        existingMetrics.push(newMetrics);
+
+        // Mantieni solo le ultime 100 metriche per pool
+        if (existingMetrics.length > 100) {
+            existingMetrics.shift();
+        }
+
+        this.poolMetrics.set(poolId, existingMetrics);
+
+        // Calcola variazioni
+        if (existingMetrics.length > 1) {
+            const previous = existingMetrics[existingMetrics.length - 2];
+            const current = existingMetrics[existingMetrics.length - 1];
+
+            const priceChangeSOL = ((current.pricePerTokenSOL - previous.pricePerTokenSOL) / previous.pricePerTokenSOL) * 100;
+            const priceChangeUSD = ((current.pricePerTokenUSD - previous.pricePerTokenUSD) / previous.pricePerTokenUSD) * 100;
+            const liquidityChange = ((current.normalizedLiquidity - previous.normalizedLiquidity) / previous.normalizedLiquidity) * 100;
+
+            logger.info('Variazioni Pool Metriche', {
+                poolId,
+                priceChangeSOL: `${priceChangeSOL.toFixed(2)}%`,
+                priceChangeUSD: `${priceChangeUSD.toFixed(2)}%`,
+                liquidityChange: `${liquidityChange.toFixed(2)}%`,
+                timeframe: `${((current.timestamp - previous.timestamp) / 1000).toFixed(1)}s`
+            });
+
+            return {
+                priceChangeSOL,
+                priceChangeUSD,
+                liquidityChange,
+                timeframe: current.timestamp - previous.timestamp
+            };
+        }
+
+        return null;
     }
 
     async handleProgramNotification(message) {
@@ -157,34 +268,51 @@ class LPTracker {
                 }
             }
 
-            // Se non abbiamo trovato entrambi i dati, usciamo
             if (!tokenData || !solanaData) {
                 logger.debug('Missing token or solana data, skipping...');
                 return;
             }
 
-            const solPrice = process.env.SOLANA_PRICE || 140.71;
+            const solPrice = await this.getSolanaPrice();
             const usdValue = solanaData.amount * solPrice;
 
-            logger.info(`New pool detected - USD Value: $${usdValue}`);
-
-            // Analisi dei rischi
-            logger.debug(`Checking Rugcheck for contract: ${tokenData.account}`);
-            const metadata = await this.fetchTokenMetadata(tokenData.account);
-            
             const poolData = {
                 tokenAccount: tokenData.account,
                 tokenAmount: tokenData.amount,
                 solanaAmount: solanaData.amount,
                 usdValue,
                 timestamp: new Date().toISOString(),
-                txId: signature,
-                metadata
+                txId: signature
             };
 
-            this.pools.set(signature, poolData);
+            // Calcola e aggiorna le metriche della pool
+            const metrics = this.calculatePoolMetrics(poolData);
+            const changes = this.updatePoolMetrics(signature, metrics);
+
+            // Aggiungi le metriche e i cambiamenti ai dati della pool
+            const enrichedPoolData = {
+                ...poolData,
+                metrics,
+                changes
+            };
+
+            logger.info('Nuova Pool Rilevata', {
+                tokenAddress: tokenData.account,
+                solAmount: solanaData.amount,
+                tokenAmount: tokenData.amount,
+                usdValue,
+                metrics: {
+                    pricePerTokenSOL: metrics.pricePerTokenSOL,
+                    pricePerTokenUSD: metrics.pricePerTokenUSD,
+                    poolDepth: metrics.poolDepth,
+                    normalizedLiquidity: metrics.normalizedLiquidity
+                },
+                ...(changes && { changes })
+            });
+
+            this.pools.set(signature, enrichedPoolData);
             logger.info(`Emitting new pool data to ${this.io.engine.clientsCount} clients`);
-            this.io.emit('newPool', poolData);
+            this.io.emit('newPool', enrichedPoolData);
 
         } catch (error) {
             logger.error('Errore nella gestione della notifica:', error);
@@ -193,6 +321,31 @@ class LPTracker {
 
     getExistingPools() {
         return Array.from(this.pools.values());
+    }
+
+    async getSolanaPrice() {
+        try {
+            const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+            this.solPrice = response.data.solana.usd;
+            return this.solPrice;
+        } catch (error) {
+            logger.error('Errore nel recupero del prezzo Solana:', error);
+            return this.solPrice || 0;
+        }
+    }
+
+    async updateSolanaPrice() {
+        this.solPrice = await this.getSolanaPrice();
+    }
+
+    startPriceUpdates() {
+        // Aggiorna subito il prezzo
+        this.getSolanaPrice();
+        
+        // Poi ogni 30 secondi
+        setInterval(() => {
+            this.getSolanaPrice();
+        }, 30000);
     }
 }
 

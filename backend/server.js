@@ -3,7 +3,7 @@ const cors = require('cors');
 const winston = require('winston');
 const fs = require('fs').promises;
 const path = require('path');
-const { Keypair } = require('@solana/web3.js');
+const { Keypair, Connection, PublicKey } = require('@solana/web3.js');
 const base58 = require('bs58');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -64,26 +64,195 @@ app.use(cors({
 app.use(express.json());
 app.use(requestLogger);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    logger.error('Errore non gestito:', err);
-    res.status(500).json({ 
-        error: 'Errore interno del server',
-        message: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
-});
+// Gestione WebSocket per il monitoraggio dei wallet
+class WalletMonitor {
+    constructor(io) {
+        this.io = io;
+        this.walletSubscriptions = new Map();
+        this.monitoredWallets = new Set();
+        this.connection = new Connection(
+            process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com",
+            'confirmed'
+        );
+        this.reconnectAttempts = new Map();
+        this.maxReconnectAttempts = 10;
+        this.isRunning = true;
+    }
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-    const health = {
-        uptime: process.uptime(),
-        timestamp: Date.now(),
-        status: 'OK',
-        socketConnections: io.engine.clientsCount,
-        memoryUsage: process.memoryUsage()
-    };
-    res.json(health);
-});
+    async startMonitoring(wallet) {
+        if (this.walletSubscriptions.has(wallet)) {
+            return false;
+        }
+
+        try {
+            const publicKey = new PublicKey(wallet);
+            
+            // Sottoscrizione al websocket per il saldo con gestione della riconnessione
+            const setupBalanceSubscription = async () => {
+                try {
+                    const balanceSubscriptionId = this.connection.onAccountChange(
+                        publicKey,
+                        (accountInfo) => {
+                            const balance = accountInfo.lamports / 10**9;
+                            this.io.emit('walletUpdate', {
+                                wallet,
+                                type: 'balance',
+                                balance
+                            });
+                            // Reset tentativi di riconnessione dopo successo
+                            this.reconnectAttempts.set(wallet, 0);
+                        },
+                        'confirmed'
+                    );
+                    return balanceSubscriptionId;
+                } catch (error) {
+                    logger.error(`Errore nella sottoscrizione del saldo per ${wallet}:`, error);
+                    await this.handleReconnect(wallet, setupBalanceSubscription);
+                    return null;
+                }
+            };
+
+            // Sottoscrizione al websocket per le transazioni con gestione della riconnessione
+            const setupSignatureSubscription = async () => {
+                try {
+                    const signatureSubscriptionId = this.connection.onSignature(
+                        publicKey,
+                        async (signature, context) => {
+                            try {
+                                const transaction = await this.connection.getTransaction(signature, {
+                                    commitment: 'confirmed',
+                                    maxSupportedTransactionVersion: 0
+                                });
+
+                                if (transaction) {
+                                    this.io.emit('walletUpdate', {
+                                        wallet,
+                                        type: 'transaction',
+                                        transaction: {
+                                            signature,
+                                            timestamp: transaction.blockTime,
+                                            amount: transaction.meta?.postBalances[0] - transaction.meta?.preBalances[0],
+                                            type: transaction.meta?.postBalances[0] > transaction.meta?.preBalances[0] ? 'credit' : 'debit'
+                                        }
+                                    });
+                                }
+                                // Reset tentativi di riconnessione dopo successo
+                                this.reconnectAttempts.set(wallet, 0);
+                            } catch (error) {
+                                logger.error(`Errore nel recupero della transazione per ${wallet}:`, error);
+                            }
+                        },
+                        'confirmed'
+                    );
+                    return signatureSubscriptionId;
+                } catch (error) {
+                    logger.error(`Errore nella sottoscrizione delle transazioni per ${wallet}:`, error);
+                    await this.handleReconnect(wallet, setupSignatureSubscription);
+                    return null;
+                }
+            };
+
+            const balanceSubscriptionId = await setupBalanceSubscription();
+            const signatureSubscriptionId = await setupSignatureSubscription();
+
+            if (balanceSubscriptionId && signatureSubscriptionId) {
+                this.walletSubscriptions.set(wallet, {
+                    balanceSubscriptionId,
+                    signatureSubscriptionId
+                });
+
+                this.monitoredWallets.add(wallet);
+                await this.saveWallets();
+                
+                // Invia il saldo iniziale
+                const accountInfo = await this.connection.getAccountInfo(publicKey);
+                if (accountInfo) {
+                    const balance = accountInfo.lamports / 10**9;
+                    this.io.emit('walletUpdate', {
+                        wallet,
+                        type: 'balance',
+                        balance
+                    });
+                }
+
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            logger.error(`Errore nel monitoraggio del wallet ${wallet}:`, error);
+            return false;
+        }
+    }
+
+    async handleReconnect(wallet, setupFunction) {
+        const attempts = this.reconnectAttempts.get(wallet) || 0;
+        
+        if (attempts < this.maxReconnectAttempts && this.isRunning) {
+            this.reconnectAttempts.set(wallet, attempts + 1);
+            const delay = Math.min(1000 * Math.pow(2, attempts), 30000);
+            logger.info(`Tentativo di riconnessione ${attempts + 1} per ${wallet} in ${delay}ms`);
+            
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return setupFunction();
+        } else {
+            logger.error(`Numero massimo di tentativi di riconnessione raggiunto per ${wallet}`);
+            return null;
+        }
+    }
+
+    async stopMonitoring(wallet) {
+        const subscriptions = this.walletSubscriptions.get(wallet);
+        if (subscriptions) {
+            try {
+                this.connection.removeAccountChangeListener(subscriptions.balanceSubscriptionId);
+                this.connection.removeSignatureListener(subscriptions.signatureSubscriptionId);
+                this.walletSubscriptions.delete(wallet);
+                this.monitoredWallets.delete(wallet);
+                await this.saveWallets();
+                return true;
+            } catch (error) {
+                logger.error(`Errore nella rimozione del monitoraggio per il wallet ${wallet}:`, error);
+                return false;
+            }
+        }
+        return false;
+    }
+
+    async loadWallets() {
+        try {
+            const data = await fs.readFile(path.join(__dirname, 'wallets.json'), 'utf8');
+            const wallets = JSON.parse(data);
+            for (const wallet of wallets) {
+                await this.startMonitoring(wallet);
+            }
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                await fs.writeFile(path.join(__dirname, 'wallets.json'), '[]');
+            } else {
+                throw error;
+            }
+        }
+    }
+
+    async saveWallets() {
+        await fs.writeFile(
+            path.join(__dirname, 'wallets.json'),
+            JSON.stringify(Array.from(this.monitoredWallets))
+        );
+    }
+
+    stop() {
+        this.isRunning = false;
+        for (const [wallet, subscriptions] of this.walletSubscriptions) {
+            this.connection.removeAccountChangeListener(subscriptions.balanceSubscriptionId);
+            this.connection.removeSignatureListener(subscriptions.signatureSubscriptionId);
+        }
+        this.walletSubscriptions.clear();
+    }
+}
+
+const walletMonitor = new WalletMonitor(io);
 
 // Routes
 app.get('/api/solana-price', (req, res) => {
@@ -99,41 +268,11 @@ app.get('/api/solana-price', (req, res) => {
 
 app.get('/api/wallets', async (req, res) => {
     try {
-        const wallets = await loadWallets();
+        const wallets = Array.from(walletMonitor.monitoredWallets);
         res.json(wallets);
     } catch (error) {
         logger.error('Error getting wallets:', error);
         res.status(500).json({ error: 'Failed to get wallets' });
-    }
-});
-
-app.get('/api/logs', (req, res) => {
-    try {
-        const logs = [...transactionLogs];
-        transactionLogs.length = 0;
-        res.json(logs);
-    } catch (error) {
-        logger.error('Error getting logs:', error);
-        res.status(500).json({ error: 'Failed to get logs' });
-    }
-});
-
-app.get('/api/my-wallet', async (req, res) => {
-    try {
-        if (!process.env.SOLANA_PRIVATE_KEY) {
-            throw new Error('SOLANA_PRIVATE_KEY non trovata nel file .env');
-        }
-
-        const wallet = new SolanaWallet(process.env.SOLANA_PRIVATE_KEY);
-        const balance = await wallet.getBalance();
-        
-        res.json({
-            address: wallet.getWalletAddress(),
-            balance: balance
-        });
-    } catch (error) {
-        logger.error('Error getting personal wallet info:', error);
-        res.status(500).json({ error: 'Failed to get wallet info' });
     }
 });
 
@@ -145,7 +284,7 @@ app.post('/api/wallets', async (req, res) => {
             return res.status(400).json({ error: "Wallet address required" });
         }
 
-        if (await startMonitoring(wallet)) {
+        if (await walletMonitor.startMonitoring(wallet)) {
             return res.json({ message: "Wallet added successfully" });
         }
 
@@ -160,7 +299,7 @@ app.delete('/api/wallets/:wallet', async (req, res) => {
     try {
         const { wallet } = req.params;
 
-        if (await stopMonitoring(wallet)) {
+        if (await walletMonitor.stopMonitoring(wallet)) {
             return res.json({ message: "Wallet removed successfully" });
         }
 
@@ -171,102 +310,11 @@ app.delete('/api/wallets/:wallet', async (req, res) => {
     }
 });
 
-// Variabili globali e classi
-class SolanaWallet {
-    constructor(privateKey) {
-        this.wallet = Keypair.fromSecretKey(base58.decode(privateKey));
-        this.endpoint = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
-    }
-
-    async makeRpcCall(method, params) {
-        try {
-            const response = await fetch(this.endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    jsonrpc: '2.0',
-                    id: 1,
-                    method,
-                    params,
-                }),
-            });
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            logger.error('Errore nella chiamata RPC:', error);
-            throw error;
-        }
-    }
-
-    async getBalance() {
-        try {
-            const params = [this.wallet.publicKey.toBase58(), { commitment: "confirmed" }];
-            const response = await this.makeRpcCall("getBalance", params);
-            if (response && response.result && response.result.value) {
-                return response.result.value / 10**9;
-            }
-            return 0;
-        } catch (error) {
-            logger.error('Errore nel recupero del saldo:', error);
-            throw error;
-        }
-    }
-
-    getWalletAddress() {
-        return this.wallet.publicKey.toBase58();
-    }
-}
-
-const transactionLogs = [];
-const monitorThreads = new Map();
-const monitoredWallets = new Set();
-
-async function loadWallets() {
-    try {
-        const data = await fs.readFile(path.join(__dirname, 'wallets.json'), 'utf8');
-        return JSON.parse(data);
-    } catch (error) {
-        if (error.code === 'ENOENT') {
-            await fs.writeFile(path.join(__dirname, 'wallets.json'), '[]');
-            return [];
-        }
-        throw error;
-    }
-}
-
-async function saveWallets() {
-    await fs.writeFile(
-        path.join(__dirname, 'wallets.json'),
-        JSON.stringify(Array.from(monitoredWallets))
-    );
-}
-
-async function startMonitoring(wallet) {
-    if (!monitorThreads.has(wallet)) {
-        monitorThreads.set(wallet, true);
-        monitoredWallets.add(wallet);
-        await saveWallets();
-        return true;
-    }
-    return false;
-}
-
-async function stopMonitoring(wallet) {
-    if (monitorThreads.has(wallet)) {
-        monitorThreads.delete(wallet);
-        monitoredWallets.delete(wallet);
-        await saveWallets();
-        return true;
-    }
-    return false;
-}
-
 // Gestione graceful shutdown
 process.on('SIGTERM', () => {
     logger.info('SIGTERM ricevuto. Avvio shutdown graceful...');
     lpTracker.stop();
+    walletMonitor.stop();
     server.close(() => {
         logger.info('Server HTTP chiuso.');
         process.exit(0);
@@ -276,6 +324,7 @@ process.on('SIGTERM', () => {
 process.on('SIGINT', () => {
     logger.info('SIGINT ricevuto. Avvio shutdown graceful...');
     lpTracker.stop();
+    walletMonitor.stop();
     server.close(() => {
         logger.info('Server HTTP chiuso.');
         process.exit(0);
@@ -285,6 +334,7 @@ process.on('SIGINT', () => {
 process.on('uncaughtException', (error) => {
     logger.error('Eccezione non gestita:', error);
     lpTracker.stop();
+    walletMonitor.stop();
     server.close(() => {
         logger.info('Server HTTP chiuso dopo eccezione non gestita.');
         process.exit(1);
@@ -300,10 +350,7 @@ const PORT = process.env.PORT || 5001;
 
 async function startServer() {
     try {
-        if (!process.env.SOLANA_PRIVATE_KEY) {
-            throw new Error('SOLANA_PRIVATE_KEY non trovata nel file .env');
-        }
-        await loadWallets();
+        await walletMonitor.loadWallets();
         
         server.listen(PORT, () => {
             logger.info(`Server in esecuzione sulla porta ${PORT}`);
