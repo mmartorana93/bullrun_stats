@@ -77,184 +77,138 @@ class WalletMonitor {
         this.reconnectAttempts = new Map();
         this.maxReconnectAttempts = 10;
         this.isRunning = true;
-    }
-
-    async startMonitoring(wallet) {
-        if (this.walletSubscriptions.has(wallet)) {
-            return false;
-        }
-
-        try {
-            const publicKey = new PublicKey(wallet);
-            
-            // Sottoscrizione al websocket per il saldo con gestione della riconnessione
-            const setupBalanceSubscription = async () => {
-                try {
-                    const balanceSubscriptionId = this.connection.onAccountChange(
-                        publicKey,
-                        (accountInfo) => {
-                            const balance = accountInfo.lamports / 10**9;
-                            this.io.emit('walletUpdate', {
-                                wallet,
-                                type: 'balance',
-                                balance
-                            });
-                            // Reset tentativi di riconnessione dopo successo
-                            this.reconnectAttempts.set(wallet, 0);
-                        },
-                        'confirmed'
-                    );
-                    return balanceSubscriptionId;
-                } catch (error) {
-                    logger.error(`Errore nella sottoscrizione del saldo per ${wallet}:`, error);
-                    await this.handleReconnect(wallet, setupBalanceSubscription);
-                    return null;
-                }
-            };
-
-            // Sottoscrizione al websocket per le transazioni con gestione della riconnessione
-            const setupSignatureSubscription = async () => {
-                try {
-                    const signatureSubscriptionId = this.connection.onSignature(
-                        publicKey,
-                        async (signature, context) => {
-                            try {
-                                const transaction = await this.connection.getTransaction(signature, {
-                                    commitment: 'confirmed',
-                                    maxSupportedTransactionVersion: 0
-                                });
-
-                                if (transaction) {
-                                    this.io.emit('walletUpdate', {
-                                        wallet,
-                                        type: 'transaction',
-                                        transaction: {
-                                            signature,
-                                            timestamp: transaction.blockTime,
-                                            amount: transaction.meta?.postBalances[0] - transaction.meta?.preBalances[0],
-                                            type: transaction.meta?.postBalances[0] > transaction.meta?.preBalances[0] ? 'credit' : 'debit'
-                                        }
-                                    });
-                                }
-                                // Reset tentativi di riconnessione dopo successo
-                                this.reconnectAttempts.set(wallet, 0);
-                            } catch (error) {
-                                logger.error(`Errore nel recupero della transazione per ${wallet}:`, error);
-                            }
-                        },
-                        'confirmed'
-                    );
-                    return signatureSubscriptionId;
-                } catch (error) {
-                    logger.error(`Errore nella sottoscrizione delle transazioni per ${wallet}:`, error);
-                    await this.handleReconnect(wallet, setupSignatureSubscription);
-                    return null;
-                }
-            };
-
-            const balanceSubscriptionId = await setupBalanceSubscription();
-            const signatureSubscriptionId = await setupSignatureSubscription();
-
-            if (balanceSubscriptionId && signatureSubscriptionId) {
-                this.walletSubscriptions.set(wallet, {
-                    balanceSubscriptionId,
-                    signatureSubscriptionId
-                });
-
-                this.monitoredWallets.add(wallet);
-                await this.saveWallets();
-                
-                // Invia il saldo iniziale
-                const accountInfo = await this.connection.getAccountInfo(publicKey);
-                if (accountInfo) {
-                    const balance = accountInfo.lamports / 10**9;
-                    this.io.emit('walletUpdate', {
-                        wallet,
-                        type: 'balance',
-                        balance
-                    });
-                }
-
-                return true;
-            }
-
-            return false;
-        } catch (error) {
-            logger.error(`Errore nel monitoraggio del wallet ${wallet}:`, error);
-            return false;
-        }
-    }
-
-    async handleReconnect(wallet, setupFunction) {
-        const attempts = this.reconnectAttempts.get(wallet) || 0;
         
-        if (attempts < this.maxReconnectAttempts && this.isRunning) {
-            this.reconnectAttempts.set(wallet, attempts + 1);
-            const delay = Math.min(1000 * Math.pow(2, attempts), 30000);
-            logger.info(`Tentativo di riconnessione ${attempts + 1} per ${wallet} in ${delay}ms`);
-            
-            await new Promise(resolve => setTimeout(resolve, delay));
-            return setupFunction();
-        } else {
-            logger.error(`Numero massimo di tentativi di riconnessione raggiunto per ${wallet}`);
-            return null;
-        }
-    }
-
-    async stopMonitoring(wallet) {
-        const subscriptions = this.walletSubscriptions.get(wallet);
-        if (subscriptions) {
+        // Inizializza il wallet personale dalla chiave privata
+        if (process.env.SOLANA_PRIVATE_KEY) {
             try {
-                this.connection.removeAccountChangeListener(subscriptions.balanceSubscriptionId);
-                this.connection.removeSignatureListener(subscriptions.signatureSubscriptionId);
-                this.walletSubscriptions.delete(wallet);
-                this.monitoredWallets.delete(wallet);
-                await this.saveWallets();
-                return true;
+                const privateKeyBytes = base58.decode(process.env.SOLANA_PRIVATE_KEY);
+                const keypair = Keypair.fromSecretKey(privateKeyBytes);
+                this.personalWallet = keypair.publicKey.toString();
+                logger.info(`Wallet personale inizializzato: ${this.personalWallet}`);
             } catch (error) {
-                logger.error(`Errore nella rimozione del monitoraggio per il wallet ${wallet}:`, error);
-                return false;
+                logger.error('Errore durante l\'inizializzazione del wallet personale:', error);
+                this.personalWallet = '';
             }
+        } else {
+            this.personalWallet = '';
+            logger.warn('Nessuna chiave privata configurata per il wallet personale');
         }
-        return false;
     }
 
     async loadWallets() {
         try {
-            const data = await fs.readFile(path.join(__dirname, 'wallets.json'), 'utf8');
+            const walletsPath = path.join(__dirname, 'wallets.json');
+            const data = await fs.readFile(walletsPath, 'utf8');
             const wallets = JSON.parse(data);
+            
+            // Inizializza il monitoraggio per ogni wallet caricato
             for (const wallet of wallets) {
                 await this.startMonitoring(wallet);
             }
+            
+            logger.info(`Caricati ${wallets.length} wallet dal file di configurazione`);
         } catch (error) {
             if (error.code === 'ENOENT') {
+                // Se il file non esiste, lo creiamo con un array vuoto
                 await fs.writeFile(path.join(__dirname, 'wallets.json'), '[]');
+                logger.info('Creato nuovo file wallets.json');
             } else {
+                logger.error('Errore durante il caricamento dei wallet:', error);
                 throw error;
             }
         }
     }
 
+    async getPersonalWalletInfo() {
+        if (!this.personalWallet) {
+            logger.warn('Nessun wallet personale configurato');
+            return { address: '', balance: 0 };
+        }
+
+        try {
+            const publicKey = new PublicKey(this.personalWallet);
+            const accountInfo = await this.connection.getAccountInfo(publicKey);
+            const balance = accountInfo ? accountInfo.lamports / 10**9 : 0;
+
+            logger.info(`Informazioni wallet personale recuperate. Balance: ${balance} SOL`);
+            return {
+                address: this.personalWallet,
+                balance
+            };
+        } catch (error) {
+            logger.error('Errore durante il recupero delle informazioni del wallet personale:', error);
+            return { address: this.personalWallet, balance: 0 };
+        }
+    }
+
+    async startMonitoring(wallet) {
+        if (this.monitoredWallets.has(wallet)) {
+            return false;
+        }
+
+        try {
+            // Verifica che l'indirizzo del wallet sia valido
+            new PublicKey(wallet);
+            
+            this.monitoredWallets.add(wallet);
+            await this.saveWallets();
+            logger.info(`Iniziato monitoraggio per il wallet: ${wallet}`);
+            return true;
+        } catch (error) {
+            logger.error(`Errore durante l'avvio del monitoraggio per il wallet ${wallet}:`, error);
+            return false;
+        }
+    }
+
+    async stopMonitoring(wallet) {
+        if (!this.monitoredWallets.has(wallet)) {
+            return false;
+        }
+
+        this.monitoredWallets.delete(wallet);
+        await this.saveWallets();
+        logger.info(`Interrotto monitoraggio per il wallet: ${wallet}`);
+        return true;
+    }
+
     async saveWallets() {
-        await fs.writeFile(
-            path.join(__dirname, 'wallets.json'),
-            JSON.stringify(Array.from(this.monitoredWallets))
-        );
+        try {
+            const walletsPath = path.join(__dirname, 'wallets.json');
+            const walletsArray = Array.from(this.monitoredWallets);
+            await fs.writeFile(walletsPath, JSON.stringify(walletsArray, null, 2));
+            logger.info('Wallet salvati con successo');
+        } catch (error) {
+            logger.error('Errore durante il salvataggio dei wallet:', error);
+            throw error;
+        }
     }
 
     stop() {
         this.isRunning = false;
-        for (const [wallet, subscriptions] of this.walletSubscriptions) {
-            this.connection.removeAccountChangeListener(subscriptions.balanceSubscriptionId);
-            this.connection.removeSignatureListener(subscriptions.signatureSubscriptionId);
+        // Chiudi tutte le sottoscrizioni attive
+        for (const [wallet, subscription] of this.walletSubscriptions) {
+            if (subscription) {
+                subscription.unsubscribe();
+            }
         }
         this.walletSubscriptions.clear();
+        logger.info('Monitor dei wallet arrestato');
     }
 }
 
 const walletMonitor = new WalletMonitor(io);
 
 // Routes
+app.get('/api/my-wallet', async (req, res) => {
+    try {
+        const walletInfo = await walletMonitor.getPersonalWalletInfo();
+        res.json(walletInfo);
+    } catch (error) {
+        logger.error('Error getting personal wallet info:', error);
+        res.status(500).json({ error: 'Failed to get personal wallet info' });
+    }
+});
+
 app.get('/api/solana-price', (req, res) => {
     try {
         const price = lpTracker.solPrice || 0;
