@@ -3,11 +3,12 @@ const cors = require('cors');
 const winston = require('winston');
 const fs = require('fs').promises;
 const path = require('path');
-const { Keypair, Connection, PublicKey } = require('@solana/web3.js');
+const { Keypair } = require('@solana/web3.js');
 const base58 = require('bs58');
 const http = require('http');
 const socketIo = require('socket.io');
 const LPTracker = require('./lpTracker');
+const { spawn } = require('child_process');
 require('dotenv').config();
 
 // Configurazione logger
@@ -64,151 +65,28 @@ app.use(cors({
 app.use(express.json());
 app.use(requestLogger);
 
-// Gestione WebSocket per il monitoraggio dei wallet
-class WalletMonitor {
-    constructor(io) {
-        this.io = io;
-        this.walletSubscriptions = new Map();
-        this.monitoredWallets = new Set();
-        this.connection = new Connection(
-            process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com",
-            'confirmed'
-        );
-        this.reconnectAttempts = new Map();
-        this.maxReconnectAttempts = 10;
-        this.isRunning = true;
-        
-        // Inizializza il wallet personale dalla chiave privata
-        if (process.env.SOLANA_PRIVATE_KEY) {
-            try {
-                const privateKeyBytes = base58.decode(process.env.SOLANA_PRIVATE_KEY);
-                const keypair = Keypair.fromSecretKey(privateKeyBytes);
-                this.personalWallet = keypair.publicKey.toString();
-                logger.info(`Wallet personale inizializzato: ${this.personalWallet}`);
-            } catch (error) {
-                logger.error('Errore durante l\'inizializzazione del wallet personale:', error);
-                this.personalWallet = '';
-            }
-        } else {
-            this.personalWallet = '';
-            logger.warn('Nessuna chiave privata configurata per il wallet personale');
-        }
-    }
-
-    async loadWallets() {
-        try {
-            const walletsPath = path.join(__dirname, 'wallets.json');
-            const data = await fs.readFile(walletsPath, 'utf8');
-            const wallets = JSON.parse(data);
-            
-            // Inizializza il monitoraggio per ogni wallet caricato
-            for (const wallet of wallets) {
-                await this.startMonitoring(wallet);
-            }
-            
-            logger.info(`Caricati ${wallets.length} wallet dal file di configurazione`);
-        } catch (error) {
-            if (error.code === 'ENOENT') {
-                // Se il file non esiste, lo creiamo con un array vuoto
-                await fs.writeFile(path.join(__dirname, 'wallets.json'), '[]');
-                logger.info('Creato nuovo file wallets.json');
-            } else {
-                logger.error('Errore durante il caricamento dei wallet:', error);
-                throw error;
-            }
-        }
-    }
-
-    async getPersonalWalletInfo() {
-        if (!this.personalWallet) {
-            logger.warn('Nessun wallet personale configurato');
-            return { address: '', balance: 0 };
-        }
-
-        try {
-            const publicKey = new PublicKey(this.personalWallet);
-            const accountInfo = await this.connection.getAccountInfo(publicKey);
-            const balance = accountInfo ? accountInfo.lamports / 10**9 : 0;
-
-            logger.info(`Informazioni wallet personale recuperate. Balance: ${balance} SOL`);
-            return {
-                address: this.personalWallet,
-                balance
-            };
-        } catch (error) {
-            logger.error('Errore durante il recupero delle informazioni del wallet personale:', error);
-            return { address: this.personalWallet, balance: 0 };
-        }
-    }
-
-    async startMonitoring(wallet) {
-        if (this.monitoredWallets.has(wallet)) {
-            return false;
-        }
-
-        try {
-            // Verifica che l'indirizzo del wallet sia valido
-            new PublicKey(wallet);
-            
-            this.monitoredWallets.add(wallet);
-            await this.saveWallets();
-            logger.info(`Iniziato monitoraggio per il wallet: ${wallet}`);
-            return true;
-        } catch (error) {
-            logger.error(`Errore durante l'avvio del monitoraggio per il wallet ${wallet}:`, error);
-            return false;
-        }
-    }
-
-    async stopMonitoring(wallet) {
-        if (!this.monitoredWallets.has(wallet)) {
-            return false;
-        }
-
-        this.monitoredWallets.delete(wallet);
-        await this.saveWallets();
-        logger.info(`Interrotto monitoraggio per il wallet: ${wallet}`);
-        return true;
-    }
-
-    async saveWallets() {
-        try {
-            const walletsPath = path.join(__dirname, 'wallets.json');
-            const walletsArray = Array.from(this.monitoredWallets);
-            await fs.writeFile(walletsPath, JSON.stringify(walletsArray, null, 2));
-            logger.info('Wallet salvati con successo');
-        } catch (error) {
-            logger.error('Errore durante il salvataggio dei wallet:', error);
-            throw error;
-        }
-    }
-
-    stop() {
-        this.isRunning = false;
-        // Chiudi tutte le sottoscrizioni attive
-        for (const [wallet, subscription] of this.walletSubscriptions) {
-            if (subscription) {
-                subscription.unsubscribe();
-            }
-        }
-        this.walletSubscriptions.clear();
-        logger.info('Monitor dei wallet arrestato');
-    }
-}
-
-const walletMonitor = new WalletMonitor(io);
-
-// Routes
-app.get('/api/my-wallet', async (req, res) => {
-    try {
-        const walletInfo = await walletMonitor.getPersonalWalletInfo();
-        res.json(walletInfo);
-    } catch (error) {
-        logger.error('Error getting personal wallet info:', error);
-        res.status(500).json({ error: 'Failed to get personal wallet info' });
-    }
+// Error handling middleware
+app.use((err, req, res, next) => {
+    logger.error('Errore non gestito:', err);
+    res.status(500).json({ 
+        error: 'Errore interno del server',
+        message: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    const health = {
+        uptime: process.uptime(),
+        timestamp: Date.now(),
+        status: 'OK',
+        socketConnections: io.engine.clientsCount,
+        memoryUsage: process.memoryUsage()
+    };
+    res.json(health);
+});
+
+// Routes
 app.get('/api/solana-price', (req, res) => {
     try {
         const price = lpTracker.solPrice || 0;
@@ -222,11 +100,98 @@ app.get('/api/solana-price', (req, res) => {
 
 app.get('/api/wallets', async (req, res) => {
     try {
-        const wallets = Array.from(walletMonitor.monitoredWallets);
+        const wallets = await loadWallets();
         res.json(wallets);
     } catch (error) {
         logger.error('Error getting wallets:', error);
         res.status(500).json({ error: 'Failed to get wallets' });
+    }
+});
+
+app.get('/api/logs', (req, res) => {
+    try {
+        const logs = [...transactionLogs];
+        transactionLogs.length = 0;
+        res.json(logs);
+    } catch (error) {
+        logger.error('Error getting logs:', error);
+        res.status(500).json({ error: 'Failed to get logs' });
+    }
+});
+
+app.get('/api/my-wallet', async (req, res) => {
+    try {
+        if (!process.env.SOLANA_PRIVATE_KEY) {
+            throw new Error('SOLANA_PRIVATE_KEY non trovata nel file .env');
+        }
+
+        const wallet = new SolanaWallet(process.env.SOLANA_PRIVATE_KEY);
+        const balance = await wallet.getBalance();
+        
+        res.json({
+            address: wallet.getWalletAddress(),
+            balance: balance
+        });
+    } catch (error) {
+        logger.error('Error getting personal wallet info:', error);
+        res.status(500).json({ error: 'Failed to get wallet info' });
+    }
+});
+
+// Endpoint per il ranking Coinbase
+app.get('/api/coinbase-ranking', async (req, res) => {
+    try {
+        // Prima legge il file esistente
+        const rankingPath = path.join(__dirname, 'coinbase_ranking.json');
+        const fileExists = await fs.access(rankingPath).then(() => true).catch(() => false);
+
+        if (fileExists) {
+            const rankingData = await fs.readFile(rankingPath, 'utf8');
+            const data = JSON.parse(rankingData);
+            // Mappa il campo timestamp a lastUpdate per il frontend
+            return res.json({
+                ranking: data.ranking,
+                lastUpdate: data.timestamp
+            });
+        }
+
+        // Se il file non esiste, esegue lo scraping
+        const pythonProcess = spawn('python3', ['coinbaseScraper.py'], {
+            cwd: __dirname
+        });
+
+        let data = '';
+        let error = '';
+
+        pythonProcess.stdout.on('data', (chunk) => {
+            data += chunk.toString();
+        });
+
+        pythonProcess.stderr.on('data', (chunk) => {
+            error += chunk.toString();
+        });
+
+        pythonProcess.on('close', async (code) => {
+            if (code !== 0) {
+                logger.error(`Errore nello scraping Coinbase: ${error}`);
+                return res.status(500).json({ error: 'Failed to get Coinbase ranking' });
+            }
+            try {
+                const rankingData = await fs.readFile(rankingPath, 'utf8');
+                const data = JSON.parse(rankingData);
+                // Mappa il campo timestamp a lastUpdate per il frontend
+                res.json({
+                    ranking: data.ranking,
+                    lastUpdate: data.timestamp
+                });
+            } catch (e) {
+                logger.error('Errore nel parsing del ranking:', e);
+                res.status(500).json({ error: 'Invalid ranking data' });
+            }
+        });
+    } catch (error) {
+        logger.error('Error getting Coinbase ranking:', error);
+        res.status(500).json({ error: 'Failed to get Coinbase ranking' });
     }
 });
 
@@ -238,7 +203,7 @@ app.post('/api/wallets', async (req, res) => {
             return res.status(400).json({ error: "Wallet address required" });
         }
 
-        if (await walletMonitor.startMonitoring(wallet)) {
+        if (await startMonitoring(wallet)) {
             return res.json({ message: "Wallet added successfully" });
         }
 
@@ -253,7 +218,7 @@ app.delete('/api/wallets/:wallet', async (req, res) => {
     try {
         const { wallet } = req.params;
 
-        if (await walletMonitor.stopMonitoring(wallet)) {
+        if (await stopMonitoring(wallet)) {
             return res.json({ message: "Wallet removed successfully" });
         }
 
@@ -264,11 +229,102 @@ app.delete('/api/wallets/:wallet', async (req, res) => {
     }
 });
 
+// Variabili globali e classi
+class SolanaWallet {
+    constructor(privateKey) {
+        this.wallet = Keypair.fromSecretKey(base58.decode(privateKey));
+        this.endpoint = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
+    }
+
+    async makeRpcCall(method, params) {
+        try {
+            const response = await fetch(this.endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    id: 1,
+                    method,
+                    params,
+                }),
+            });
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            logger.error('Errore nella chiamata RPC:', error);
+            throw error;
+        }
+    }
+
+    async getBalance() {
+        try {
+            const params = [this.wallet.publicKey.toBase58(), { commitment: "confirmed" }];
+            const response = await this.makeRpcCall("getBalance", params);
+            if (response && response.result && response.result.value) {
+                return response.result.value / 10**9;
+            }
+            return 0;
+        } catch (error) {
+            logger.error('Errore nel recupero del saldo:', error);
+            throw error;
+        }
+    }
+
+    getWalletAddress() {
+        return this.wallet.publicKey.toBase58();
+    }
+}
+
+const transactionLogs = [];
+const monitorThreads = new Map();
+const monitoredWallets = new Set();
+
+async function loadWallets() {
+    try {
+        const data = await fs.readFile(path.join(__dirname, 'wallets.json'), 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            await fs.writeFile(path.join(__dirname, 'wallets.json'), '[]');
+            return [];
+        }
+        throw error;
+    }
+}
+
+async function saveWallets() {
+    await fs.writeFile(
+        path.join(__dirname, 'wallets.json'),
+        JSON.stringify(Array.from(monitoredWallets))
+    );
+}
+
+async function startMonitoring(wallet) {
+    if (!monitorThreads.has(wallet)) {
+        monitorThreads.set(wallet, true);
+        monitoredWallets.add(wallet);
+        await saveWallets();
+        return true;
+    }
+    return false;
+}
+
+async function stopMonitoring(wallet) {
+    if (monitorThreads.has(wallet)) {
+        monitorThreads.delete(wallet);
+        monitoredWallets.delete(wallet);
+        await saveWallets();
+        return true;
+    }
+    return false;
+}
+
 // Gestione graceful shutdown
 process.on('SIGTERM', () => {
     logger.info('SIGTERM ricevuto. Avvio shutdown graceful...');
     lpTracker.stop();
-    walletMonitor.stop();
     server.close(() => {
         logger.info('Server HTTP chiuso.');
         process.exit(0);
@@ -278,7 +334,6 @@ process.on('SIGTERM', () => {
 process.on('SIGINT', () => {
     logger.info('SIGINT ricevuto. Avvio shutdown graceful...');
     lpTracker.stop();
-    walletMonitor.stop();
     server.close(() => {
         logger.info('Server HTTP chiuso.');
         process.exit(0);
@@ -288,7 +343,6 @@ process.on('SIGINT', () => {
 process.on('uncaughtException', (error) => {
     logger.error('Eccezione non gestita:', error);
     lpTracker.stop();
-    walletMonitor.stop();
     server.close(() => {
         logger.info('Server HTTP chiuso dopo eccezione non gestita.');
         process.exit(1);
@@ -304,7 +358,10 @@ const PORT = process.env.PORT || 5001;
 
 async function startServer() {
     try {
-        await walletMonitor.loadWallets();
+        if (!process.env.SOLANA_PRIVATE_KEY) {
+            throw new Error('SOLANA_PRIVATE_KEY non trovata nel file .env');
+        }
+        await loadWallets();
         
         server.listen(PORT, () => {
             logger.info(`Server in esecuzione sulla porta ${PORT}`);

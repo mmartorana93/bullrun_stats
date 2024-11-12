@@ -5,6 +5,7 @@ import TransactionLog from './components/TransactionLog';
 import TokenRanking from './components/TokenRanking';
 import LPTracking from './components/LPTracking';
 import Analytics from './components/Analytics';
+import BullRunStats from './components/BullRunStats';
 import BetaIcon from '@mui/icons-material/NewReleases';
 import { useState, useEffect } from 'react';
 import { Transaction } from './types';
@@ -173,6 +174,14 @@ function App() {
                     </Stack>
                   }
                 />
+                <Tab 
+                  icon={
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <span>BullRun Stats</span>
+                      <BetaIcon color="warning" fontSize="small" />
+                    </Stack>
+                  }
+                />
               </Tabs>
             </Box>
 
@@ -194,6 +203,9 @@ function App() {
               </TabPanel>
               <TabPanel value={tabValue} index={4}>
                 <Analytics />
+              </TabPanel>
+              <TabPanel value={tabValue} index={5}>
+                <BullRunStats />
               </TabPanel>
             </Box>
           </Box>
