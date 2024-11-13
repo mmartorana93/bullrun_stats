@@ -4,6 +4,7 @@ import re
 import json
 import os
 from datetime import datetime, timedelta
+import sys
 
 def get_stored_data():
     try:
@@ -27,7 +28,10 @@ def save_ranking(ranking):
     except Exception as e:
         print(f"Errore nel salvataggio del file: {e}")
 
-def should_update():
+def should_update(force=False):
+    if force:
+        return True
+        
     stored_data = get_stored_data()
     if not stored_data:
         return True
@@ -61,9 +65,10 @@ def fetch_ranking():
 
 def get_app_ranking():
     try:
+        force = '--force' in sys.argv
         stored_data = get_stored_data()
         
-        if should_update():
+        if should_update(force):
             ranking = fetch_ranking()
             save_ranking(ranking)
             print(ranking)

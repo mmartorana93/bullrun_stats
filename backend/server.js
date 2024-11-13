@@ -65,8 +65,9 @@ const lpTracker = new LPTracker(io);
 // Configurazione CORS
 app.use(cors({
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    methods: ['GET', 'POST', 'DELETE'],
-    credentials: true
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
@@ -200,57 +201,37 @@ app.get('/api/my-wallet', async (req, res) => {
 // Endpoint per il ranking Coinbase
 app.get('/api/coinbase-ranking', async (req, res) => {
     try {
-        // Prima legge il file esistente
-        const rankingPath = path.join(__dirname, 'coinbase_ranking.json');
-        const fileExists = await fs.access(rankingPath).then(() => true).catch(() => false);
-
-        if (fileExists) {
-            const rankingData = await fs.readFile(rankingPath, 'utf8');
-            const data = JSON.parse(rankingData);
-            // Mappa il campo timestamp a lastUpdate per il frontend
-            return res.json({
-                ranking: data.ranking,
-                lastUpdate: data.timestamp
-            });
-        }
-
-        // Se il file non esiste, esegue lo scraping
-        const pythonProcess = spawn('python3', ['coinbaseScraper.py'], {
-            cwd: __dirname
-        });
-
+        const force = req.query.force === 'true';
+        const { spawn } = require('child_process');
+        const python = spawn('python3', ['coinbaseScraper.py', force ? '--force' : '']);
+        
         let data = '';
-        let error = '';
-
-        pythonProcess.stdout.on('data', (chunk) => {
-            data += chunk.toString();
+        
+        python.stdout.on('data', (chunk) => {
+            data += chunk;
         });
 
-        pythonProcess.stderr.on('data', (chunk) => {
-            error += chunk.toString();
+        python.stderr.on('data', (data) => {
+            logger.error(`Error from Python script: ${data}`);
         });
 
-        pythonProcess.on('close', async (code) => {
+        python.on('close', async (code) => {
             if (code !== 0) {
-                logger.error(`Errore nello scraping Coinbase: ${error}`);
-                return res.status(500).json({ error: 'Failed to get Coinbase ranking' });
+                return res.status(500).json({ error: 'Failed to fetch ranking' });
             }
+
             try {
-                const rankingData = await fs.readFile(rankingPath, 'utf8');
-                const data = JSON.parse(rankingData);
-                // Mappa il campo timestamp a lastUpdate per il frontend
-                res.json({
-                    ranking: data.ranking,
-                    lastUpdate: data.timestamp
-                });
-            } catch (e) {
-                logger.error('Errore nel parsing del ranking:', e);
-                res.status(500).json({ error: 'Invalid ranking data' });
+                const storedData = await fs.readFile('coinbase_ranking.json', 'utf8');
+                const parsedData = JSON.parse(storedData);
+                res.json(parsedData);
+            } catch (error) {
+                logger.error('Error reading ranking file:', error);
+                res.status(500).json({ error: 'Failed to read ranking data' });
             }
         });
     } catch (error) {
-        logger.error('Error getting Coinbase ranking:', error);
-        res.status(500).json({ error: 'Failed to get Coinbase ranking' });
+        logger.error('Error in coinbase ranking endpoint:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -433,3 +414,132 @@ async function startServer() {
 }
 
 startServer();
+
+// Modifica la durata della cache a 60 secondi
+const CACHE_DURATION = 60000; // 60 secondi
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 5000; // 5 secondi tra i retry
+
+async function fetchWithRetry(url, retries = 0) {
+  try {
+    const response = await axios.get(url, {
+      headers: { 
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 429 && retries < MAX_RETRIES) {
+      logger.warn(`Rate limit hit, retrying in ${RETRY_DELAY}ms... (${retries + 1}/${MAX_RETRIES})`);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      return fetchWithRetry(url, retries + 1);
+    }
+    throw error;
+  }
+}
+
+// Aggiungi una cache di fallback
+const FALLBACK_CACHE_FILE = path.join(__dirname, 'cache/crypto_data.json');
+
+// Funzione per salvare i dati nella cache di fallback
+async function saveFallbackCache(data) {
+  try {
+    await fs.mkdir(path.dirname(FALLBACK_CACHE_FILE), { recursive: true });
+    await fs.writeFile(FALLBACK_CACHE_FILE, JSON.stringify(data));
+    logger.info('Fallback cache saved successfully');
+  } catch (error) {
+    logger.error('Error saving fallback cache:', error);
+  }
+}
+
+// Funzione per leggere i dati dalla cache di fallback
+async function loadFallbackCache() {
+  try {
+    const data = await fs.readFile(FALLBACK_CACHE_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    logger.error('Error loading fallback cache:', error);
+    return null;
+  }
+}
+
+// Modifica updateAllData per usare il fallback
+async function updateAllData() {
+  if (cache.updating) return cache.data;
+  
+  const now = Date.now();
+  if (cache.data && (now - cache.timestamp) < CACHE_DURATION) {
+    logger.info('Serving cached data');
+    return cache.data;
+  }
+
+  try {
+    cache.updating = true;
+    logger.info('Fetching fresh data from CoinGecko');
+    
+    const [globalData, defiData, tetherData] = await Promise.all([
+      fetchWithRetry('https://api.coingecko.com/api/v3/global'),
+      fetchWithRetry('https://api.coingecko.com/api/v3/global/decentralized_finance_defi'),
+      fetchWithRetry('https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=usd&include_market_cap=true')
+    ]);
+
+    const newData = {
+      global: globalData,
+      defi: defiData,
+      tether: tetherData,
+      timestamp: now
+    };
+
+    cache.data = newData;
+    cache.timestamp = now;
+    
+    // Salva i dati nella cache di fallback
+    await saveFallbackCache(newData);
+    
+    logger.info('Data successfully updated');
+    return newData;
+  } catch (error) {
+    logger.error('Error updating data:', error);
+    
+    // Prova a usare la cache in memoria
+    if (cache.data) {
+      logger.info('Using memory cache');
+      return cache.data;
+    }
+    
+    // Se non c'è cache in memoria, usa il fallback
+    logger.info('Trying fallback cache');
+    const fallbackData = await loadFallbackCache();
+    if (fallbackData) {
+      logger.info('Using fallback cache');
+      return fallbackData;
+    }
+    
+    return null;
+  } finally {
+    cache.updating = false;
+  }
+}
+
+// Un solo endpoint per tutti i dati
+app.get('/api/crypto/all', async (req, res) => {
+  try {
+    const data = await updateAllData();
+    if (!data) {
+      return res.status(500).json({ error: 'No data available' });
+    }
+    res.json(data);
+  } catch (error) {
+    console.error('Error serving data:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Aggiorna i dati ogni 30 secondi
+setInterval(updateAllData, CACHE_DURATION);
+
+// Test endpoint
+app.get('/test', (req, res) => {
+    res.json({ message: 'Server is running' });
+});

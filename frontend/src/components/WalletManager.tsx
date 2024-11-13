@@ -26,7 +26,7 @@ import { useWebSocket } from '../contexts/WebSocketContext';
 
 interface WalletManagerProps {
   wallets: string[];
-  onWalletsUpdate: () => void;
+  onWalletsUpdate: (wallets: string[]) => void;
 }
 
 interface WalletData {
@@ -112,7 +112,7 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
       });
       setSuccess(response.data.message || 'Wallet aggiunto con successo');
       setNewWallet('');
-      onWalletsUpdate();
+      onWalletsUpdate([...wallets, newWallet]);
     } catch (error: any) {
       setError(error.response?.data?.error || 'Errore durante l\'aggiunta del wallet');
     } finally {
@@ -124,7 +124,7 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
     try {
       const response = await api.delete<WalletResponse>(`/api/wallets/${wallet}`);
       setSuccess(response.data.message || 'Wallet rimosso con successo');
-      onWalletsUpdate();
+      onWalletsUpdate(wallets.filter(w => w !== wallet));
     } catch (error: any) {
       setError(error.response?.data?.error || 'Errore durante la rimozione del wallet');
     }

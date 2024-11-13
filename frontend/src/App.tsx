@@ -12,6 +12,7 @@ import { Transaction } from './types';
 import api from './api/config';
 import Header from './components/Header';
 import { WebSocketProvider } from './contexts/WebSocketContext';
+import Queries from './components/Queries';
 
 const darkTheme = createTheme({
   palette: {
@@ -158,6 +159,7 @@ function App() {
                 <Tab label="Gestione Wallet" />
                 <Tab label="Log Transazioni" />
                 <Tab label="Token Ranking" />
+                <Tab label="Queries" />
                 <Tab 
                   icon={
                     <Stack direction="row" spacing={1} alignItems="center">
@@ -199,12 +201,15 @@ function App() {
                 <TokenRanking />
               </TabPanel>
               <TabPanel value={tabValue} index={3}>
-                <LPTracking />
+                <Queries />
               </TabPanel>
               <TabPanel value={tabValue} index={4}>
-                <Analytics />
+                <LPTracking />
               </TabPanel>
               <TabPanel value={tabValue} index={5}>
+                <Analytics />
+              </TabPanel>
+              <TabPanel value={tabValue} index={6}>
                 <BullRunStats />
               </TabPanel>
             </Box>

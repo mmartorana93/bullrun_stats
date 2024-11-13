@@ -51,3 +51,6 @@ combined.log
 error.log
 lptracker-error.log
 lptracker.log
+
+# Exclude queries folder
+/queries/

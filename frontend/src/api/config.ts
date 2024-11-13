@@ -8,14 +8,13 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json'
     },
-    // Timeout di default a 15 secondi
     timeout: 15000
 });
 
 // Configurazione specifica per l'endpoint coinbase-ranking
-export const getCoinbaseRanking = () => {
+export const getCoinbaseRanking = (force: boolean = false) => {
     return api.get('/api/coinbase-ranking', {
-        timeout: 30000 // 30 secondi di timeout per questo endpoint specifico
+        params: { force }
     });
 };
 
