@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Box, Typography, Paper, CircularProgress, Grid } from '@mui/material';
+import { Box, Typography, Paper, CircularProgress, Grid, Divider } from '@mui/material';
 import { getCoinbaseRanking } from '../api/config';
 import { getBitcoinDominance, BitcoinDominanceData } from '../services/cryptoService';
 import coinbaseIcon from '../assets/images/coinbase.png';
@@ -14,34 +14,75 @@ interface TradingViewWidgetProps {
   title: string;
 }
 
+declare global {
+  interface Window {
+    TradingView?: any;
+  }
+}
+
 const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ symbol, title }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const container = useRef<HTMLDivElement>(null);
+  const scriptLoaded = useRef(false);
 
   useEffect(() => {
-    if (containerRef.current) {
-      const script = document.createElement('script');
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-      script.type = 'text/javascript';
-      script.async = true;
-      script.innerHTML = `
-        {
-          "autosize": true,
-          "symbol": "${symbol}",
-          "interval": "D",
-          "timezone": "Europe/Rome",
-          "theme": "dark",
-          "style": "1",
-          "locale": "it",
-          "enable_publishing": false,
-          "hide_top_toolbar": true,
-          "allow_symbol_change": false,
-          "save_image": false,
-          "calendar": false,
-          "hide_volume": true,
-          "support_host": "https://www.tradingview.com"
-        }`;
-      containerRef.current.appendChild(script);
+    const currentContainer = container.current;
+    
+    const loadTradingViewScript = () => {
+      return new Promise<void>((resolve) => {
+        if (window.TradingView) {
+          resolve();
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.id = 'tradingview-widget-script';
+        script.src = 'https://s3.tradingview.com/tv.js';
+        script.async = true;
+        script.onload = () => resolve();
+        document.head.appendChild(script);
+      });
+    };
+
+    const initWidget = () => {
+      if (!currentContainer || !window.TradingView) return;
+
+      new window.TradingView.widget({
+        container_id: currentContainer.id,
+        symbol: symbol,
+        interval: 'D',
+        timezone: 'Europe/Rome',
+        theme: 'dark',
+        style: '1',
+        locale: 'it',
+        enable_publishing: false,
+        hide_top_toolbar: true,
+        allow_symbol_change: false,
+        save_image: false,
+        hide_volume: true,
+        height: '100%',
+        width: '100%',
+      });
+    };
+
+    const init = async () => {
+      if (!scriptLoaded.current) {
+        await loadTradingViewScript();
+        scriptLoaded.current = true;
+      }
+      initWidget();
+    };
+
+    if (currentContainer) {
+      currentContainer.innerHTML = '';
+      currentContainer.id = `tradingview-widget-${symbol.replace(/[^a-zA-Z0-9]/g, '')}`;
+      init();
     }
+
+    return () => {
+      if (currentContainer) {
+        currentContainer.innerHTML = '';
+      }
+    };
   }, [symbol]);
 
   return (
@@ -49,12 +90,9 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ symbol, title }) 
       <Typography variant="h6" gutterBottom>{title}</Typography>
       <Box sx={{ height: 'calc(100% - 32px)' }}>
         <div
-          ref={containerRef}
-          className="tradingview-widget-container"
+          ref={container}
           style={{ height: '100%', width: '100%' }}
-        >
-          <div className="tradingview-widget-container__widget" style={{ height: '100%', width: '100%' }}></div>
-        </div>
+        />
       </Box>
     </Paper>
   );
@@ -104,7 +142,6 @@ const BullRunStats: React.FC = () => {
     fetchRanking();
     fetchBtcDominance();
 
-    // Aggiorna ogni 5 minuti
     const rankingInterval = setInterval(fetchRanking, 5 * 60 * 1000);
     const btcDominanceInterval = setInterval(fetchBtcDominance, 5 * 60 * 1000);
 
@@ -125,7 +162,7 @@ const BullRunStats: React.FC = () => {
     });
   };
 
-  const IndicatorCard = ({ 
+  const IndicatorItem = ({ 
     title, 
     icon, 
     value, 
@@ -142,25 +179,18 @@ const BullRunStats: React.FC = () => {
     isLoading?: boolean;
     error?: string | null;
   }) => (
-    <Paper 
-      elevation={3} 
-      sx={{ 
-        p: 3,
-        mb: 2,
-        width: '100%'
-      }}
-    >
+    <Box sx={{ py: 1.5 }}>
       <Box 
         sx={{ 
           display: 'flex', 
           alignItems: 'center',
-          gap: 2
+          gap: 1.5
         }}
       >
         <Box 
           sx={{ 
-            width: 48, 
-            height: 48, 
+            width: 32, 
+            height: 32, 
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
@@ -180,26 +210,26 @@ const BullRunStats: React.FC = () => {
         </Box>
 
         <Box sx={{ flex: 1 }}>
-          <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+          <Typography variant="body2" color="text.secondary">
             {title}
           </Typography>
           
           {isLoading ? (
-            <CircularProgress size={24} />
+            <CircularProgress size={20} />
           ) : error ? (
-            <Typography color="error">{error}</Typography>
+            <Typography color="error" variant="body2">{error}</Typography>
           ) : (
             <>
-              <Typography variant="h4" gutterBottom>
+              <Typography variant="h6" sx={{ lineHeight: 1.2 }}>
                 {value || '---'}
               </Typography>
               {target && (
-                <Typography variant="subtitle2" color="primary" gutterBottom>
+                <Typography variant="caption" color="primary">
                   Target: {target}
                 </Typography>
               )}
               {lastUpdate && (
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" color="text.secondary" display="block">
                   Ultimo aggiornamento: {lastUpdate}
                 </Typography>
               )}
@@ -207,7 +237,7 @@ const BullRunStats: React.FC = () => {
           )}
         </Box>
       </Box>
-    </Paper>
+    </Box>
   );
 
   return (
@@ -219,60 +249,75 @@ const BullRunStats: React.FC = () => {
       <Grid container spacing={3}>
         {/* Colonna sinistra per gli indicatori */}
         <Grid item xs={12} md={3}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <IndicatorCard
-              title="Ranking Coinbase App Store"
-              icon={coinbaseIcon}
-              value={rankingData?.ranking ? `#${rankingData.ranking}` : undefined}
-              lastUpdate={rankingData?.lastUpdate ? formatLastUpdate(rankingData.lastUpdate) : undefined}
-              isLoading={loading}
-              error={error}
-            />
-            <IndicatorCard
-              title="Dominanza Bitcoin"
-              icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
-              value={btcDominanceData?.btcDominance ? `${btcDominanceData.btcDominance.toFixed(2)}%` : undefined}
-              target="43.87%"
-              lastUpdate={btcDominanceData?.lastUpdate ? formatLastUpdate(btcDominanceData.lastUpdate) : undefined}
-              isLoading={btcDominanceLoading}
-              error={btcDominanceError}
-            />
-            <IndicatorCard
-              title="Prezzo Bitcoin"
-              icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
-              value="$36,500"
-              target="87K/109K"
-            />
-            <IndicatorCard
-              title="Total 2"
-              icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
-              value="1.8T"
-              target="2T/2.5T"
-            />
-            <IndicatorCard
-              title="Others (Total 3)"
-              icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
-              value="550B"
-              target="600B/685B"
-            />
-            <IndicatorCard
-              title="USDT Dominance"
-              icon="https://assets.coingecko.com/coins/images/325/small/Tether.png"
-              value="3.50%"
-              target="3.80%"
-            />
-            <IndicatorCard
-              title="Total"
-              icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
-              value="3.5T"
-              target="4T/4.5T"
-            />
-          </Box>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+              Indicatori
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <IndicatorItem
+                title="Ranking Coinbase App Store"
+                icon={coinbaseIcon}
+                value={rankingData?.ranking ? `#${rankingData.ranking}` : undefined}
+                lastUpdate={rankingData?.lastUpdate ? formatLastUpdate(rankingData.lastUpdate) : undefined}
+                isLoading={loading}
+                error={error}
+              />
+              <Divider />
+              <IndicatorItem
+                title="Dominanza Bitcoin"
+                icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
+                value={btcDominanceData?.btcDominance ? `${btcDominanceData.btcDominance.toFixed(2)}%` : undefined}
+                target="43.87%"
+                lastUpdate={btcDominanceData?.lastUpdate ? formatLastUpdate(btcDominanceData.lastUpdate) : undefined}
+                isLoading={btcDominanceLoading}
+                error={btcDominanceError}
+              />
+              <Divider />
+              <IndicatorItem
+                title="Prezzo Bitcoin"
+                icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
+                value="$36,500"
+                target="87K/109K"
+              />
+              <Divider />
+              <IndicatorItem
+                title="Total 2"
+                icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
+                value="1.8T"
+                target="2T/2.5T"
+              />
+              <Divider />
+              <IndicatorItem
+                title="Others (Total 3)"
+                icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
+                value="550B"
+                target="600B/685B"
+              />
+              <Divider />
+              <IndicatorItem
+                title="USDT Dominance"
+                icon="https://assets.coingecko.com/coins/images/325/small/Tether.png"
+                value="3.50%"
+                target="3.80%"
+              />
+              <Divider />
+              <IndicatorItem
+                title="Total"
+                icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
+                value="3.5T"
+                target="4T/4.5T"
+              />
+            </Box>
+          </Paper>
         </Grid>
 
         {/* Colonna destra per i grafici */}
         <Grid item xs={12} md={9}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TradingViewWidget 
+              symbol="CRYPTOCAP:BTC.D" 
+              title="Bitcoin Dominance"
+            />
             <TradingViewWidget 
               symbol="BINANCE:BTCUSDT" 
               title="Prezzo Bitcoin"
@@ -284,10 +329,6 @@ const BullRunStats: React.FC = () => {
             <TradingViewWidget 
               symbol="TOTAL3" 
               title="Others (Total 3)"
-            />
-            <TradingViewWidget 
-              symbol="CRYPTOCAP:BTC.D" 
-              title="Bitcoin Dominance"
             />
             <TradingViewWidget 
               symbol="CRYPTOCAP:USDT.D" 
