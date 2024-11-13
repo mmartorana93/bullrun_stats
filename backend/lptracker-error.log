@@ -37,3 +37,12 @@
 2024-11-10T08:28:06.595Z [ERROR] Errore nel recupero dei metadata per J9PAvnax9ZkAnoNRA5wNQ7GGUSoht4FcMAYzNYaEgXwV: Request failed with status code 404
 2024-11-10T08:28:08.605Z [ERROR] Errore nel recupero dei metadata per AufSf9UXUFQCTzvMM2mjSYYegadWV4XBaut7JRBV3zSD: Request failed with status code 404
 2024-11-10T08:30:50.173Z [ERROR] Errore nel recupero dei metadata per 2jQPykh1DUXM6c8kRaMNM4bToSUuonrGHHujrSsvFnoj: Request failed with status code 404
+2024-11-11T07:28:19.454Z [ERROR] Numero massimo di tentativi di riconnessione raggiunto
+2024-11-11T11:08:08.699Z [ERROR] Numero massimo di tentativi di riconnessione raggiunto
+2024-11-12T08:54:14.042Z [ERROR] Numero massimo di tentativi di riconnessione raggiunto
+2024-11-12T09:28:44.848Z [ERROR] Numero massimo di tentativi di riconnessione raggiunto
+2024-11-12T09:40:43.361Z [ERROR] Errore nella gestione della notifica: 502 Bad Gateway: {"jsonrpc":"2.0","error":{"code":502,"message":"Bad gateway"}, "id": null}
+
+Metadata: {
+  "stack": "Error: 502 Bad Gateway: {\"jsonrpc\":\"2.0\",\"error\":{\"code\":502,\"message\":\"Bad gateway\"}, \"id\": null}\n\n    at ClientBrowser.callServer (/Users/manuelmartorana/Projects/Apps/crypto/solana_tracker/backend/node_modules/@solana/web3.js/lib/index.cjs.js:5091:18)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+}

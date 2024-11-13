@@ -678,3 +678,571 @@
 2024-11-10T08:30:49.642Z [INFO] New pool detected - USD Value: $31903704.947793093
 2024-11-10T08:30:50.173Z [ERROR] Errore nel recupero dei metadata per 2jQPykh1DUXM6c8kRaMNM4bToSUuonrGHHujrSsvFnoj: Request failed with status code 404
 2024-11-10T08:30:50.200Z [INFO] Emitting new pool data to 1 clients
+2024-11-10T08:55:43.008Z [INFO] WebSocket connesso
+2024-11-10T08:56:09.166Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "9BCxD91zTo6MBFvuwFKALRRoJDpUC9mtfGvfJMexKZU5",
+  "solAmount": 155732.182456158,
+  "tokenAmount": 4042.04449563,
+  "usdValue": 31855017.921407122,
+  "metrics": {
+    "pricePerTokenSOL": 38.528072272466495,
+    "pricePerTokenUSD": 7880.917183333022,
+    "poolDepth": 25089.368483271162,
+    "normalizedLiquidity": 1269.6620061460333
+  }
+}
+2024-11-10T08:56:09.166Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T07:25:23.040Z [INFO] WebSocket connesso
+2024-11-11T07:26:20.067Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "46rEm1wSDps6c3tbefRQAZTP9H9U1B4A15EXS2zmJ1Ju",
+  "solAmount": 155048.582456158,
+  "tokenAmount": 4042.044495042,
+  "usdValue": 32197388.63284577,
+  "metrics": {
+    "pricePerTokenSOL": 38.3589499438568,
+    "pricePerTokenUSD": 7965.619545341302,
+    "poolDepth": 25034.241933419496,
+    "normalizedLiquidity": 1286.1339567811647
+  }
+}
+2024-11-11T07:26:20.068Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T07:28:19.454Z [WARN] Connessione WebSocket chiusa
+2024-11-11T07:28:19.454Z [ERROR] Numero massimo di tentativi di riconnessione raggiunto
+2024-11-11T07:28:28.642Z [INFO] WebSocket connesso
+2024-11-11T07:29:42.907Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "HaVsGU7dgsLRRXqZa5sZaJZFJnC73hBga1yfUqxwoJmY",
+  "solAmount": 155048.982456158,
+  "tokenAmount": 4042.044504867,
+  "usdValue": 32129250.14456506,
+  "metrics": {
+    "pricePerTokenSOL": 38.35904881043851,
+    "pricePerTokenUSD": 7948.762094499068,
+    "poolDepth": 25034.274255950248,
+    "normalizedLiquidity": 1283.4104882001302
+  }
+}
+2024-11-11T07:29:42.908Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T07:31:20.513Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "DnchbUPhSwjYqASvvD3VVcKMqf8hitxgLrctednrVmJW",
+  "solAmount": 155049.382456158,
+  "tokenAmount": 321635.440721,
+  "usdValue": 32129333.03256506,
+  "metrics": {
+    "pricePerTokenSOL": 0.48206560231232193,
+    "pricePerTokenUSD": 99.89363411115936,
+    "poolDepth": 223314.52362039793,
+    "normalizedLiquidity": 143.87480272971513
+  }
+}
+2024-11-11T07:31:20.513Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T07:34:13.130Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "B9BAs8XMqiwzMyUU423prKLUnKu6LQqchZgCfhkiLfPd",
+  "solAmount": 155049.782456158,
+  "tokenAmount": 321635.440721,
+  "usdValue": 32113910.942319445,
+  "metrics": {
+    "pricePerTokenSOL": 0.48206684595636534,
+    "pricePerTokenUSD": 99.8456851344824,
+    "poolDepth": 223314.81167621093,
+    "normalizedLiquidity": 143.805557281539
+  }
+}
+2024-11-11T07:34:13.130Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T07:35:29.048Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "4Bf7Qz79qCsQk4QnENDnQsx6kwnioXFz9nhRHAhnUy4y",
+  "solAmount": 155050.182456158,
+  "tokenAmount": 4042906.369703,
+  "usdValue": 32113993.79031945,
+  "metrics": {
+    "pricePerTokenSOL": 0.038351168263030616,
+    "pricePerTokenUSD": 7.943293970638901,
+    "poolDepth": 791740.7216226872,
+    "normalizedLiquidity": 40.56125056255946
+  }
+}
+2024-11-11T07:35:29.048Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T07:36:49.535Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "8veZUf5DqL2cxh5rSWSxukSQsqTnW3WedYinoxpqkGCp",
+  "solAmount": 155050.582456158,
+  "tokenAmount": 4042.044501925,
+  "usdValue": 32114076.638319448,
+  "metrics": {
+    "pricePerTokenSOL": 38.35944467764174,
+    "pricePerTokenUSD": 7945.008181633158,
+    "poolDepth": 25034.40341484459,
+    "normalizedLiquidity": 1282.7977605920037
+  }
+}
+2024-11-11T07:36:49.535Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T08:05:38.310Z [INFO] WebSocket connesso
+2024-11-11T10:55:33.210Z [INFO] WebSocket connesso
+2024-11-11T10:55:37.149Z [WARN] Connessione WebSocket chiusa
+2024-11-11T10:55:37.150Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-11T10:55:39.328Z [INFO] WebSocket connesso
+2024-11-11T10:56:07.897Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "FzLB6yrkrofBTPLbysHWxAvi9RqJcFg5hbZwKUXK48Dq",
+  "solAmount": 155090.982456158,
+  "tokenAmount": 4042.044498727,
+  "usdValue": 33448472.186319593,
+  "metrics": {
+    "pricePerTokenSOL": 38.36943964991041,
+    "pricePerTokenUSD": 8275.137049296178,
+    "poolDepth": 25037.66467622488,
+    "normalizedLiquidity": 1335.9261983439455
+  }
+}
+2024-11-11T10:56:07.898Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T10:56:37.334Z [WARN] Connessione WebSocket chiusa
+2024-11-11T10:56:37.334Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-11T10:56:39.615Z [INFO] WebSocket connesso
+2024-11-11T10:57:47.332Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "8UyUo6bmz9unXgzjK95mXp7gCSCfVYLrZwAwyQfWwfCW",
+  "solAmount": 155091.382456158,
+  "tokenAmount": 4042.044806054,
+  "usdValue": 33448558.454319593,
+  "metrics": {
+    "pricePerTokenSOL": 38.36953569239728,
+    "pricePerTokenUSD": 8275.157762779321,
+    "poolDepth": 25037.697915755914,
+    "normalizedLiquidity": 1335.927870320331
+  }
+}
+2024-11-11T10:57:47.332Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T10:58:22.017Z [WARN] Connessione WebSocket chiusa
+2024-11-11T10:58:22.018Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-11T10:58:24.297Z [INFO] WebSocket connesso
+2024-11-11T10:58:37.788Z [WARN] Connessione WebSocket chiusa
+2024-11-11T10:58:37.788Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-11T10:58:40.089Z [INFO] WebSocket connesso
+2024-11-11T11:00:38.109Z [WARN] Connessione WebSocket chiusa
+2024-11-11T11:00:38.109Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-11T11:00:40.354Z [INFO] WebSocket connesso
+2024-11-11T11:01:09.173Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "DzUuB42pZws82ZyGvbKaYiGL1CRMvaguQBDEGCiNX4UQ",
+  "solAmount": 155091.782456158,
+  "tokenAmount": 321635.440721,
+  "usdValue": 33450195.64014416,
+  "metrics": {
+    "pricePerTokenSOL": 0.4821974285809227,
+    "pricePerTokenUSD": 104.00034139633341,
+    "poolDepth": 223345.05546909213,
+    "normalizedLiquidity": 149.76913444485547
+  }
+}
+2024-11-11T11:01:09.174Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T11:01:17.587Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "FzDiBSPDjsTtJao3HsPRFZiSybrBEiL5sTdXP1qjDY4B",
+  "solAmount": 155092.182456158,
+  "tokenAmount": 387834.403231834,
+  "usdValue": 33450281.91214416,
+  "metrics": {
+    "pricePerTokenSOL": 0.399892792294265,
+    "pricePerTokenUSD": 86.24887744202708,
+    "poolDepth": 245255.14067763544,
+    "normalizedLiquidity": 136.38972793688094
+  }
+}
+2024-11-11T11:01:17.587Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T11:02:18.706Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "CeX6PtMvnfNFVV1MJC6WN8LgRcKeGyuA7n7WkGfoo9nj",
+  "solAmount": 155092.582456158,
+  "tokenAmount": 4042.044495042,
+  "usdValue": 33450368.18414416,
+  "metrics": {
+    "pricePerTokenSOL": 38.36983552417487,
+    "pricePerTokenUSD": 8275.606125854036,
+    "poolDepth": 25037.79381532568,
+    "normalizedLiquidity": 1335.9950333830582
+  }
+}
+2024-11-11T11:02:18.706Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T11:02:38.114Z [WARN] Connessione WebSocket chiusa
+2024-11-11T11:02:38.115Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-11T11:02:41.376Z [INFO] WebSocket connesso
+2024-11-11T11:02:42.998Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "8J8RPHzDpk87wVtPwxoVJQRXLGDzdwsStra5H5yPfnRV",
+  "solAmount": 155092.982456158,
+  "tokenAmount": 1301920.656629,
+  "usdValue": 33450454.456144158,
+  "metrics": {
+    "pricePerTokenSOL": 0.119126293654279,
+    "pricePerTokenUSD": 25.693159015354894,
+    "poolDepth": 449353.71096483804,
+    "normalizedLiquidity": 74.44125560757115
+  }
+}
+2024-11-11T11:02:42.998Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T11:04:06.186Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "8TVUfsW1eGQKTADGY1mGWEsErHCEH9wWkZyQeyPC9KKV",
+  "solAmount": 155093.382456158,
+  "tokenAmount": 56567.542494923,
+  "usdValue": 33450540.728144158,
+  "metrics": {
+    "pricePerTokenSOL": 2.7417380288365507,
+    "pricePerTokenUSD": 591.3380580594672,
+    "poolDepth": 93665.63672324052,
+    "normalizedLiquidity": 357.1271375326522
+  }
+}
+2024-11-11T11:04:06.186Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T11:06:42.497Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "Cd8zaq85j1vporwXNswM3JWufSpJkbgSuW76iyLxN8Ld",
+  "solAmount": 155093.782456158,
+  "tokenAmount": 4042.044517073,
+  "usdValue": 33452177.937968716,
+  "metrics": {
+    "pricePerTokenSOL": 38.370132194503235,
+    "pricePerTokenUSD": 8276.053813032402,
+    "poolDepth": 25037.89074600786,
+    "normalizedLiquidity": 1336.0621418680191
+  }
+}
+2024-11-11T11:06:42.497Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T11:06:42.562Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "2wNN4qQDhL5DS6WFBXvkhFAyGAfgA3A7C3yw58sb8S8c",
+  "solAmount": 155094.182456158,
+  "tokenAmount": 4042906.369703,
+  "usdValue": 33452264.21396872,
+  "metrics": {
+    "pricePerTokenSOL": 0.03836205152273946,
+    "pricePerTokenUSD": 8.274310892939672,
+    "poolDepth": 791853.0533854627,
+    "normalizedLiquidity": 42.24554552255371
+  }
+}
+2024-11-11T11:06:42.562Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T11:07:37.520Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "3vBbDBYLN2gvWmJnW2pBm9zsdeJr9xKjqmVxyU4Y9qT2",
+  "solAmount": 155094.582456158,
+  "tokenAmount": 4042.044501336,
+  "usdValue": 33452350.48996872,
+  "metrics": {
+    "pricePerTokenSOL": 38.37033026353254,
+    "pricePerTokenUSD": 8276.096534541333,
+    "poolDepth": 25037.955272024836,
+    "normalizedLiquidity": 1336.0655902818621
+  }
+}
+2024-11-11T11:07:37.520Z [INFO] Emitting new pool data to 1 clients
+2024-11-11T11:07:38.241Z [WARN] Connessione WebSocket chiusa
+2024-11-11T11:07:38.242Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-11T11:07:40.388Z [INFO] WebSocket connesso
+2024-11-11T11:08:08.698Z [WARN] Connessione WebSocket chiusa
+2024-11-11T11:08:08.699Z [ERROR] Numero massimo di tentativi di riconnessione raggiunto
+2024-11-12T08:33:39.127Z [INFO] WebSocket connesso
+2024-11-12T08:35:22.943Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "7YdRY88BbB42i3X2tjvvBZ4Kc4U1s7EqbaGCMueTJLvW",
+  "solAmount": 155464.582456158,
+  "tokenAmount": 4042906.369703,
+  "usdValue": 34688812.283442535,
+  "metrics": {
+    "pricePerTokenSOL": 0.03845366878174296,
+    "pricePerTokenUSD": 8.580167115270307,
+    "poolDepth": 792798.0516343481,
+    "normalizedLiquidity": 43.754916162989765
+  }
+}
+2024-11-12T08:35:22.943Z [INFO] Emitting new pool data to 1 clients
+2024-11-12T08:36:26.893Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "HZ2sY2c3mPR9KmP8ivecbJxZpcJHNCGZmoVqXW9RDE8s",
+  "solAmount": 155464.982456158,
+  "tokenAmount": 4338189.86717,
+  "usdValue": 34688901.53544253,
+  "metrics": {
+    "pricePerTokenSOL": 0.035836371209260816,
+    "pricePerTokenUSD": 7.996169507922365,
+    "poolDepth": 821240.8974174792,
+    "normalizedLiquidity": 42.23961768651223
+  }
+}
+2024-11-12T08:36:26.894Z [INFO] Emitting new pool data to 1 clients
+2024-11-12T08:39:01.862Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "CLo9gQXu8Xk9jiQcKoc2Df4tnSUEmjwnR4u4yZ74cxYz",
+  "solAmount": 155465.382456158,
+  "tokenAmount": 4042.044505379,
+  "usdValue": 34709201.287161835,
+  "metrics": {
+    "pricePerTokenSOL": 38.462065979053556,
+    "pricePerTokenUSD": 8587.040850483498,
+    "poolDepth": 25067.867777965446,
+    "normalizedLiquidity": 1384.6092373947768
+  }
+}
+2024-11-12T08:39:01.862Z [INFO] Emitting new pool data to 1 clients
+2024-11-12T08:39:07.331Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "FL1TkzYbA37jLpXqxM6BLFC8EgrV5M2AAccPD7ipsuQ7",
+  "solAmount": 155465.782456158,
+  "tokenAmount": 5386092.195718,
+  "usdValue": 34709290.59116183,
+  "metrics": {
+    "pricePerTokenSOL": 0.028864300276878835,
+    "pricePerTokenUSD": 6.444243679815968,
+    "poolDepth": 915069.9632204659,
+    "normalizedLiquidity": 37.93075063791532
+  }
+}
+2024-11-12T08:39:07.331Z [INFO] Emitting new pool data to 1 clients
+2024-11-12T08:42:00.146Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "6JrGLA5fCzjUQr8dsDu3isj3kxhaJveNyPxBdq8RoSzk",
+  "solAmount": 155466.182456158,
+  "tokenAmount": 4042.04450323,
+  "usdValue": 34709379.89516184,
+  "metrics": {
+    "pricePerTokenSOL": 38.462263919144114,
+    "pricePerTokenUSD": 8587.085042588114,
+    "poolDepth": 25067.93226883832,
+    "normalizedLiquidity": 1384.6128002471387
+  }
+}
+2024-11-12T08:42:00.150Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T08:44:48.593Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "Xozgyc48cxbTvHKWNV49sQpZG1ZnucXXpqCiG6SjhWE",
+  "solAmount": 155466.582456158,
+  "tokenAmount": 352334.067797686,
+  "usdValue": 34720351.85993377,
+  "metrics": {
+    "pricePerTokenSOL": 0.44124765858698795,
+    "pricePerTokenUSD": 98.54383959223203,
+    "poolDepth": 234043.10159323754,
+    "normalizedLiquidity": 148.3502467006145
+  }
+}
+2024-11-12T08:44:48.593Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T08:52:46.752Z [INFO] WebSocket connesso
+2024-11-12T08:54:14.041Z [WARN] Connessione WebSocket chiusa
+2024-11-12T08:54:14.042Z [ERROR] Numero massimo di tentativi di riconnessione raggiunto
+2024-11-12T08:54:35.861Z [INFO] WebSocket connesso
+2024-11-12T08:56:56.351Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "4Db9thKqmoZzxHETyYJtpRrrCRGFnMAZD9kQZwiq34GV",
+  "solAmount": 155468.582456158,
+  "tokenAmount": 4042906.369703,
+  "usdValue": 34753446.92224956,
+  "metrics": {
+    "pricePerTokenSOL": 0.038454658168989214,
+    "pricePerTokenUSD": 8.59615428709585,
+    "poolDepth": 792808.2506512513,
+    "normalizedLiquidity": 43.835879474893694
+  }
+}
+2024-11-12T08:56:56.352Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:14:41.731Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "4VD6L9STL6c9QANv3Hkjeid4dicNgAoWz1tNRaZMX9Df",
+  "solAmount": 155470.982456158,
+  "tokenAmount": 4042.044503742,
+  "usdValue": 34758647.54772324,
+  "metrics": {
+    "pricePerTokenSOL": 38.463451432122476,
+    "pricePerTokenUSD": 8599.27383667962,
+    "poolDepth": 25068.319252161327,
+    "normalizedLiquidity": 1386.5567610691107
+  }
+}
+2024-11-12T09:14:41.732Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:15:08.889Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "5LF3aXE4nCUzaPjv4HESguS9kyfk1zqoyiDDSZecTc1T",
+  "solAmount": 155471.382456158,
+  "tokenAmount": 312168.66540649,
+  "usdValue": 34758736.975723244,
+  "metrics": {
+    "pricePerTokenSOL": 0.498036477343782,
+    "pricePerTokenUSD": 111.34601523974933,
+    "poolDepth": 220302.73255282338,
+    "normalizedLiquidity": 157.77714862156293
+  }
+}
+2024-11-12T09:15:08.889Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:18:08.979Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "8KFoDMW6dGsgK4qaF6ph3GnUwacHiHWg5EUmS2fV6YNa",
+  "solAmount": 155472.182456158,
+  "tokenAmount": 380564.368892126,
+  "usdValue": 34404439.25572321,
+  "metrics": {
+    "pricePerTokenSOL": 0.40853058027675687,
+    "pricePerTokenUSD": 90.40373210944354,
+    "poolDepth": 243243.0327814329,
+    "normalizedLiquidity": 141.44059487466376
+  }
+}
+2024-11-12T09:18:08.979Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:23:49.392Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "6rZnuqKYo4TuuEBQmfUZZKFUrvevfHAbqS3Cg94FC4Zc",
+  "solAmount": 155472.982456158,
+  "tokenAmount": 312863.811060624,
+  "usdValue": 34297339.92982846,
+  "metrics": {
+    "pricePerTokenSOL": 0.49693501440481974,
+    "pricePerTokenUSD": 109.62386417770324,
+    "poolDepth": 220549.0190596982,
+    "normalizedLiquidity": 155.50892076534174
+  }
+}
+2024-11-12T09:23:49.393Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:26:49.053Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "EDSy9pWVhrJuh85y4XeRrvA8eVoRfsXmnxC5ppGVNXSJ",
+  "solAmount": 155473.782456158,
+  "tokenAmount": 4042.044570166,
+  "usdValue": 34294406.93417933,
+  "metrics": {
+    "pricePerTokenSOL": 38.46414351877692,
+    "pricePerTokenUSD": 8484.420777371812,
+    "poolDepth": 25068.545194727263,
+    "normalizedLiquidity": 1368.0254146296677
+  }
+}
+2024-11-12T09:26:49.053Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:28:29.341Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "E8U9kowfmm4F3xxdAtW4HhAHJMMnP9ekfMFt6mi5ZaGR",
+  "solAmount": 155474.582456158,
+  "tokenAmount": 4042.044500722,
+  "usdValue": 34294583.39817934,
+  "metrics": {
+    "pricePerTokenSOL": 38.464342099248725,
+    "pricePerTokenUSD": 8484.464580252285,
+    "poolDepth": 25068.60947517757,
+    "normalizedLiquidity": 1368.0289460066438
+  }
+}
+2024-11-12T09:28:29.341Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:28:44.848Z [WARN] Connessione WebSocket chiusa
+2024-11-12T09:28:44.848Z [ERROR] Numero massimo di tentativi di riconnessione raggiunto
+2024-11-12T09:30:33.774Z [INFO] WebSocket connesso
+2024-11-12T09:34:58.055Z [WARN] Connessione WebSocket chiusa
+2024-11-12T09:34:58.056Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-12T09:35:00.216Z [INFO] WebSocket connesso
+2024-11-12T09:35:42.776Z [WARN] Connessione WebSocket chiusa
+2024-11-12T09:35:42.776Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-12T09:35:44.950Z [INFO] WebSocket connesso
+2024-11-12T09:36:09.089Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "HuMk8Eq6Yjtws5rnQ2CbE9LhkhyJbKT8jzaZTSUoxHvQ",
+  "solAmount": 155475.782456158,
+  "tokenAmount": 4042906.369703,
+  "usdValue": 34206226.898179315,
+  "metrics": {
+    "pricePerTokenSOL": 0.03845643906603248,
+    "pricePerTokenUSD": 8.460801158917805,
+    "poolDepth": 792826.6085510495,
+    "normalizedLiquidity": 43.14465045603575
+  }
+}
+2024-11-12T09:36:09.090Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:36:10.063Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "1xwN7xrA7f2i8x2HtnvdGUSr3EAWLExMDWNX4yfH5g6",
+  "solAmount": 155476.182456158,
+  "tokenAmount": 214316.054850984,
+  "usdValue": 34206314.90217932,
+  "metrics": {
+    "pricePerTokenSOL": 0.7254528017710203,
+    "pricePerTokenUSD": 159.6068709176422,
+    "poolDepth": 182540.52165833086,
+    "normalizedLiquidity": 187.390255004337
+  }
+}
+2024-11-12T09:36:10.063Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:36:37.716Z [WARN] Connessione WebSocket chiusa
+2024-11-12T09:36:37.717Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-12T09:36:39.874Z [INFO] WebSocket connesso
+2024-11-12T09:37:14.293Z [WARN] Connessione WebSocket chiusa
+2024-11-12T09:37:14.293Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-12T09:37:16.630Z [INFO] WebSocket connesso
+2024-11-12T09:37:44.903Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "7aQ9WRFUETmB4ra7xuvSjs5nkNZj9FymXWKeVuDKan4B",
+  "solAmount": 155476.982456158,
+  "tokenAmount": 4042.044506505,
+  "usdValue": 34206490.910179324,
+  "metrics": {
+    "pricePerTokenSOL": 38.4649358031421,
+    "pricePerTokenUSD": 8462.670526049294,
+    "poolDepth": 25068.802979497996,
+    "normalizedLiquidity": 1364.5043577930066
+  }
+}
+2024-11-12T09:37:44.904Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:38:14.494Z [WARN] Connessione WebSocket chiusa
+2024-11-12T09:38:14.495Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-12T09:38:16.909Z [INFO] WebSocket connesso
+2024-11-12T09:39:07.014Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "FgPjq18fK1JFKaWXC7ubj2jf2VoBUtyksagYVyLLPd2y",
+  "solAmount": 155477.382456158,
+  "tokenAmount": 4042.044499724,
+  "usdValue": 34222126.65242494,
+  "metrics": {
+    "pricePerTokenSOL": 38.46503482749246,
+    "pricePerTokenUSD": 8466.538815879365,
+    "poolDepth": 25068.83520605611,
+    "normalizedLiquidity": 1365.12631604669
+  }
+}
+2024-11-12T09:39:07.014Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:40:14.714Z [WARN] Connessione WebSocket chiusa
+2024-11-12T09:40:14.714Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-12T09:40:17.056Z [INFO] WebSocket connesso
+2024-11-12T09:40:43.361Z [ERROR] Errore nella gestione della notifica: 502 Bad Gateway: {"jsonrpc":"2.0","error":{"code":502,"message":"Bad gateway"}, "id": null}
+
+Metadata: {
+  "stack": "Error: 502 Bad Gateway: {\"jsonrpc\":\"2.0\",\"error\":{\"code\":502,\"message\":\"Bad gateway\"}, \"id\": null}\n\n    at ClientBrowser.callServer (/Users/manuelmartorana/Projects/Apps/crypto/solana_tracker/backend/node_modules/@solana/web3.js/lib/index.cjs.js:5091:18)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+}
+2024-11-12T09:40:43.548Z [WARN] Connessione WebSocket chiusa
+2024-11-12T09:40:43.549Z [INFO] Tentativo di riconnessione 1 in 2000ms
+2024-11-12T09:40:45.702Z [INFO] WebSocket connesso
+2024-11-12T09:41:18.182Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "6GTwmyJZ8g1HBa5LFxDg1cwYkRfrorGgSuAfQNy8nYM2",
+  "solAmount": 155478.582456158,
+  "tokenAmount": 4042.044562055,
+  "usdValue": 34222390.78442494,
+  "metrics": {
+    "pricePerTokenSOL": 38.46533111379449,
+    "pricePerTokenUSD": 8466.604031457306,
+    "poolDepth": 25068.932141855053,
+    "normalizedLiquidity": 1365.1315736455836
+  }
+}
+2024-11-12T09:41:18.183Z [INFO] Emitting new pool data to 2 clients
+2024-11-12T09:43:22.061Z [INFO] Nuova Pool Rilevata
+Metadata: {
+  "tokenAddress": "Ft8u5V3eC7RvtCRyxz99X1h7btTfb5tRPb6WCfCe5kiz",
+  "solAmount": 155478.982456158,
+  "tokenAmount": 4042.044495758,
+  "usdValue": 34143184.5473723,
+  "metrics": {
+    "pricePerTokenSOL": 38.46543070451806,
+    "pricePerTokenUSD": 8447.008582712167,
+    "poolDepth": 25068.96418368673,
+    "normalizedLiquidity": 1361.970295110577
+  }
+}
+2024-11-12T09:43:22.061Z [INFO] Emitting new pool data to 2 clients

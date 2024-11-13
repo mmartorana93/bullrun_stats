@@ -1,12 +1,19 @@
-export interface Transaction {
-  // Aggiungi qui i campi della tua interfaccia Transaction
+declare module '*.png' {
+    const value: string;
+    export default value;
 }
 
-declare global {
-  interface Window {
-    setInterval(handler: TimerHandler, timeout?: number, ...arguments: any[]): number;
-    clearInterval(handle: number): void;
-  }
+declare module '*.jpg' {
+    const value: string;
+    export default value;
 }
 
-export {};
+declare module '*.svg' {
+    const value: string;
+    export default value;
+}
+
+declare module '*.webp' {
+    const value: string;
+    export default value;
+}
