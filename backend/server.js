@@ -9,7 +9,14 @@ const http = require('http');
 const socketIo = require('socket.io');
 const LPTracker = require('./lpTracker');
 const { spawn } = require('child_process');
+const axios = require('axios');
 require('dotenv').config();
+
+// Cache per la dominanza Bitcoin
+let btcDominanceCache = {
+    data: null,
+    lastUpdate: 0
+};
 
 // Configurazione logger
 const logger = winston.createLogger({
@@ -84,6 +91,58 @@ app.get('/health', (req, res) => {
         memoryUsage: process.memoryUsage()
     };
     res.json(health);
+});
+
+// Funzione per recuperare la dominanza Bitcoin con cache
+async function getBitcoinDominance() {
+    const now = Date.now();
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 minuti
+
+    try {
+        // Se abbiamo dati in cache validi, li restituiamo
+        if (btcDominanceCache.data && (now - btcDominanceCache.lastUpdate) < CACHE_DURATION) {
+            logger.info('Returning cached BTC dominance data:', btcDominanceCache.data);
+            return btcDominanceCache.data;
+        }
+
+        // Altrimenti facciamo una nuova richiesta
+        logger.info('Fetching new BTC dominance data from CoinGecko');
+        const response = await axios.get('https://api.coingecko.com/api/v3/global');
+        logger.info('CoinGecko response:', response.data);
+
+        const btcDominance = response.data.data.market_cap_percentage.btc;
+        
+        btcDominanceCache = {
+            data: {
+                btcDominance: btcDominance,
+                lastUpdate: new Date().toISOString()
+            },
+            lastUpdate: now
+        };
+
+        logger.info('New BTC dominance data cached:', btcDominanceCache.data);
+        return btcDominanceCache.data;
+    } catch (error) {
+        logger.error('Error in getBitcoinDominance:', error);
+        throw error;
+    }
+}
+
+// Endpoint per la dominanza Bitcoin con gestione cache
+app.get('/api/bitcoin-dominance', async (req, res) => {
+    try {
+        const data = await getBitcoinDominance();
+        logger.info('Sending BTC dominance data:', data);
+        res.json(data);
+    } catch (error) {
+        logger.error('Error fetching Bitcoin dominance:', error);
+        // Se abbiamo dati in cache, li restituiamo anche se sono scaduti
+        if (btcDominanceCache.data) {
+            logger.info('Returning expired cache data:', btcDominanceCache.data);
+            return res.json(btcDominanceCache.data);
+        }
+        res.status(500).json({ error: 'Failed to fetch Bitcoin dominance' });
+    }
 });
 
 // Routes
