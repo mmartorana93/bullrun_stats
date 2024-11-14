@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Paper,
   Table,
@@ -20,6 +20,7 @@ import {
   Grid,
 } from '@mui/material';
 import { Transaction } from '../types';
+import LoggingService from '../services/loggingService';
 
 interface TransactionLogProps {
   transactions: Transaction[];
@@ -31,6 +32,24 @@ const TransactionLog: React.FC<TransactionLogProps> = ({ transactions }) => {
   const [searchWallet, setSearchWallet] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
+
+  useEffect(() => {
+    // Log new transactions when they arrive
+    const logNewTransactions = async () => {
+      for (const transaction of transactions) {
+        await LoggingService.logTransaction({
+          timestamp: transaction.timestamp,
+          wallet: transaction.wallet,
+          type: transaction.type,
+          amount_sol: transaction.amount_sol,
+          success: transaction.success,
+          signature: transaction.signature
+        });
+      }
+    };
+
+    logNewTransactions();
+  }, [transactions]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);

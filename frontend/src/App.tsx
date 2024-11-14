@@ -12,6 +12,7 @@ import { Transaction } from './types';
 import api from './api/config';
 import Header from './components/Header';
 import { WebSocketProvider } from './contexts/WebSocketContext';
+import { useRealTimeStore } from './store/realTimeStore';
 import Queries from './components/Queries';
 
 const darkTheme = createTheme({
@@ -51,10 +52,10 @@ function TabPanel(props: TabPanelProps) {
 
 function App() {
   const [wallets, setWallets] = useState<string[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [myWallet, setMyWallet] = useState({ address: '', balance: 0 });
   const [solanaPrice, setSolanaPrice] = useState<number | null>(null);
   const [tabValue, setTabValue] = useState(1);
+  const { transactions } = useRealTimeStore();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -66,21 +67,6 @@ function App() {
       setWallets(response.data);
     } catch (error) {
       console.error('Error fetching wallets:', error);
-    }
-  };
-
-  const fetchTransactions = async () => {
-    try {
-      const walletsResponse = await api.get('/api/wallets');
-      if (!walletsResponse.data.length) {
-        setTransactions([]);
-        return;
-      }
-      
-      const response = await api.get('/api/logs');
-      setTransactions(response.data);
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
     }
   };
 
@@ -108,7 +94,6 @@ function App() {
     const fetchInitialData = async () => {
       await fetchSolanaPrice();
       await fetchWallets();
-      await fetchTransactions();
       await fetchMyWalletInfo();
     };
 
@@ -117,7 +102,6 @@ function App() {
     const priceInterval = setInterval(fetchSolanaPrice, 30000);
     const dataInterval = setInterval(() => {
       fetchWallets();
-      fetchTransactions();
       fetchMyWalletInfo();
     }, 30000);
     

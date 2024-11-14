@@ -3,7 +3,7 @@ const cors = require('cors');
 const winston = require('winston');
 const fs = require('fs').promises;
 const path = require('path');
-const { Keypair } = require('@solana/web3.js');
+const { Keypair, Connection, PublicKey } = require('@solana/web3.js');
 const base58 = require('bs58');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -12,10 +12,16 @@ const { spawn } = require('child_process');
 const axios = require('axios');
 require('dotenv').config();
 
-// Cache per la dominanza Bitcoin
+// Cache per la dominanza Bitcoin e dati crypto
 let btcDominanceCache = {
     data: null,
     lastUpdate: 0
+};
+
+let cache = {
+    data: null,
+    timestamp: 0,
+    updating: false
 };
 
 // Configurazione logger
@@ -73,6 +79,20 @@ app.use(cors({
 app.use(express.json());
 app.use(requestLogger);
 
+// Gestione connessioni Socket.IO
+io.on('connection', (socket) => {
+    logger.info('Nuovo client connesso');
+
+    socket.on('getTransactions', () => {
+        logger.info('Richiesta transazioni esistenti');
+        socket.emit('existingTransactions', transactionLogs);
+    });
+
+    socket.on('disconnect', () => {
+        logger.info('Client disconnesso');
+    });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     logger.error('Errore non gestito:', err);
@@ -81,6 +101,43 @@ app.use((err, req, res, next) => {
         message: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
 });
+
+// Funzione per emettere una nuova transazione
+async function emitTransaction(signature, wallet, amount, type) {
+    try {
+        const connection = new Connection(process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com");
+        const tx = await connection.getTransaction(signature, {
+            commitment: 'confirmed',
+            maxSupportedTransactionVersion: 0
+        });
+
+        if (!tx) {
+            logger.error(`Transazione non trovata: ${signature}`);
+            return;
+        }
+
+        const transaction = {
+            wallet,
+            timestamp: new Date().toISOString(),
+            amount_sol: amount,
+            success: tx.meta?.err === null,
+            type,
+            signature
+        };
+
+        logger.info('Emissione nuova transazione:', transaction);
+        transactionLogs.push(transaction);
+        
+        // Mantieni solo le ultime 1000 transazioni
+        if (transactionLogs.length > 1000) {
+            transactionLogs.shift();
+        }
+        
+        io.emit('newTransaction', transaction);
+    } catch (error) {
+        logger.error('Errore nell\'emissione della transazione:', error);
+    }
+}
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -171,7 +228,6 @@ app.get('/api/wallets', async (req, res) => {
 app.get('/api/logs', (req, res) => {
     try {
         const logs = [...transactionLogs];
-        transactionLogs.length = 0;
         res.json(logs);
     } catch (error) {
         logger.error('Error getting logs:', error);
@@ -187,6 +243,9 @@ app.get('/api/my-wallet', async (req, res) => {
 
         const wallet = new SolanaWallet(process.env.SOLANA_PRIVATE_KEY);
         const balance = await wallet.getBalance();
+        
+        // Sottoscrivi il wallet personale alle transazioni
+        await wallet.subscribeToTransactions();
         
         res.json({
             address: wallet.getWalletAddress(),
@@ -274,6 +333,7 @@ class SolanaWallet {
     constructor(privateKey) {
         this.wallet = Keypair.fromSecretKey(base58.decode(privateKey));
         this.endpoint = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
+        this.connection = new Connection(this.endpoint);
     }
 
     async makeRpcCall(method, params) {
@@ -315,6 +375,45 @@ class SolanaWallet {
     getWalletAddress() {
         return this.wallet.publicKey.toBase58();
     }
+
+    async subscribeToTransactions() {
+        try {
+            const address = this.getWalletAddress();
+            await this.connection.onAccountChange(
+                new PublicKey(address),
+                async (accountInfo, context) => {
+                    logger.info(`Cambiamento rilevato per il wallet ${address}`);
+                    
+                    // Ottieni le ultime transazioni
+                    const signatures = await this.connection.getSignaturesForAddress(
+                        new PublicKey(address),
+                        { limit: 1 }
+                    );
+
+                    if (signatures.length > 0) {
+                        const tx = await this.connection.getTransaction(signatures[0].signature);
+                        if (tx) {
+                            const preBalance = tx.meta.preBalances[0] / 10**9;
+                            const postBalance = tx.meta.postBalances[0] / 10**9;
+                            const amount = Math.abs(postBalance - preBalance);
+                            const type = postBalance > preBalance ? 'receive' : 'send';
+
+                            await emitTransaction(
+                                signatures[0].signature,
+                                address,
+                                amount,
+                                type
+                            );
+                        }
+                    }
+                },
+                'confirmed'
+            );
+            logger.info(`Sottoscrizione alle transazioni attivata per ${address}`);
+        } catch (error) {
+            logger.error('Errore nella sottoscrizione alle transazioni:', error);
+        }
+    }
 }
 
 const transactionLogs = [];
@@ -341,22 +440,70 @@ async function saveWallets() {
     );
 }
 
-async function startMonitoring(wallet) {
-    if (!monitorThreads.has(wallet)) {
-        monitorThreads.set(wallet, true);
-        monitoredWallets.add(wallet);
-        await saveWallets();
-        return true;
+async function startMonitoring(walletAddress) {
+    if (!monitorThreads.has(walletAddress)) {
+        try {
+            const connection = new Connection(process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com");
+            const publicKey = new PublicKey(walletAddress);
+
+            // Sottoscrizione ai cambiamenti del wallet
+            const subscriptionId = connection.onAccountChange(
+                publicKey,
+                async (accountInfo, context) => {
+                    logger.info(`Cambiamento rilevato per il wallet ${walletAddress}`);
+                    
+                    // Ottieni le ultime transazioni
+                    const signatures = await connection.getSignaturesForAddress(
+                        publicKey,
+                        { limit: 1 }
+                    );
+
+                    if (signatures.length > 0) {
+                        const tx = await connection.getTransaction(signatures[0].signature);
+                        if (tx) {
+                            const preBalance = tx.meta.preBalances[0] / 10**9;
+                            const postBalance = tx.meta.postBalances[0] / 10**9;
+                            const amount = Math.abs(postBalance - preBalance);
+                            const type = postBalance > preBalance ? 'receive' : 'send';
+
+                            await emitTransaction(
+                                signatures[0].signature,
+                                walletAddress,
+                                amount,
+                                type
+                            );
+                        }
+                    }
+                },
+                'confirmed'
+            );
+
+            monitorThreads.set(walletAddress, subscriptionId);
+            monitoredWallets.add(walletAddress);
+            await saveWallets();
+            return true;
+        } catch (error) {
+            logger.error(`Errore nell'avvio del monitoraggio per ${walletAddress}:`, error);
+            return false;
+        }
     }
     return false;
 }
 
-async function stopMonitoring(wallet) {
-    if (monitorThreads.has(wallet)) {
-        monitorThreads.delete(wallet);
-        monitoredWallets.delete(wallet);
-        await saveWallets();
-        return true;
+async function stopMonitoring(walletAddress) {
+    if (monitorThreads.has(walletAddress)) {
+        try {
+            const connection = new Connection(process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com");
+            const subscriptionId = monitorThreads.get(walletAddress);
+            connection.removeAccountChangeListener(subscriptionId);
+            monitorThreads.delete(walletAddress);
+            monitoredWallets.delete(walletAddress);
+            await saveWallets();
+            return true;
+        } catch (error) {
+            logger.error(`Errore nell'arresto del monitoraggio per ${walletAddress}:`, error);
+            return false;
+        }
     }
     return false;
 }
@@ -402,6 +549,12 @@ async function startServer() {
             throw new Error('SOLANA_PRIVATE_KEY non trovata nel file .env');
         }
         await loadWallets();
+        
+        // Riavvia il monitoraggio per tutti i wallet salvati
+        const savedWallets = await loadWallets();
+        for (const wallet of savedWallets) {
+            await startMonitoring(wallet);
+        }
         
         server.listen(PORT, () => {
             logger.info(`Server in esecuzione sulla porta ${PORT}`);
@@ -538,6 +691,67 @@ app.get('/api/crypto/all', async (req, res) => {
 
 // Aggiorna i dati ogni 30 secondi
 setInterval(updateAllData, CACHE_DURATION);
+
+// Nuovi endpoint per il logging
+app.post('/api/logs/transaction', async (req, res) => {
+    try {
+        const {
+            timestamp,
+            wallet,
+            type,
+            amount_sol,
+            success,
+            signature
+        } = req.body;
+
+        const logMessage = `TRANSACTION - Wallet: ${wallet} - Type: ${type} - Amount: ${amount_sol} SOL - Status: ${success ? 'SUCCESS' : 'FAILED'} - Signature: ${signature}`;
+        
+        // Usa il logger Winston esistente
+        logger.info(logMessage);
+
+        // Scrivi anche nel file specifico per le transazioni
+        await fs.appendFile(
+            path.join(__dirname, '..', 'logs', 'transaction-logs.log'),
+            `[${new Date(timestamp).toISOString()}] ${logMessage}\n`
+        );
+
+        res.status(200).json({ message: 'Log saved successfully' });
+    } catch (error) {
+        logger.error('Error saving transaction log:', error);
+        res.status(500).json({ error: 'Failed to save log' });
+    }
+});
+
+app.post('/api/logs/lptracking', async (req, res) => {
+    try {
+        const {
+            timestamp,
+            tokenAccount,
+            tokenAmount,
+            solanaAmount,
+            usdValue,
+            txId,
+            riskAnalysis
+        } = req.body;
+
+        const riskStatus = riskAnalysis?.isSafeToBuy ? 'SAFE' : 'RISKY';
+        const logMessage = `LP_POOL - Token: ${tokenAccount} - Amount: ${tokenAmount} tokens / ${solanaAmount} SOL - Value: $${usdValue} - Risk: ${riskStatus} - TxID: ${txId}`;
+        
+        // Usa il logger Winston esistente
+        logger.info(logMessage);
+
+        // Scrivi anche nel file specifico per LP tracking
+        await fs.appendFile(
+            path.join(__dirname, '..', 'logs', 'lp-tracking-logs.log'),
+            `[${new Date(timestamp).toISOString()}] ${logMessage}\n`
+        );
+
+        res.status(200).json({ message: 'Log saved successfully' });
+    } catch (error) {
+        logger.error('Error saving LP tracking log:', error);
+        res.status(500).json({ error: 'Failed to save log' });
+    }
+});
 
 // Test endpoint
 app.get('/test', (req, res) => {

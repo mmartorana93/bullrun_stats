@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { useRealTimeStore } from '../store/realTimeStore';
 
 interface WebSocketContextType {
   socket: Socket | null;
@@ -18,6 +19,7 @@ let globalSocket: Socket | null = null;
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isConnected, setIsConnected] = React.useState(false);
   const socketRef = useRef<Socket | null>(null);
+  const { setSocket, subscribeToUpdates, unsubscribeFromUpdates } = useRealTimeStore();
 
   useEffect(() => {
     if (!globalSocket) {
@@ -30,15 +32,18 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
 
     socketRef.current = globalSocket;
+    setSocket(globalSocket);
 
     const handleConnect = () => {
       console.log('WebSocket connesso');
       setIsConnected(true);
+      subscribeToUpdates();
     };
 
     const handleDisconnect = () => {
       console.log('WebSocket disconnesso');
       setIsConnected(false);
+      unsubscribeFromUpdates();
     };
 
     const handleError = (error: Error) => {
@@ -58,8 +63,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       globalSocket?.off('connect', handleConnect);
       globalSocket?.off('disconnect', handleDisconnect);
       globalSocket?.off('error', handleError);
+      unsubscribeFromUpdates();
     };
-  }, []);
+  }, [setSocket, subscribeToUpdates, unsubscribeFromUpdates]);
 
   return (
     <WebSocketContext.Provider value={{ socket: socketRef.current, isConnected }}>
@@ -76,5 +82,4 @@ export const useWebSocket = () => {
   return context;
 };
 
-// Aggiunto export vuoto per risolvere l'errore di TypeScript
 export {};

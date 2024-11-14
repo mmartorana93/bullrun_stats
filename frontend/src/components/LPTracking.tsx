@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     Box, 
     Paper, 
@@ -25,32 +25,13 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import WarningIcon from '@mui/icons-material/Warning';
-import EditIcon from '@mui/icons-material/Edit';
-import LockIcon from '@mui/icons-material/Lock';
-import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useWebSocket } from '../contexts/WebSocketContext';
-import { rugcheckService } from '../services/rugcheckService';
-import { dextoolsService } from '../services/dextoolsService';
-import { useLPHistory } from '../hooks/useLPHistory';
-
-interface Pool {
-    tokenAccount: string;
-    tokenAmount: number;
-    solanaAmount: number;
-    usdValue: number;
-    timestamp: string;
-    txId: string;
-    riskAnalysis: {
-        flags: {
-            mutable_metadata: boolean;
-            freeze_authority_enabled: boolean;
-            mint_authority_enabled: boolean;
-        };
-        isSafeToBuy: boolean;
-    };
-}
+import { useRealTimeStore } from '../store/realTimeStore';
+import LoggingService from '../services/loggingService';
 
 interface FilterSettings {
     minUsd: number;
@@ -59,17 +40,89 @@ interface FilterSettings {
 }
 
 interface ExpandableRowProps {
-    pool: Pool;
+    pool: any;
     isInRange: boolean;
     formatTime: (timestamp: string) => string;
     formatUSD: (value: number) => string;
-    getRiskStatus: (riskAnalysis: Pool['riskAnalysis']) => React.ReactNode;
+    getRiskStatus: (riskAnalysis: any) => React.ReactNode;
 }
 
 const ExpandableRow: React.FC<ExpandableRowProps> = ({ pool, isInRange, formatTime, formatUSD, getRiskStatus }) => {
     const [open, setOpen] = useState(false);
 
-    const getRiskDetails = (riskAnalysis: Pool['riskAnalysis']) => {
+    const getMetricsDetails = (metrics: any, changes: any) => {
+        if (!metrics) return null;
+
+        return (
+            <Box sx={{ p: 2, bgcolor: 'background.paper' }}>
+                <Typography variant="subtitle2" gutterBottom>
+                    Metriche Pool:
+                </Typography>
+                <Stack spacing={2}>
+                    <Box>
+                        <Typography variant="body2" color="textSecondary" gutterBottom>
+                            Prezzo Token:
+                        </Typography>
+                        <Stack direction="row" spacing={2}>
+                            <Chip
+                                icon={<span>₳</span>}
+                                label={`${metrics.pricePerTokenSOL.toFixed(8)} SOL`}
+                                size="small"
+                            />
+                            <Chip
+                                icon={<span>$</span>}
+                                label={`${metrics.pricePerTokenUSD.toFixed(4)} USD`}
+                                size="small"
+                            />
+                            {changes && (
+                                <>
+                                    <Chip
+                                        icon={changes.priceChangeSOL > 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                                        label={`${changes.priceChangeSOL.toFixed(2)}%`}
+                                        color={changes.priceChangeSOL > 0 ? "success" : "error"}
+                                        size="small"
+                                    />
+                                    <Chip
+                                        icon={changes.priceChangeUSD > 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                                        label={`${changes.priceChangeUSD.toFixed(2)}%`}
+                                        color={changes.priceChangeUSD > 0 ? "success" : "error"}
+                                        size="small"
+                                    />
+                                </>
+                            )}
+                        </Stack>
+                    </Box>
+                    <Box>
+                        <Typography variant="body2" color="textSecondary" gutterBottom>
+                            Liquidità:
+                        </Typography>
+                        <Stack direction="row" spacing={2}>
+                            <Chip
+                                label={`Profondità: ${metrics.poolDepth.toFixed(2)}`}
+                                size="small"
+                            />
+                            <Chip
+                                label={`Normalizzata: ${metrics.normalizedLiquidity.toFixed(2)}`}
+                                size="small"
+                            />
+                            {changes && (
+                                <Chip
+                                    icon={changes.liquidityChange > 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
+                                    label={`${changes.liquidityChange.toFixed(2)}%`}
+                                    color={changes.liquidityChange > 0 ? "success" : "error"}
+                                    size="small"
+                                />
+                            )}
+                        </Stack>
+                    </Box>
+                </Stack>
+            </Box>
+        );
+    };
+
+    const getRiskDetails = (riskAnalysis: any) => {
+        if (!riskAnalysis) return null;
+        
         const { flags } = riskAnalysis;
         return (
             <Box sx={{ p: 2, bgcolor: 'background.paper' }}>
@@ -146,7 +199,7 @@ const ExpandableRow: React.FC<ExpandableRowProps> = ({ pool, isInRange, formatTi
                 <TableCell align="right">{pool.tokenAmount.toLocaleString()}</TableCell>
                 <TableCell align="right">{pool.solanaAmount.toFixed(2)}</TableCell>
                 <TableCell align="right">{formatUSD(pool.usdValue)}</TableCell>
-                <TableCell>{getRiskStatus(pool.riskAnalysis)}</TableCell>
+                <TableCell>{pool.riskAnalysis && getRiskStatus(pool.riskAnalysis)}</TableCell>
                 <TableCell>
                     <Link 
                         href={`https://solscan.io/tx/${pool.txId}`}
@@ -160,7 +213,10 @@ const ExpandableRow: React.FC<ExpandableRowProps> = ({ pool, isInRange, formatTi
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        {getRiskDetails(pool.riskAnalysis)}
+                        <Stack spacing={2}>
+                            {getMetricsDetails(pool.metrics, pool.changes)}
+                            {pool.riskAnalysis && getRiskDetails(pool.riskAnalysis)}
+                        </Stack>
                     </Collapse>
                 </TableCell>
             </TableRow>
@@ -177,9 +233,8 @@ const DEFAULT_FILTERS: FilterSettings = {
 const FILTER_SETTINGS_KEY = 'lptracking_filters';
 
 const LPTracking: React.FC = () => {
-    const { socket, isConnected } = useWebSocket();
-    const { addPool } = useLPHistory();
-    const [pools, setPools] = useState<Pool[]>([]);
+    const { isConnected } = useWebSocket();
+    const { pools, isLoading } = useRealTimeStore();
     const [newPoolsCount, setNewPoolsCount] = useState(0);
     const [filters, setFilters] = useState<FilterSettings>(() => {
         try {
@@ -190,7 +245,6 @@ const LPTracking: React.FC = () => {
             return DEFAULT_FILTERS;
         }
     });
-    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         try {
@@ -200,82 +254,27 @@ const LPTracking: React.FC = () => {
         }
     }, [filters]);
 
-    const analyzeToken = useCallback(async (tokenAddress: string) => {
-        try {
-            const [riskAnalysis, tokenPrice] = await Promise.all([
-                rugcheckService.analyzeToken(tokenAddress),
-                dextoolsService.getTokenPrice(tokenAddress)
-            ]);
-
-            return riskAnalysis;
-        } catch (error) {
-            console.error('Errore nell\'analisi del token:', error);
-            return {
-                flags: {
-                    mutable_metadata: false,
-                    freeze_authority_enabled: false,
-                    mint_authority_enabled: false
-                },
-                isSafeToBuy: false
-            };
-        }
-    }, []);
-
-    const handleNewPool = useCallback(async (poolData: Pool) => {
-        setIsLoading(true);
-        try {
-            const riskAnalysis = await analyzeToken(poolData.tokenAccount);
-            const enrichedPool = {
-                ...poolData,
-                riskAnalysis
-            };
-
-            setPools(prevPools => {
-                const newPools = [enrichedPool, ...prevPools].slice(0, 100);
-                return newPools;
-            });
-
-            addPool(enrichedPool);
-            setNewPoolsCount(prev => prev + 1);
-        } catch (error) {
-            console.error('Errore nella gestione del nuovo pool:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [addPool, analyzeToken]);
-
     useEffect(() => {
-        if (!socket) return;
-
-        if (isConnected) {
-            socket.emit('getPools');
-        }
-
-        const handleExistingPools = async (existingPools: Pool[]) => {
-            setIsLoading(true);
-            try {
-                const enrichedPools = await Promise.all(
-                    existingPools.map(async pool => ({
-                        ...pool,
-                        riskAnalysis: await analyzeToken(pool.tokenAccount)
-                    }))
-                );
-                setPools(enrichedPools);
-            } catch (error) {
-                console.error('Errore nel caricamento dei pool esistenti:', error);
-            } finally {
-                setIsLoading(false);
+        // Log new pools when they arrive
+        const logNewPools = async () => {
+            for (const pool of pools) {
+                await LoggingService.logLPTracking({
+                    timestamp: pool.timestamp,
+                    tokenAccount: pool.tokenAccount,
+                    tokenAmount: pool.tokenAmount,
+                    solanaAmount: pool.solanaAmount,
+                    usdValue: pool.usdValue,
+                    txId: pool.txId,
+                    riskAnalysis: pool.riskAnalysis
+                });
             }
         };
 
-        socket.on('newPool', handleNewPool);
-        socket.on('existingPools', handleExistingPools);
-
-        return () => {
-            socket.off('newPool', handleNewPool);
-            socket.off('existingPools', handleExistingPools);
-        };
-    }, [socket, isConnected, handleNewPool, analyzeToken]);
+        if (pools.length > 0) {
+            logNewPools();
+            setNewPoolsCount(prev => prev + 1);
+        }
+    }, [pools]);
 
     useEffect(() => {
         const handleVisibilityChange = () => {
@@ -298,7 +297,7 @@ const LPTracking: React.FC = () => {
         }));
     };
 
-    const isInRange = (pool: Pool) => {
+    const isInRange = (pool: any) => {
         return pool.usdValue >= filters.minUsd && pool.usdValue <= filters.maxUsd;
     };
 
@@ -317,7 +316,7 @@ const LPTracking: React.FC = () => {
         return new Date(timestamp).toLocaleTimeString('it-IT');
     };
 
-    const getRiskStatus = (riskAnalysis: Pool['riskAnalysis']) => {
+    const getRiskStatus = (riskAnalysis: any) => {
         if (!riskAnalysis) return null;
 
         const { flags, isSafeToBuy } = riskAnalysis;
@@ -416,7 +415,7 @@ const LPTracking: React.FC = () => {
                 <Table stickyHeader size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell style={{ width: 50 }} /> {/* Colonna per l'icona di espansione */}
+                            <TableCell style={{ width: 50 }} />
                             <TableCell>Orario</TableCell>
                             <TableCell>Token</TableCell>
                             <TableCell align="right">Quantità Token</TableCell>
