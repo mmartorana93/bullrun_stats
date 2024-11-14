@@ -3,6 +3,8 @@ const { Connection, PublicKey } = require('@solana/web3.js');
 const winston = require('winston');
 const axios = require('axios');
 require('dotenv').config();
+const fs = require('fs').promises;
+const path = require('path');
 
 // Configurazione del logger
 const logger = winston.createLogger({
@@ -18,13 +20,13 @@ const logger = winston.createLogger({
         })
     ),
     transports: [
+        new winston.transports.Console(),
         new winston.transports.File({ 
-            filename: 'lptracker.log',
-            level: 'info'
+            filename: path.join(__dirname, 'logs', 'lptracker-error.log'), 
+            level: 'error' 
         }),
         new winston.transports.File({ 
-            filename: 'lptracker-error.log', 
-            level: 'error' 
+            filename: path.join(__dirname, 'logs', 'lptracker.log')
         })
     ]
 });
@@ -97,14 +99,15 @@ class LPTracker {
                 this.subscribeToProgram();
             });
 
-            this.ws.on('message', (data) => {
+            this.ws.on('message', async (data) => {
                 try {
                     const message = JSON.parse(data);
                     if (message.method === 'logsNotification') {
+                        await writeLogToFile('lp-tracker.log', `Nuovo messaggio ricevuto: ${JSON.stringify(message)}`);
                         this.handleProgramNotification(message);
                     }
                 } catch (error) {
-                    logger.error('Errore nel parsing del messaggio WebSocket:', error);
+                    await writeLogToFile('error.log', `Errore nel parsing del messaggio WebSocket: ${error.message}`);
                 }
             });
 
@@ -347,6 +350,12 @@ class LPTracker {
             this.getSolanaPrice();
         }, 30000);
     }
+}
+
+// Funzione per scrivere nei file di log
+async function writeLogToFile(filename, message) {
+    const logMessage = `${new Date().toISOString()} - ${message}\n`;
+    await fs.appendFile(path.join(__dirname, 'logs', filename), logMessage);
 }
 
 module.exports = LPTracker;

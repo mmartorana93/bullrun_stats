@@ -54,3 +54,4 @@ lptracker.log
 
 # Exclude queries folder
 /queries/
+backend/cache/crypto_data.json

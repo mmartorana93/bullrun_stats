@@ -11,6 +11,7 @@ const LPTracker = require('./lpTracker');
 const { spawn } = require('child_process');
 const axios = require('axios');
 require('dotenv').config();
+const fetch = require('node-fetch');
 
 // Cache per la dominanza Bitcoin e dati crypto
 let btcDominanceCache = {
@@ -35,17 +36,42 @@ const logger = winston.createLogger({
     ),
     transports: [
         new winston.transports.Console(),
-        new winston.transports.File({ filename: 'error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'combined.log' })
+        new winston.transports.File({ 
+            filename: path.join(__dirname, 'logs', 'error.log'), 
+            level: 'error' 
+        }),
+        new winston.transports.File({ 
+            filename: path.join(__dirname, 'logs', 'combined.log')
+        })
     ]
 });
+
+// Aggiungi questo per assicurarti che la cartella logs esista
+async function ensureLogDirectory() {
+    try {
+        await fs.mkdir(path.join(__dirname, 'logs'), { recursive: true });
+        logger.info('Directory logs creata/verificata con successo');
+    } catch (error) {
+        console.error('Errore nella creazione della directory logs:', error);
+    }
+}
+
+// Chiama la funzione all'avvio
+ensureLogDirectory();
+
+// Funzione per scrivere nei file di log
+async function writeLogToFile(filename, message) {
+    const logMessage = `${new Date().toISOString()} - ${message}\n`;
+    await fs.appendFile(path.join(__dirname, 'logs', filename), logMessage);
+}
 
 // Middleware per il logging delle richieste HTTP
 const requestLogger = (req, res, next) => {
     const start = Date.now();
-    res.on('finish', () => {
+    res.on('finish', async () => {
         const duration = Date.now() - start;
-        logger.info(`${req.method} ${req.url} ${res.statusCode} - ${duration}ms`);
+        const logMessage = `${req.method} ${req.url} ${res.statusCode} - ${duration}ms`;
+        await writeLogToFile('http-requests.log', logMessage); // Scrivi nel file di log
     });
     next();
 };
@@ -94,8 +120,9 @@ io.on('connection', (socket) => {
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
-    logger.error('Errore non gestito:', err);
+app.use(async (err, req, res, next) => {
+    const logMessage = `Errore non gestito: ${err.message}`;
+    await writeLogToFile('error.log', logMessage); // Scrivi nel file di log
     res.status(500).json({ 
         error: 'Errore interno del server',
         message: process.env.NODE_ENV === 'development' ? err.message : undefined
@@ -238,22 +265,69 @@ app.get('/api/logs', (req, res) => {
 app.get('/api/my-wallet', async (req, res) => {
     try {
         if (!process.env.SOLANA_PRIVATE_KEY) {
-            throw new Error('SOLANA_PRIVATE_KEY non trovata nel file .env');
+            return res.status(500).json({ error: 'SOLANA_PRIVATE_KEY non configurata' });
         }
 
-        const wallet = new SolanaWallet(process.env.SOLANA_PRIVATE_KEY);
-        const balance = await wallet.getBalance();
-        
-        // Sottoscrivi il wallet personale alle transazioni
-        await wallet.subscribeToTransactions();
-        
-        res.json({
-            address: wallet.getWalletAddress(),
-            balance: balance
-        });
+        // Usa direttamente l'RPC endpoint per evitare problemi di timeout
+        const endpoint = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
+        const keypair = Keypair.fromSecretKey(base58.decode(process.env.SOLANA_PRIVATE_KEY));
+        const walletAddress = keypair.publicKey.toString();
+
+        // Chiamata RPC diretta con timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 secondi timeout
+
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    id: 1,
+                    method: 'getBalance',
+                    params: [
+                        walletAddress,
+                        { commitment: 'confirmed' }
+                    ]
+                }),
+                signal: controller.signal
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (!data.result || data.result.value === undefined) {
+                return res.status(500).json({ error: 'Balance non disponibile' });
+            }
+
+            return res.json({
+                address: walletAddress,
+                balance: data.result.value / 10**9 // Convert lamports to SOL
+            });
+
+        } catch (fetchError) {
+            if (fetchError.name === 'AbortError') {
+                return res.status(504).json({ error: 'Timeout della richiesta RPC' });
+            }
+            throw fetchError;
+        } finally {
+            clearTimeout(timeoutId);
+        }
+
     } catch (error) {
-        logger.error('Error getting personal wallet info:', error);
-        res.status(500).json({ error: 'Failed to get wallet info' });
+        logger.error('Errore nel recupero info wallet:', error);
+        return res.status(500).json({ 
+            error: 'Errore nel recupero info wallet',
+            details: error.message 
+        });
     }
 });
 
@@ -327,94 +401,6 @@ app.delete('/api/wallets/:wallet', async (req, res) => {
         res.status(500).json({ error: 'Failed to remove wallet' });
     }
 });
-
-// Variabili globali e classi
-class SolanaWallet {
-    constructor(privateKey) {
-        this.wallet = Keypair.fromSecretKey(base58.decode(privateKey));
-        this.endpoint = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
-        this.connection = new Connection(this.endpoint);
-    }
-
-    async makeRpcCall(method, params) {
-        try {
-            const response = await fetch(this.endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    jsonrpc: '2.0',
-                    id: 1,
-                    method,
-                    params,
-                }),
-            });
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            logger.error('Errore nella chiamata RPC:', error);
-            throw error;
-        }
-    }
-
-    async getBalance() {
-        try {
-            const params = [this.wallet.publicKey.toBase58(), { commitment: "confirmed" }];
-            const response = await this.makeRpcCall("getBalance", params);
-            if (response && response.result && response.result.value) {
-                return response.result.value / 10**9;
-            }
-            return 0;
-        } catch (error) {
-            logger.error('Errore nel recupero del saldo:', error);
-            throw error;
-        }
-    }
-
-    getWalletAddress() {
-        return this.wallet.publicKey.toBase58();
-    }
-
-    async subscribeToTransactions() {
-        try {
-            const address = this.getWalletAddress();
-            await this.connection.onAccountChange(
-                new PublicKey(address),
-                async (accountInfo, context) => {
-                    logger.info(`Cambiamento rilevato per il wallet ${address}`);
-                    
-                    // Ottieni le ultime transazioni
-                    const signatures = await this.connection.getSignaturesForAddress(
-                        new PublicKey(address),
-                        { limit: 1 }
-                    );
-
-                    if (signatures.length > 0) {
-                        const tx = await this.connection.getTransaction(signatures[0].signature);
-                        if (tx) {
-                            const preBalance = tx.meta.preBalances[0] / 10**9;
-                            const postBalance = tx.meta.postBalances[0] / 10**9;
-                            const amount = Math.abs(postBalance - preBalance);
-                            const type = postBalance > preBalance ? 'receive' : 'send';
-
-                            await emitTransaction(
-                                signatures[0].signature,
-                                address,
-                                amount,
-                                type
-                            );
-                        }
-                    }
-                },
-                'confirmed'
-            );
-            logger.info(`Sottoscrizione alle transazioni attivata per ${address}`);
-        } catch (error) {
-            logger.error('Errore nella sottoscrizione alle transazioni:', error);
-        }
-    }
-}
 
 const transactionLogs = [];
 const monitorThreads = new Map();
@@ -545,9 +531,6 @@ const PORT = process.env.PORT || 5001;
 
 async function startServer() {
     try {
-        if (!process.env.SOLANA_PRIVATE_KEY) {
-            throw new Error('SOLANA_PRIVATE_KEY non trovata nel file .env');
-        }
         await loadWallets();
         
         // Riavvia il monitoraggio per tutti i wallet salvati
