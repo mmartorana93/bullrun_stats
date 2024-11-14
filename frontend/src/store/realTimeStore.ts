@@ -46,11 +46,24 @@ interface RealTimeState {
     setSocket: (socket: Socket) => void;
     addPool: (pool: Pool) => Promise<void>;
     setPools: (pools: Pool[]) => void;
-    addTransaction: (transaction: Transaction) => void;
+    addTransaction: (tx: IncomingTransaction) => void;
     setTransactions: (transactions: Transaction[]) => void;
     setIsLoading: (loading: boolean) => void;
     subscribeToUpdates: () => void;
     unsubscribeFromUpdates: () => void;
+}
+
+interface IncomingTransaction {
+    signature: string;
+    timestamp: string;
+    wallet: string;
+    amount_sol?: number;
+    amount?: number;
+    success?: boolean;
+    type: string;
+    tokenSymbol?: string;
+    tokenAddress?: string;
+    age?: number;
 }
 
 const analyzeToken = async (tokenAddress: string) => {
@@ -139,17 +152,25 @@ export const useRealTimeStore = create<RealTimeState>((set, get) => ({
         }
     },
 
-    addTransaction: (transaction: Transaction) => {
-        console.log('Aggiunta nuova transazione:', transaction);
+    addTransaction: (tx: IncomingTransaction) => {
+        const normalizedTx: Transaction = {
+            signature: tx.signature,
+            timestamp: tx.timestamp,
+            wallet: tx.wallet,
+            amount_sol: tx.amount_sol ?? tx.amount ?? 0,
+            success: tx.success ?? true,
+            type: tx.type as Transaction['type'],
+            tokenSymbol: tx.tokenSymbol,
+            tokenAddress: tx.tokenAddress,
+            age: tx.age
+        };
+
         set(state => ({
-            transactions: [transaction, ...state.transactions].slice(0, 100)
+            transactions: [normalizedTx, ...state.transactions].slice(0, 100)
         }));
     },
 
-    setTransactions: (transactions: Transaction[]) => {
-        console.log('Setting transactions:', transactions);
-        set({ transactions });
-    },
+    setTransactions: (transactions) => set({ transactions }),
 
     setIsLoading: (loading: boolean) => set({ isLoading: loading }),
 
@@ -211,3 +232,8 @@ export const useRealTimeStore = create<RealTimeState>((set, get) => ({
         socket.off('newTransaction');
     }
 }));
+
+export const useTransactions = () => useRealTimeStore((state: RealTimeState) => state.transactions);
+export const usePools = () => useRealTimeStore((state: RealTimeState) => state.pools);
+export const useIsLoading = () => useRealTimeStore((state: RealTimeState) => state.isLoading);
+export const useSocket = () => useRealTimeStore((state: RealTimeState) => state.socket);

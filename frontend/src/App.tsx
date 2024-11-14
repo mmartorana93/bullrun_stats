@@ -12,7 +12,7 @@ import { Transaction } from './types';
 import api from './api/config';
 import Header from './components/Header';
 import { WebSocketProvider } from './contexts/WebSocketContext';
-import { useRealTimeStore } from './store/realTimeStore';
+import { useRealTimeStore, useTransactions } from './store/realTimeStore';
 import Queries from './components/Queries';
 
 const darkTheme = createTheme({
@@ -55,7 +55,7 @@ function App() {
   const [myWallet, setMyWallet] = useState({ address: '', balance: 0 });
   const [solanaPrice, setSolanaPrice] = useState<number | null>(null);
   const [tabValue, setTabValue] = useState(1);
-  const { transactions } = useRealTimeStore();
+  const transactions = useTransactions();
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -179,7 +179,7 @@ function App() {
                 />
               </TabPanel>
               <TabPanel value={tabValue} index={1}>
-                <TransactionLog transactions={transactions} />
+                <TransactionLog />
               </TabPanel>
               <TabPanel value={tabValue} index={2}>
                 <TokenRanking />

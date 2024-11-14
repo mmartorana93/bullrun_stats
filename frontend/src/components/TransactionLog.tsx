@@ -21,12 +21,11 @@ import {
 } from '@mui/material';
 import { Transaction } from '../types';
 import LoggingService from '../services/loggingService';
+import { shortenAddress, formatDate } from '../utils/format';
+import { useTransactions } from '../store/realTimeStore';
 
-interface TransactionLogProps {
-  transactions: Transaction[];
-}
-
-const TransactionLog: React.FC<TransactionLogProps> = ({ transactions }) => {
+const TransactionLog: React.FC = () => {
+  const transactions = useTransactions();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchWallet, setSearchWallet] = useState('');
@@ -34,8 +33,9 @@ const TransactionLog: React.FC<TransactionLogProps> = ({ transactions }) => {
   const [filterStatus, setFilterStatus] = useState('all');
 
   useEffect(() => {
-    // Log new transactions when they arrive
     const logNewTransactions = async () => {
+      if (!Array.isArray(transactions)) return;
+      
       for (const transaction of transactions) {
         await LoggingService.logTransaction({
           timestamp: transaction.timestamp,
@@ -61,9 +61,11 @@ const TransactionLog: React.FC<TransactionLogProps> = ({ transactions }) => {
   };
 
   const filteredTransactions = useMemo(() => {
+    if (!Array.isArray(transactions) || transactions.length === 0) return [];
+    
     return [...transactions]
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-      .filter(transaction => {
+      .filter((transaction: Transaction) => {
         const matchesWallet = transaction.wallet.toLowerCase().includes(searchWallet.toLowerCase());
         const matchesType = filterType === 'all' || transaction.type === filterType;
         const matchesStatus = filterStatus === 'all' || 
@@ -124,81 +126,25 @@ const TransactionLog: React.FC<TransactionLogProps> = ({ transactions }) => {
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell>Timestamp</TableCell>
               <TableCell>Wallet</TableCell>
+              <TableCell>Token</TableCell>
               <TableCell>Tipo</TableCell>
-              <TableCell align="right">Importo (SOL)</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Signature</TableCell>
+              <TableCell>Importo (SOL)</TableCell>
+              <TableCell>Età</TableCell>
+              <TableCell>Timestamp</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredTransactions
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((transaction) => (
-                <TableRow key={transaction.signature} hover>
-                  <TableCell>
-                    {new Date(transaction.timestamp).toLocaleString('it-IT')}
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" sx={{ 
-                      wordBreak: 'break-all',
-                      fontFamily: 'monospace',
-                      fontSize: '0.875rem'
-                    }}>
-                      {transaction.wallet}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={transaction.type === 'receive' ? 'Ricevuta' : 'Inviata'}
-                      color={transaction.type === 'receive' ? 'success' : 'info'}
-                      size="small"
-                      sx={{ minWidth: 80 }}
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography
-                      sx={{
-                        fontFamily: 'monospace',
-                        color: transaction.type === 'receive' ? 'success.main' : 'info.main',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      {transaction.amount_sol.toFixed(9)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={transaction.success ? 'Successo' : 'Fallita'}
-                      color={transaction.success ? 'success' : 'error'}
-                      size="small"
-                      sx={{ minWidth: 80 }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Link 
-                      href={`https://solscan.io/tx/${transaction.signature}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{ 
-                        wordBreak: 'break-all',
-                        fontFamily: 'monospace',
-                        fontSize: '0.875rem'
-                      }}
-                    >
-                      {transaction.signature}
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))}
-            {filteredTransactions.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={6} align="center">
-                  Nessuna transazione trovata
-                </TableCell>
+            {Array.isArray(transactions) && transactions.map((tx: Transaction) => (
+              <TableRow key={tx.signature}>
+                <TableCell>{shortenAddress(tx.wallet)}</TableCell>
+                <TableCell>{tx.tokenSymbol || 'N/A'}</TableCell>
+                <TableCell>{tx.type}</TableCell>
+                <TableCell>{tx.amount_sol}</TableCell>
+                <TableCell>{tx.age ? `${tx.age}s` : 'N/A'}</TableCell>
+                <TableCell>{formatDate(tx.timestamp)}</TableCell>
               </TableRow>
-            )}
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

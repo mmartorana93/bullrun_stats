@@ -1,10 +1,13 @@
 export interface Transaction {
-    wallet: string;
+    signature: string;
     timestamp: string;
+    wallet: string;
     amount_sol: number;
     success: boolean;
-    type: 'send' | 'receive';
-    signature: string;
+    type: 'send' | 'receive' | 'BUY' | 'SELL';
+    tokenSymbol?: string;
+    tokenAddress?: string;
+    age?: number;
 }
 
 export interface WalletResponse {

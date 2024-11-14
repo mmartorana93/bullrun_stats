@@ -144,22 +144,17 @@ async function emitTransaction(signature, wallet, amount, type) {
         }
 
         const transaction = {
+            signature,
             wallet,
             timestamp: new Date().toISOString(),
             amount_sol: amount,
             success: tx.meta?.err === null,
             type,
-            signature
+            tokenSymbol: tx.meta?.tokenSymbol || null,
+            tokenAddress: tx.meta?.tokenAddress || null,
+            age: calculateAge(tx.blockTime)
         };
 
-        logger.info('Emissione nuova transazione:', transaction);
-        transactionLogs.push(transaction);
-        
-        // Mantieni solo le ultime 1000 transazioni
-        if (transactionLogs.length > 1000) {
-            transactionLogs.shift();
-        }
-        
         io.emit('newTransaction', transaction);
     } catch (error) {
         logger.error('Errore nell\'emissione della transazione:', error);
@@ -739,4 +734,65 @@ app.post('/api/logs/lptracking', async (req, res) => {
 // Test endpoint
 app.get('/test', (req, res) => {
     res.json({ message: 'Server is running' });
+});
+
+// Aggiorna la configurazione WebSocket esistente
+async function setupWalletMonitoring(socket, wallets) {
+    const connection = new Connection("https://api.mainnet-beta.solana.com", 'confirmed');
+    
+    const subscriptions = wallets.map(wallet => {
+        return connection.onLogs(
+            new PublicKey(wallet),
+            async (logs) => {
+                try {
+                    const tx = await connection.getTransaction(logs.signature, {
+                        maxSupportedTransactionVersion: 0
+                    });
+                    
+                    if (!tx) return;
+                    
+                    const txDetails = await analyzeTx(tx, wallet);
+                    if (txDetails) {
+                        socket.emit('newTransaction', txDetails);
+                    }
+                } catch (err) {
+                    logger.error('Error processing transaction:', err);
+                }
+            },
+            'confirmed'
+        );
+    });
+
+    return () => {
+        subscriptions.forEach(sub => connection.removeOnLogsListener(sub));
+    };
+}
+
+async function analyzeTx(tx, wallet) {
+    const preBalances = tx.meta?.preBalances || [];
+    const postBalances = tx.meta?.postBalances || [];
+    const preTokenBalances = tx.meta?.preTokenBalances || [];
+    const postTokenBalances = tx.meta?.postTokenBalances || [];
+    
+    // Logica di analisi simile allo script Python
+    // ...
+
+    return {
+        signature: tx.transaction.signatures[0],
+        timestamp: tx.blockTime,
+        wallet,
+        tokenAddress,
+        tokenSymbol,
+        type: isBuy ? 'BUY' : 'SELL',
+        amount: Math.abs(solDelta),
+        age
+    };
+}
+
+// Aggiorna la gestione delle connessioni socket esistente
+io.on('connection', (socket) => {
+    socket.on('startMonitoring', async (wallets) => {
+        const cleanup = await setupWalletMonitoring(socket, wallets);
+        socket.on('disconnect', cleanup);
+    });
 });
