@@ -66,6 +66,31 @@ function initializeRoutes(socketManager) {
         }
     });
 
+    // POST /api/wallets/create-test
+    router.post('/create-test', async (req, res) => {
+        try {
+            const testWallet = await walletService.createTestWallet();
+            
+            // Avvia automaticamente il monitoraggio del wallet di test
+            await walletService.startMonitoring(
+                testWallet.publicKey,
+                socketManager.emitTransaction.bind(socketManager)
+            );
+
+            res.json({
+                ...testWallet,
+                message: 'Wallet di test creato e monitoraggio avviato',
+                note: 'Conserva la privateKey in modo sicuro per poter effettuare transazioni di test'
+            });
+        } catch (error) {
+            logger.error('Errore nella creazione del wallet di test:', error);
+            res.status(500).json({ 
+                error: 'Errore nella creazione del wallet di test',
+                details: error.message 
+            });
+        }
+    });
+
     return router;
 }
 

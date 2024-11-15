@@ -10,10 +10,10 @@ class WalletService {
         this.monitorThreads = new Map();
         this.monitoredWallets = new Set();
         this.connection = new Connection(
-            process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com",
+            process.env.SOLANA_RPC_URL || "https://api.devnet.solana.com",
             {
                 commitment: 'confirmed',
-                wsEndpoint: process.env.SOLANA_WS_URL || "wss://api.mainnet-beta.solana.com/",
+                wsEndpoint: process.env.SOLANA_WS_URL || "wss://api.devnet.solana.com/",
                 confirmTransactionInitialTimeout: 60000,
             }
         );
@@ -135,12 +135,13 @@ class WalletService {
         return false;
     }
 
-    async getMyWalletInfo() {
-        if (!process.env.SOLANA_PRIVATE_KEY) {
-            throw new Error('SOLANA_PRIVATE_KEY non configurata');
+    async getMyWalletInfo(useTestKey = false) {
+        const privateKeyEnvVar = useTestKey ? 'SOLANA_PRIVATE_KEY_TEST' : 'SOLANA_PRIVATE_KEY';
+        if (!process.env[privateKeyEnvVar]) {
+            throw new Error(`${privateKeyEnvVar} non configurata`);
         }
 
-        const keypair = Keypair.fromSecretKey(base58.decode(process.env.SOLANA_PRIVATE_KEY));
+        const keypair = Keypair.fromSecretKey(base58.decode(process.env[privateKeyEnvVar]));
         const walletAddress = keypair.publicKey.toString();
         
         try {
@@ -151,6 +152,32 @@ class WalletService {
             };
         } catch (error) {
             logger.error('Errore nel recupero del balance:', error);
+            throw error;
+        }
+    }
+
+    // Nuovo metodo per creare un wallet di test
+    async createTestWallet() {
+        const newKeypair = Keypair.generate();
+        const publicKey = newKeypair.publicKey.toString();
+        const privateKey = base58.encode(newKeypair.secretKey);
+
+        try {
+            // Richiedi SOL di test dalla devnet
+            const airdropSignature = await this.connection.requestAirdrop(
+                newKeypair.publicKey,
+                2 * 10**9 // 2 SOL in lamports
+            );
+            
+            await this.connection.confirmTransaction(airdropSignature);
+
+            return {
+                publicKey,
+                privateKey,
+                message: 'Wallet di test creato con successo con 2 SOL'
+            };
+        } catch (error) {
+            logger.error('Errore nella creazione del wallet di test:', error);
             throw error;
         }
     }
