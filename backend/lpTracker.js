@@ -1,42 +1,10 @@
 const WebSocket = require('ws');
 const { Connection, PublicKey } = require('@solana/web3.js');
-const winston = require('winston');
+const { logger } = require('./src/config/logger');
 const axios = require('axios');
 require('dotenv').config();
 const fs = require('fs').promises;
 const path = require('path');
-
-// Configurazione del logger
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.printf(({ timestamp, level, message, ...meta }) => {
-            let logMessage = `${timestamp} [${level.toUpperCase()}] ${message}`;
-            if (Object.keys(meta).length > 0) {
-                logMessage += `\nMetadata: ${JSON.stringify(meta, null, 2)}`;
-            }
-            return logMessage;
-        })
-    ),
-    transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ 
-            filename: path.join(__dirname, 'logs', 'lptracker-error.log'), 
-            level: 'error' 
-        }),
-        new winston.transports.File({ 
-            filename: path.join(__dirname, 'logs', 'lptracker.log')
-        })
-    ]
-});
-
-if (process.env.NODE_ENV !== 'production') {
-    logger.add(new winston.transports.Console({
-        level: 'debug',
-        format: winston.format.simple()
-    }));
-}
 
 const WRAPPED_SOL_ADDRESS = "So11111111111111111111111111111111111111112";
 
@@ -51,9 +19,13 @@ class LPTracker {
         this.reconnectAttempts = 0;
         this.maxReconnectAttempts = 10;
         this.reconnectDelay = 1000;
+        this.maxReconnectDelay = 30000;
         this.isRunning = false;
         this.solPrice = 0;
         this.poolMetrics = new Map();
+        this.lastPongTime = Date.now();
+        this.heartbeatInterval = null;
+        this.connectionCheckInterval = null;
         this.startPriceUpdates();
     }
 
@@ -61,18 +33,38 @@ class LPTracker {
         if (!this.isRunning) {
             this.isRunning = true;
             this.setupWebSocket();
+            this.setupConnectionCheck();
         }
     }
 
     stop() {
         this.isRunning = false;
-        if (this.pingInterval) {
-            clearInterval(this.pingInterval);
-        }
+        this.cleanupIntervals();
         if (this.ws) {
             this.ws.terminate();
             this.ws = null;
         }
+    }
+
+    cleanupIntervals() {
+        if (this.heartbeatInterval) {
+            clearInterval(this.heartbeatInterval);
+            this.heartbeatInterval = null;
+        }
+        if (this.connectionCheckInterval) {
+            clearInterval(this.connectionCheckInterval);
+            this.connectionCheckInterval = null;
+        }
+    }
+
+    setupConnectionCheck() {
+        this.connectionCheckInterval = setInterval(() => {
+            const now = Date.now();
+            if (now - this.lastPongTime > 45000) {
+                logger.warn('Nessun pong ricevuto per 45 secondi, riconnessione...');
+                this.handleReconnect();
+            }
+        }, 15000);
     }
 
     async setupWebSocket() {
@@ -83,19 +75,23 @@ class LPTracker {
 
             this.ws = new WebSocket(this.wsEndpoint);
             
-            // Ping interval
-            this.pingInterval = setInterval(() => {
-                if (this.ws.readyState === WebSocket.OPEN) {
+            this.heartbeatInterval = setInterval(() => {
+                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
                     this.ws.ping();
+                    logger.debug('Ping inviato');
                 }
             }, 30000);
 
             this.ws.on('pong', () => {
+                this.lastPongTime = Date.now();
+                this.reconnectAttempts = 0;
+                logger.debug('Pong ricevuto');
             });
 
             this.ws.on('open', () => {
                 logger.info('WebSocket connesso');
                 this.reconnectAttempts = 0;
+                this.lastPongTime = Date.now();
                 this.subscribeToProgram();
             });
 
@@ -103,11 +99,10 @@ class LPTracker {
                 try {
                     const message = JSON.parse(data);
                     if (message.method === 'logsNotification') {
-                        await writeLogToFile('lp-tracker.log', `Nuovo messaggio ricevuto: ${JSON.stringify(message)}`);
-                        this.handleProgramNotification(message);
+                        await this.handleProgramNotification(message);
                     }
                 } catch (error) {
-                    await writeLogToFile('error.log', `Errore nel parsing del messaggio WebSocket: ${error.message}`);
+                    logger.error('Errore nel parsing del messaggio WebSocket:', error);
                 }
             });
 
@@ -116,31 +111,47 @@ class LPTracker {
                 this.handleReconnect();
             });
 
-            this.ws.on('close', () => {
-                logger.warn('Connessione WebSocket chiusa');
-                if (this.pingInterval) {
-                    clearInterval(this.pingInterval);
-                }
+            this.ws.on('close', (code, reason) => {
+                logger.warn(`Connessione WebSocket chiusa. Code: ${code}, Reason: ${reason}`);
+                this.cleanupIntervals();
                 this.handleReconnect();
             });
 
         } catch (error) {
-            if (this.pingInterval) {
-                clearInterval(this.pingInterval);
-            }
             logger.error('Errore nella configurazione WebSocket:', error);
+            this.cleanupIntervals();
             this.handleReconnect();
         }
     }
 
     handleReconnect() {
-        if (this.reconnectAttempts < this.maxReconnectAttempts && this.isRunning) {
+        if (!this.isRunning) return;
+
+        if (this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
-            const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
-            logger.info(`Tentativo di riconnessione ${this.reconnectAttempts} in ${delay}ms`);
-            setTimeout(() => this.setupWebSocket(), delay);
+            const delay = Math.min(
+                this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1),
+                this.maxReconnectDelay
+            );
+            
+            logger.info(`Tentativo di riconnessione ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${delay}ms`);
+            
+            setTimeout(() => {
+                if (this.isRunning) {
+                    this.setupWebSocket();
+                }
+            }, delay);
         } else {
             logger.error('Numero massimo di tentativi di riconnessione raggiunto');
+            this.stop();
+            
+            setTimeout(() => {
+                if (this.isRunning) {
+                    logger.info('Tentativo di riavvio dopo pausa lunga...');
+                    this.reconnectAttempts = 0;
+                    this.start();
+                }
+            }, 300000);
         }
     }
 

@@ -1,9 +1,9 @@
 export interface TokenDetails {
     address: string;
     symbol: string;
-    decimals?: number;
-    priceUsd?: string;
-    dexScreenerUrl?: string;
+    decimals: number;
+    priceUsd: string;
+    dexScreenerUrl: string;
     createdAt?: number;
 }
 
@@ -11,7 +11,18 @@ export interface TokenChange {
     tokenAddress: string;
     preAmount: string;
     postAmount: string;
-    decimals?: number;
+    decimals: number;
+}
+
+export interface Links {
+    dexScreener: string;
+    photon: string;
+    rugcheck: string;
+}
+
+export interface BalanceInfo {
+    sol: number;
+    token: number;
 }
 
 export interface Transaction {
@@ -25,6 +36,9 @@ export interface Transaction {
     tokenSymbol?: string;
     tokenAddress?: string;
     tokenAmount?: number;
+    links?: Links;
+    preBalances?: BalanceInfo;
+    postBalances?: BalanceInfo;
     tokenChanges?: TokenChange[];
     logMessages?: string[];
     age?: number;

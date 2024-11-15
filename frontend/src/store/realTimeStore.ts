@@ -2,7 +2,13 @@ import { create } from 'zustand';
 import { Socket } from 'socket.io-client';
 import { rugcheckService } from '../services/rugcheckService';
 import { dextoolsService } from '../services/dextoolsService';
-import { Transaction } from '../types';
+import { 
+    Transaction, 
+    TokenInfo, 
+    Links, 
+    Balances,
+    IncomingTransaction as BaseIncomingTransaction 
+} from '../types';
 
 interface PoolMetrics {
     pricePerTokenSOL: number;
@@ -46,24 +52,21 @@ interface RealTimeState {
     setSocket: (socket: Socket) => void;
     addPool: (pool: Pool) => Promise<void>;
     setPools: (pools: Pool[]) => void;
-    addTransaction: (tx: IncomingTransaction) => void;
+    addTransaction: (tx: IncomingTransaction | IncomingSwapTransaction) => void;
     setTransactions: (transactions: Transaction[]) => void;
     setIsLoading: (loading: boolean) => void;
     subscribeToUpdates: () => void;
     unsubscribeFromUpdates: () => void;
 }
 
-interface IncomingTransaction {
-    signature: string;
-    timestamp: string;
-    wallet: string;
-    amount_sol?: number;
-    amount?: number;
-    success?: boolean;
-    type: string;
-    tokenSymbol?: string;
-    tokenAddress?: string;
-    age?: number;
+type IncomingTransaction = BaseIncomingTransaction;
+
+interface IncomingSwapTransaction extends IncomingTransaction {
+    token?: TokenInfo;
+    tokenAmount?: number;
+    links?: Links;
+    preBalances?: Balances;
+    postBalances?: Balances;
 }
 
 const analyzeToken = async (tokenAddress: string) => {
@@ -152,7 +155,7 @@ export const useRealTimeStore = create<RealTimeState>((set, get) => ({
         }
     },
 
-    addTransaction: (tx: IncomingTransaction) => {
+    addTransaction: (tx: IncomingTransaction | IncomingSwapTransaction) => {
         const normalizedTx: Transaction = {
             signature: tx.signature,
             timestamp: tx.timestamp,
@@ -160,10 +163,16 @@ export const useRealTimeStore = create<RealTimeState>((set, get) => ({
             amount_sol: tx.amount_sol ?? tx.amount ?? 0,
             success: tx.success ?? true,
             type: tx.type as Transaction['type'],
-            tokenSymbol: tx.tokenSymbol,
-            tokenAddress: tx.tokenAddress,
-            age: tx.age
         };
+
+        // Type guard per verificare se è uno swap
+        if ('token' in tx) {
+            normalizedTx.token = tx.token;
+            normalizedTx.tokenAmount = tx.tokenAmount;
+            normalizedTx.links = tx.links;
+            normalizedTx.preBalances = tx.preBalances;
+            normalizedTx.postBalances = tx.postBalances;
+        }
 
         set(state => ({
             transactions: [normalizedTx, ...state.transactions].slice(0, 100)
@@ -212,7 +221,7 @@ export const useRealTimeStore = create<RealTimeState>((set, get) => ({
 
         // Gestisci le nuove transazioni
         socket.on('newTransaction', (transaction: Transaction) => {
-            console.log('Ricevuta nuova transazione:', transaction);
+            console.log('Received transaction with full details:', transaction);
             const { addTransaction } = get();
             addTransaction(transaction);
         });

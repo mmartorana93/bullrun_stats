@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const base58 = require('bs58');
 const { logger } = require('../config/logger');
+const config = require('../config/config');
 const transactionTracker = require('../utils/transactionTracker');
 
 // Token di test noti sulla devnet
@@ -18,14 +19,17 @@ class WalletService {
         this.monitorThreads = new Map();
         this.monitoredWallets = new Set();
         this.connection = new Connection(
-            process.env.SOLANA_RPC_URL || "https://api.devnet.solana.com",
+            config.SOLANA_RPC_URL,
             {
                 commitment: 'confirmed',
-                wsEndpoint: process.env.SOLANA_WS_URL || "wss://api.devnet.solana.com/",
+                wsEndpoint: config.SOLANA_WS_URL,
                 confirmTransactionInitialTimeout: 60000,
             }
         );
         this.socketManager = socketManager;
+        this.backupConnections = config.BACKUP_RPC_URLS.map(url => 
+            new Connection(url, { commitment: 'confirmed' })
+        );
     }
 
     async loadWallets() {
@@ -49,6 +53,10 @@ class WalletService {
     }
 
     async startMonitoring(walletAddress, emitTransaction) {
+        if (this.monitoredWallets.size >= config.MAX_MONITORED_WALLETS) {
+            throw new Error(`Limite massimo di wallet monitorati (${config.MAX_MONITORED_WALLETS}) raggiunto`);
+        }
+
         if (!this.monitorThreads.has(walletAddress)) {
             try {
                 const publicKey = new PublicKey(walletAddress);
@@ -71,9 +79,7 @@ class WalletService {
                         });
 
                         try {
-                            const tx = await this.connection.getTransaction(signature, {
-                                maxSupportedTransactionVersion: 0
-                            });
+                            const tx = await this.getTransactionWithRetry(signature);
 
                             if (!tx) {
                                 logger.warn(`[WebSocket] Nessuna transazione trovata per signature ${signature}`);
@@ -145,7 +151,7 @@ class WalletService {
     }
 
     async getMyWalletInfo(useTestKey = false) {
-        const privateKeyEnvVar = useTestKey ? 'SOLANA_PRIVATE_KEY_TEST' : 'SOLANA_PRIVATE_KEY';
+        const privateKeyEnvVar = useTestKey ? 'SOLANA_PRIVATE_KEY_TEST' : 'WALLET_PRIVATE_KEY';
         if (!process.env[privateKeyEnvVar]) {
             throw new Error(`${privateKeyEnvVar} non configurata`);
         }
@@ -167,8 +173,38 @@ class WalletService {
         }
     }
 
-    // Nuovo metodo per creare un wallet di test
+    async getTransactionWithRetry(signature, maxRetries = 3) {
+        let lastError;
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                // Prova prima con la connessione principale
+                const tx = await this.connection.getTransaction(signature, {
+                    maxSupportedTransactionVersion: 0
+                });
+                if (tx) return tx;
+
+                // Se non trova la transazione, prova con i backup RPC
+                for (const backupConnection of this.backupConnections) {
+                    const tx = await backupConnection.getTransaction(signature, {
+                        maxSupportedTransactionVersion: 0
+                    });
+                    if (tx) return tx;
+                }
+            } catch (error) {
+                lastError = error;
+                logger.warn(`Tentativo ${i + 1} fallito per signature ${signature}:`, error);
+                await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+            }
+        }
+        throw lastError;
+    }
+
+    // I metodi di test rimangono ma vengono disabilitati in produzione
     async createTestWallet() {
+        if (!config.ENABLE_TEST_FEATURES) {
+            throw new Error('Le funzionalità di test sono disabilitate in produzione');
+        }
+
         const newKeypair = Keypair.generate();
         const publicKey = newKeypair.publicKey.toString();
         const privateKey = base58.encode(newKeypair.secretKey);
@@ -194,6 +230,10 @@ class WalletService {
     }
 
     async sendTestTransaction(amount, destinationAddress, useTestKey = true) {
+        if (!config.ENABLE_TEST_FEATURES) {
+            throw new Error('Le funzionalità di test sono disabilitate in produzione');
+        }
+
         const privateKeyEnvVar = useTestKey ? 'SOLANA_PRIVATE_KEY_TEST' : 'SOLANA_PRIVATE_KEY';
         if (!process.env[privateKeyEnvVar]) {
             throw new Error(`${privateKeyEnvVar} non configurata`);
@@ -221,6 +261,10 @@ class WalletService {
     }
 
     async simulateTokenSwap(useTestKey = true) {
+        if (!config.ENABLE_TEST_FEATURES) {
+            throw new Error('Le funzionalità di test sono disabilitate in produzione');
+        }
+
         const privateKeyEnvVar = useTestKey ? 'SOLANA_PRIVATE_KEY_TEST' : 'SOLANA_PRIVATE_KEY';
         if (!process.env[privateKeyEnvVar]) {
             throw new Error(`${privateKeyEnvVar} non configurata`);
@@ -249,6 +293,10 @@ class WalletService {
                 })
             );
 
+            // Calcola i balance pre-transazione
+            const preBalance = await this.connection.getBalance(keypair.publicKey);
+            const preTokenBalance = await this.connection.getTokenAccountBalance(tokenAccount.address);
+
             logger.info('Invio transazione...');
             const signature = await this.connection.sendTransaction(
                 transaction,
@@ -257,16 +305,23 @@ class WalletService {
 
             logger.info('Attesa conferma transazione...');
             await this.connection.confirmTransaction(signature);
+
+            // Calcola i balance post-transazione
+            const postBalance = await this.connection.getBalance(keypair.publicKey);
+            const postTokenBalance = await this.connection.getTokenAccountBalance(tokenAccount.address);
+
+            // Calcola le variazioni
+            const solDelta = (postBalance - preBalance) / LAMPORTS_PER_SOL;
+            const tokenDelta = postTokenBalance.value.uiAmount - preTokenBalance.value.uiAmount;
             
             logger.info(`Swap simulato! Signature: ${signature}`);
             
-            // Crea un oggetto transazione più dettagliato
             const transactionDetails = {
                 signature,
                 tokenAddress: TEST_TOKENS.USDC_DEV.toString(),
                 tokenSymbol: 'USDC',
-                amountIn: 0.1,
-                tokenAmount: 0.1 * 1000000, // USDC ha 6 decimali
+                amountIn: Math.abs(solDelta),
+                tokenAmount: Math.abs(tokenDelta),
                 type: 'swap',
                 timestamp: new Date().toISOString(),
                 wallet: keypair.publicKey.toString(),
@@ -277,10 +332,21 @@ class WalletService {
                     decimals: 6,
                     priceUsd: 1.0,
                     dexScreenerUrl: `https://dexscreener.com/solana/${TEST_TOKENS.USDC_DEV.toString()}`
+                },
+                preBalances: {
+                    sol: preBalance / LAMPORTS_PER_SOL,
+                    token: preTokenBalance.value.uiAmount
+                },
+                postBalances: {
+                    sol: postBalance / LAMPORTS_PER_SOL,
+                    token: postTokenBalance.value.uiAmount
                 }
             };
 
-            // Emetti l'evento attraverso il socket
+            logger.info('========= SWAP TRANSACTION DETAILS =========');
+            logger.info('Transaction details:', JSON.stringify(transactionDetails, null, 2));
+            logger.info('===========================================');
+
             if (this.socketManager) {
                 this.socketManager.emitTransaction(transactionDetails);
             }
@@ -295,3 +361,4 @@ class WalletService {
 }
 
 module.exports = WalletService;
+

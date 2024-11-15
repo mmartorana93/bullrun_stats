@@ -18,21 +18,36 @@ class SocketManager {
         });
 
         this.connection = new Connection(
-            process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com",
+            process.env.SOLANA_RPC_URL || "https://api.devnet.solana.com",
             {
                 commitment: 'confirmed',
-                wsEndpoint: process.env.SOLANA_WS_URL || "wss://api.mainnet-beta.solana.com/",
+                wsEndpoint: process.env.SOLANA_WS_URL || "wss://api.devnet.solana.com/",
                 confirmTransactionInitialTimeout: 60000,
             }
         );
         
         this.activeSubscriptions = new Map();
+        this.processedTransactions = new Set();
+        this.heartbeatIntervals = new Map();
         this.setupEventHandlers();
     }
 
     setupEventHandlers() {
         this.io.on('connection', (socket) => {
             logger.info('Nuovo client connesso');
+
+            // Setup heartbeat per questo socket
+            const heartbeatInterval = setInterval(() => {
+                if (socket.connected) {
+                    socket.emit('ping');
+                }
+            }, 15000);
+
+            this.heartbeatIntervals.set(socket.id, heartbeatInterval);
+
+            socket.on('pong', () => {
+                logger.debug(`Heartbeat ricevuto da ${socket.id}`);
+            });
 
             socket.on('startMonitoring', async (wallets) => {
                 logger.info(`Client richiede monitoraggio per ${wallets.length} wallets`);
@@ -41,17 +56,38 @@ class SocketManager {
                 socket.on('disconnect', () => {
                     logger.info('Client disconnesso, pulizia subscriptions');
                     cleanup();
+                    // Pulizia heartbeat
+                    const interval = this.heartbeatIntervals.get(socket.id);
+                    if (interval) {
+                        clearInterval(interval);
+                        this.heartbeatIntervals.delete(socket.id);
+                    }
                 });
             });
 
             socket.on('getTransactions', () => {
                 logger.info('Richiesta transazioni esistenti');
-                socket.emit('existingTransactions', []); // Implementare la logica per recuperare le transazioni esistenti
+                socket.emit('existingTransactions', []);
             });
 
-            socket.on('disconnect', () => {
-                logger.info('Client disconnesso');
+            socket.on('error', (error) => {
+                logger.error(`Errore socket per ${socket.id}:`, error);
             });
+
+            socket.on('disconnect', (reason) => {
+                logger.info(`Client ${socket.id} disconnesso. Motivo: ${reason}`);
+                // Pulizia heartbeat
+                const interval = this.heartbeatIntervals.get(socket.id);
+                if (interval) {
+                    clearInterval(interval);
+                    this.heartbeatIntervals.delete(socket.id);
+                }
+            });
+        });
+
+        // Gestione errori a livello di server Socket.IO
+        this.io.engine.on('connection_error', (error) => {
+            logger.error('Errore connessione Socket.IO:', error);
         });
     }
 
@@ -109,7 +145,6 @@ class SocketManager {
             }
         }
 
-        // Funzione di cleanup
         return () => {
             subscriptions.forEach((subscriptionId, wallet) => {
                 try {
@@ -130,7 +165,6 @@ class SocketManager {
             const preTokenBalances = tx.meta?.preTokenBalances || [];
             const postTokenBalances = tx.meta?.postTokenBalances || [];
             
-            // Calcola la variazione del balance in SOL
             const walletIndex = tx.transaction.message.accountKeys.findIndex(
                 key => key.toString() === wallet
             );
@@ -141,7 +175,7 @@ class SocketManager {
             
             return {
                 signature: tx.transaction.signatures[0],
-                timestamp: tx.blockTime * 1000, // Converti in millisecondi
+                timestamp: tx.blockTime * 1000,
                 wallet,
                 type: solDelta > 0 ? 'RECEIVE' : 'SEND',
                 amount: Math.abs(solDelta),
@@ -176,10 +210,21 @@ class SocketManager {
 
     async emitTransaction(transactionDetails) {
         try {
+            if (this.processedTransactions.has(transactionDetails.signature)) {
+                logger.info(`Transaction ${transactionDetails.signature} already processed, skipping`);
+                return;
+            }
+
             if (transactionDetails.type === 'swap') {
+                logger.info('========= PROCESSING SWAP TRANSACTION =========');
+                logger.info('Raw transaction details:', JSON.stringify(transactionDetails, null, 2));
+
+                const timestamp = new Date().toISOString();
+                const dexScreenerUrl = `https://dexscreener.com/solana/${transactionDetails.tokenAddress}?maker=${transactionDetails.wallet}`;
+
                 const eventData = {
                     signature: transactionDetails.signature,
-                    timestamp: transactionDetails.timestamp,
+                    timestamp: timestamp,
                     wallet: transactionDetails.wallet,
                     type: 'swap',
                     amount_sol: transactionDetails.amountIn,
@@ -189,39 +234,65 @@ class SocketManager {
                         address: transactionDetails.tokenAddress,
                         decimals: transactionDetails.token.decimals,
                         priceUsd: transactionDetails.token.priceUsd.toString(),
-                        dexScreenerUrl: transactionDetails.token.dexScreenerUrl
+                        dexScreenerUrl: dexScreenerUrl
                     },
-                    tokenAmount: transactionDetails.tokenAmount
+                    tokenAmount: transactionDetails.tokenAmount,
+                    links: {
+                        dexScreener: dexScreenerUrl,
+                        photon: `https://photon-sol.tinyastro.io/en/lp/${transactionDetails.tokenAddress}`,
+                        rugcheck: `https://rugcheck.xyz/tokens/${transactionDetails.tokenAddress}`
+                    },
+                    preBalances: transactionDetails.preBalances,
+                    postBalances: transactionDetails.postBalances
                 };
-                
-                logger.info('Emitting swap transaction:', JSON.stringify(eventData, null, 2));
+
+                logger.info('Prepared event data:', JSON.stringify(eventData, null, 2));
+                logger.info('Token details:', JSON.stringify(eventData.token, null, 2));
+                logger.info('Links:', JSON.stringify(eventData.links, null, 2));
+                logger.info('Balance changes:', JSON.stringify({
+                    pre: eventData.preBalances,
+                    post: eventData.postBalances
+                }, null, 2));
+
+                logger.info('Emitting newTransaction event...');
                 this.io.emit('newTransaction', eventData);
+                this.processedTransactions.add(transactionDetails.signature);
+                
+                logger.info(`Successfully emitted swap transaction for token ${eventData.token.symbol}`);
+                logger.info('==========================================');
                 return;
             }
 
-            // Per le transazioni normali, usa la logica esistente
-            const tx = await this.connection.getTransaction(transactionDetails.signature, {
-                commitment: 'confirmed',
-                maxSupportedTransactionVersion: 0
-            });
+            try {
+                const tx = await this.connection.getTransaction(transactionDetails.signature, {
+                    commitment: 'confirmed',
+                    maxSupportedTransactionVersion: 0
+                });
 
-            if (!tx) {
-                logger.error(`Transazione non trovata: ${transactionDetails.signature}`);
-                return;
+                if (!tx) {
+                    logger.error(`Transazione non trovata: ${transactionDetails.signature}`);
+                    return;
+                }
+
+                const transaction = {
+                    signature: transactionDetails.signature,
+                    wallet: transactionDetails.wallet,
+                    timestamp: new Date().toISOString(),
+                    amount_sol: transactionDetails.amount_sol,
+                    success: tx.meta?.err === null,
+                    type: transactionDetails.type
+                };
+
+                this.io.emit('newTransaction', transaction);
+                this.processedTransactions.add(transactionDetails.signature);
+            } catch (error) {
+                logger.error(`Errore nel recupero della transazione: ${error.message}`);
             }
 
-            const transaction = {
-                signature: transactionDetails.signature,
-                wallet: transactionDetails.wallet,
-                timestamp: new Date().toISOString(),
-                amount_sol: transactionDetails.amount_sol,
-                success: tx.meta?.err === null,
-                type: transactionDetails.type
-            };
-
-            this.io.emit('newTransaction', transaction);
         } catch (error) {
             logger.error('Errore nell\'emissione della transazione:', error);
+            logger.error('Stack trace:', error.stack);
+            logger.error('Transaction details:', JSON.stringify(transactionDetails, null, 2));
         }
     }
 }

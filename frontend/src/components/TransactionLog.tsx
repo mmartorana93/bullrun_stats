@@ -40,12 +40,11 @@ const Row = ({ tx }: { tx: Transaction }) => {
     navigator.clipboard.writeText(text);
   };
 
-  const formatDate = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString();
-  };
-
-  const shortenAddress = (address: string) => {
-    return `${address.slice(0, 4)}...${address.slice(-4)}`;
+  const getLinks = (tokenAddress: string, wallet: string) => {
+    const dexScreenerUrl = `https://dexscreener.com/solana/${tokenAddress}?maker=${wallet}`;
+    const photonLink = `https://photon-sol.tinyastro.io/en/lp/${tokenAddress}`;
+    const rugcheckLink = `https://rugcheck.xyz/tokens/${tokenAddress}`;
+    return { dexScreenerUrl, photonLink, rugcheckLink };
   };
 
   return (
@@ -65,21 +64,35 @@ const Row = ({ tx }: { tx: Transaction }) => {
           {shortenAddress(tx.wallet)}
         </TableCell>
         <TableCell>
-          {tx.token ? (
-            <Link href={tx.token.dexScreenerUrl} target="_blank" rel="noopener">
-              {tx.token.symbol}
-              <OpenInNew fontSize="small" sx={{ ml: 0.5, verticalAlign: 'middle' }} />
-            </Link>
-          ) : 'SOL'}
+          {tx.token && (
+            <Box>
+              <Link 
+                href={tx.token.dexScreenerUrl} 
+                target="_blank" 
+                rel="noopener"
+                sx={{ display: 'flex', alignItems: 'center' }}
+              >
+                {tx.token.symbol}
+                <OpenInNew fontSize="small" sx={{ ml: 0.5 }} />
+              </Link>
+            </Box>
+          )}
         </TableCell>
         <TableCell>
           <Chip
             label={tx.type.toUpperCase()}
-            color={tx.type === 'receive' ? 'success' : 'error'}
+            color={tx.type === 'swap' ? 'warning' : tx.type === 'receive' ? 'success' : 'error'}
             size="small"
           />
         </TableCell>
-        <TableCell>{tx.amount_sol.toFixed(4)} SOL</TableCell>
+        <TableCell>
+          {tx.amount_sol.toFixed(4)} SOL
+          {tx.token && tx.tokenAmount && (
+            <Typography variant="body2" color="text.secondary">
+              {tx.tokenAmount} {tx.token.symbol}
+            </Typography>
+          )}
+        </TableCell>
         <TableCell>
           <Chip
             label={tx.success ? 'SUCCESS' : 'FAILED'}
@@ -89,6 +102,7 @@ const Row = ({ tx }: { tx: Transaction }) => {
         </TableCell>
         <TableCell>{formatDate(tx.timestamp)}</TableCell>
       </TableRow>
+
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
           <Collapse in={open} timeout="auto" unmountOnExit>
@@ -115,36 +129,34 @@ const Row = ({ tx }: { tx: Transaction }) => {
                     <br />
                     Price: ${tx.token.priceUsd}
                     <br />
-                    {tx.token.createdAt && (
+                    Amount: {tx.tokenAmount} {tx.token.symbol}
+                  </Typography>
+                  <Box sx={{ mt: 1, display: 'flex', gap: 2 }}>
+                    <Link href={tx.token.dexScreenerUrl} target="_blank" rel="noopener">
+                      DEX
+                    </Link>
+                    {tx.links && (
                       <>
-                        Created: {new Date(tx.token.createdAt).toLocaleString()}
+                        <Link href={tx.links.photon} target="_blank" rel="noopener">
+                          PHT
+                        </Link>
+                        <Link href={tx.links.rugcheck} target="_blank" rel="noopener">
+                          RUG
+                        </Link>
                       </>
                     )}
+                  </Box>
+                </Box>
+              )}
+
+              {tx.preBalances && tx.postBalances && (
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle2">Balance Changes:</Typography>
+                  <Typography variant="body2">
+                    SOL: {tx.preBalances.sol.toFixed(4)} → {tx.postBalances.sol.toFixed(4)}
+                    <br />
+                    {tx.token && `${tx.token.symbol}: ${tx.preBalances.token} → ${tx.postBalances.token}`}
                   </Typography>
-                </Box>
-              )}
-
-              {tx.tokenChanges && tx.tokenChanges.length > 0 && (
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="subtitle2">Token Changes:</Typography>
-                  {tx.tokenChanges.map((change, i) => (
-                    <Typography key={i} variant="body2">
-                      {shortenAddress(change.tokenAddress)}: {change.preAmount} → {change.postAmount}
-                    </Typography>
-                  ))}
-                </Box>
-              )}
-
-              {tx.logMessages && tx.logMessages.length > 0 && (
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="subtitle2">Log Messages:</Typography>
-                  <Paper variant="outlined" sx={{ p: 1, maxHeight: 200, overflow: 'auto' }}>
-                    {tx.logMessages.map((log, i) => (
-                      <Typography key={i} variant="body2" sx={{ fontFamily: 'monospace' }}>
-                        {log}
-                      </Typography>
-                    ))}
-                  </Paper>
                 </Box>
               )}
             </Box>
