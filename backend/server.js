@@ -7,7 +7,7 @@ const initializeWalletRoutes = require('./src/routes/walletRoutes');
 const cryptoRoutes = require('./src/routes/cryptoRoutes');
 const logRoutes = require('./src/routes/logRoutes');
 const cryptoService = require('./src/services/cryptoService');
-const walletService = require('./src/services/walletService');
+const WalletService = require('./src/services/walletService');
 const LPTracker = require('./lpTracker');
 
 // Inizializza l'app Express
@@ -19,6 +19,9 @@ const server = http.createServer(app);
 // Inizializza Socket.IO
 const socketManager = new SocketManager(server);
 
+// Inizializza il WalletService con il socketManager
+const walletService = new WalletService(socketManager);
+
 // Inizializza LP Tracker e rendilo disponibile globalmente
 global.lpTracker = new LPTracker(socketManager.io);
 
@@ -26,7 +29,7 @@ global.lpTracker = new LPTracker(socketManager.io);
 ensureLogDirectory();
 
 // Configura le routes
-app.use('/api/wallets', initializeWalletRoutes(socketManager));
+app.use('/api/wallets', initializeWalletRoutes(socketManager, walletService));
 app.use('/api/crypto', cryptoRoutes);
 app.use('/api/logs', logRoutes);
 
@@ -47,21 +50,61 @@ app.get('/test', (req, res) => {
     res.json({ message: 'Server is running' });
 });
 
-// Gestione graceful shutdown
+// Modifica la funzione gracefulShutdown
 async function gracefulShutdown(signal) {
     logger.info(`${signal} ricevuto. Avvio shutdown graceful...`);
     
-    if (global.lpTracker) {
-        global.lpTracker.stop();
+    // Aumentiamo il timeout a 10 secondi
+    const shutdownTimeout = setTimeout(() => {
+        logger.error('Shutdown forzato dopo timeout');
+        process.exit(1);
+    }, 10000);
+
+    try {
+        // Chiudi prima le connessioni WebSocket
+        if (socketManager && socketManager.io) {
+            logger.info('Chiusura connessioni Socket.IO...');
+            await new Promise(resolve => socketManager.io.close(resolve));
+        }
+
+        // Ferma il LP Tracker
+        if (global.lpTracker) {
+            logger.info('Arresto LP Tracker...');
+            global.lpTracker.stop();
+        }
+
+        // Chiudi il server HTTP solo se stiamo effettivamente facendo shutdown
+        if (signal === 'SIGINT' || signal === 'SIGTERM') {
+            await new Promise((resolve, reject) => {
+                server.close(err => {
+                    if (err) {
+                        logger.error('Errore nella chiusura del server:', err);
+                        reject(err);
+                    } else {
+                        logger.info('Server HTTP chiuso con successo');
+                        resolve();
+                    }
+                });
+            });
+        }
+
+        clearTimeout(shutdownTimeout);
+        
+        // Esci solo se è una richiesta di shutdown effettiva
+        if (signal === 'SIGINT' || signal === 'SIGTERM') {
+            logger.info('Shutdown completato con successo');
+            process.exit(0);
+        }
+    } catch (error) {
+        logger.error('Errore durante lo shutdown:', error);
+        clearTimeout(shutdownTimeout);
+        if (signal === 'SIGINT' || signal === 'SIGTERM') {
+            process.exit(1);
+        }
     }
-    
-    server.close(() => {
-        logger.info('Server HTTP chiuso.');
-        process.exit(0);
-    });
 }
 
-// Gestione dei segnali di shutdown
+// Gestione dei segnali di shutdown - rimuovi il doppio handler SIGINT
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
@@ -73,6 +116,7 @@ process.on('uncaughtException', (error) => {
 
 process.on('unhandledRejection', (reason, promise) => {
     logger.error('Rejection non gestita:', reason);
+    // Non facciamo shutdown per unhandledRejection, solo log
 });
 
 // Avvio del server

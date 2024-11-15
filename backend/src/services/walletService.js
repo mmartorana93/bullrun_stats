@@ -1,12 +1,20 @@
-const { Connection, PublicKey, Keypair } = require('@solana/web3.js');
+const { Connection, PublicKey, Keypair, Transaction, SystemProgram, LAMPORTS_PER_SOL } = require('@solana/web3.js');
+const { createMint, getOrCreateAssociatedTokenAccount, mintTo } = require('@solana/spl-token');
 const fs = require('fs').promises;
 const path = require('path');
 const base58 = require('bs58');
 const { logger } = require('../config/logger');
 const transactionTracker = require('../utils/transactionTracker');
 
+// Token di test noti sulla devnet
+const TEST_TOKENS = {
+    USDC_DEV: new PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU'),
+    SRM_DEV: new PublicKey('SNSNkV9zfG5ZKWQs6x4hxvBRV6s8SqMfSGCtECDvdMd'),
+    RAY_DEV: new PublicKey('RaYSHhicZ9PwPwBn6AHJpyPxpDwRpf8HM2M4vbVVBzG'),
+};
+
 class WalletService {
-    constructor() {
+    constructor(socketManager) {
         this.monitorThreads = new Map();
         this.monitoredWallets = new Set();
         this.connection = new Connection(
@@ -17,6 +25,7 @@ class WalletService {
                 confirmTransactionInitialTimeout: 60000,
             }
         );
+        this.socketManager = socketManager;
     }
 
     async loadWallets() {
@@ -141,17 +150,19 @@ class WalletService {
             throw new Error(`${privateKeyEnvVar} non configurata`);
         }
 
-        const keypair = Keypair.fromSecretKey(base58.decode(process.env[privateKeyEnvVar]));
-        const walletAddress = keypair.publicKey.toString();
-        
+        logger.info(`Tentativo di decodifica chiave per ${privateKeyEnvVar}`);
         try {
+            const keypair = Keypair.fromSecretKey(base58.decode(process.env[privateKeyEnvVar]));
+            const walletAddress = keypair.publicKey.toString();
+            
+            logger.info(`Wallet address decodificato: ${walletAddress}`);
             const balance = await this.connection.getBalance(keypair.publicKey);
             return {
                 address: walletAddress,
-                balance: balance / 10**9 // Convert lamports to SOL
+                balance: balance / 10**9
             };
         } catch (error) {
-            logger.error('Errore nel recupero del balance:', error);
+            logger.error(`Errore nella decodifica della chiave: ${error.message}`);
             throw error;
         }
     }
@@ -181,6 +192,106 @@ class WalletService {
             throw error;
         }
     }
+
+    async sendTestTransaction(amount, destinationAddress, useTestKey = true) {
+        const privateKeyEnvVar = useTestKey ? 'SOLANA_PRIVATE_KEY_TEST' : 'SOLANA_PRIVATE_KEY';
+        if (!process.env[privateKeyEnvVar]) {
+            throw new Error(`${privateKeyEnvVar} non configurata`);
+        }
+
+        try {
+            const keypair = Keypair.fromSecretKey(base58.decode(process.env[privateKeyEnvVar]));
+            const transaction = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: keypair.publicKey,
+                    toPubkey: new PublicKey(destinationAddress),
+                    lamports: amount * LAMPORTS_PER_SOL
+                })
+            );
+
+            const signature = await this.connection.sendTransaction(transaction, [keypair]);
+            await this.connection.confirmTransaction(signature);
+            
+            logger.info(`Transazione di test inviata: ${signature}`);
+            return signature;
+        } catch (error) {
+            logger.error('Errore nell\'invio della transazione di test:', error);
+            throw error;
+        }
+    }
+
+    async simulateTokenSwap(useTestKey = true) {
+        const privateKeyEnvVar = useTestKey ? 'SOLANA_PRIVATE_KEY_TEST' : 'SOLANA_PRIVATE_KEY';
+        if (!process.env[privateKeyEnvVar]) {
+            throw new Error(`${privateKeyEnvVar} non configurata`);
+        }
+
+        try {
+            const keypair = Keypair.fromSecretKey(base58.decode(process.env[privateKeyEnvVar]));
+            
+            // Ottieni o crea un token account per USDC
+            logger.info('Creazione token account...');
+            const tokenAccount = await getOrCreateAssociatedTokenAccount(
+                this.connection,
+                keypair,
+                TEST_TOKENS.USDC_DEV,
+                keypair.publicKey
+            );
+
+            logger.info(`Token account creato: ${tokenAccount.address.toString()}`);
+
+            // Simula uno swap SOL -> USDC
+            const transaction = new Transaction().add(
+                SystemProgram.transfer({
+                    fromPubkey: keypair.publicKey,
+                    toPubkey: TEST_TOKENS.USDC_DEV,
+                    lamports: 0.1 * LAMPORTS_PER_SOL
+                })
+            );
+
+            logger.info('Invio transazione...');
+            const signature = await this.connection.sendTransaction(
+                transaction,
+                [keypair]
+            );
+
+            logger.info('Attesa conferma transazione...');
+            await this.connection.confirmTransaction(signature);
+            
+            logger.info(`Swap simulato! Signature: ${signature}`);
+            
+            // Crea un oggetto transazione più dettagliato
+            const transactionDetails = {
+                signature,
+                tokenAddress: TEST_TOKENS.USDC_DEV.toString(),
+                tokenSymbol: 'USDC',
+                amountIn: 0.1,
+                tokenAmount: 0.1 * 1000000, // USDC ha 6 decimali
+                type: 'swap',
+                timestamp: new Date().toISOString(),
+                wallet: keypair.publicKey.toString(),
+                success: true,
+                token: {
+                    address: TEST_TOKENS.USDC_DEV.toString(),
+                    symbol: 'USDC',
+                    decimals: 6,
+                    priceUsd: 1.0,
+                    dexScreenerUrl: `https://dexscreener.com/solana/${TEST_TOKENS.USDC_DEV.toString()}`
+                }
+            };
+
+            // Emetti l'evento attraverso il socket
+            if (this.socketManager) {
+                this.socketManager.emitTransaction(transactionDetails);
+            }
+
+            return transactionDetails;
+
+        } catch (error) {
+            logger.error('Errore nella simulazione dello swap:', error.message);
+            throw new Error(`Errore nella simulazione dello swap: ${error.message}`);
+        }
+    }
 }
 
-module.exports = new WalletService();
+module.exports = WalletService;

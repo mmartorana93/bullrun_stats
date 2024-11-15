@@ -115,7 +115,11 @@ const Row = ({ tx }: { tx: Transaction }) => {
                     <br />
                     Price: ${tx.token.priceUsd}
                     <br />
-                    Created: {new Date(tx.token.createdAt).toLocaleString()}
+                    {tx.token.createdAt && (
+                      <>
+                        Created: {new Date(tx.token.createdAt).toLocaleString()}
+                      </>
+                    )}
                   </Typography>
                 </Box>
               )}

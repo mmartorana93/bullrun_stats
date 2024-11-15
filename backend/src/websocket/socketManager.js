@@ -174,25 +174,49 @@ class SocketManager {
         return changes;
     }
 
-    async emitTransaction(signature, wallet, amount, type) {
+    async emitTransaction(transactionDetails) {
         try {
-            const tx = await this.connection.getTransaction(signature, {
+            if (transactionDetails.type === 'swap') {
+                const eventData = {
+                    signature: transactionDetails.signature,
+                    timestamp: transactionDetails.timestamp,
+                    wallet: transactionDetails.wallet,
+                    type: 'swap',
+                    amount_sol: transactionDetails.amountIn,
+                    success: true,
+                    token: {
+                        symbol: transactionDetails.tokenSymbol,
+                        address: transactionDetails.tokenAddress,
+                        decimals: transactionDetails.token.decimals,
+                        priceUsd: transactionDetails.token.priceUsd.toString(),
+                        dexScreenerUrl: transactionDetails.token.dexScreenerUrl
+                    },
+                    tokenAmount: transactionDetails.tokenAmount
+                };
+                
+                logger.info('Emitting swap transaction:', JSON.stringify(eventData, null, 2));
+                this.io.emit('newTransaction', eventData);
+                return;
+            }
+
+            // Per le transazioni normali, usa la logica esistente
+            const tx = await this.connection.getTransaction(transactionDetails.signature, {
                 commitment: 'confirmed',
                 maxSupportedTransactionVersion: 0
             });
 
             if (!tx) {
-                logger.error(`Transazione non trovata: ${signature}`);
+                logger.error(`Transazione non trovata: ${transactionDetails.signature}`);
                 return;
             }
 
             const transaction = {
-                signature,
-                wallet,
+                signature: transactionDetails.signature,
+                wallet: transactionDetails.wallet,
                 timestamp: new Date().toISOString(),
-                amount_sol: amount,
+                amount_sol: transactionDetails.amount_sol,
                 success: tx.meta?.err === null,
-                type
+                type: transactionDetails.type
             };
 
             this.io.emit('newTransaction', transaction);

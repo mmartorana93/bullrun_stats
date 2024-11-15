@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const walletService = require('../services/walletService');
 const { logger } = require('../config/logger');
+const { Keypair } = require('@solana/web3.js');
 
 // Funzione per inizializzare le route con il socketManager
-function initializeRoutes(socketManager) {
+function initializeRoutes(socketManager, walletService) {
     // GET /api/wallets
     router.get('/', async (req, res) => {
         try {
@@ -55,7 +56,9 @@ function initializeRoutes(socketManager) {
     // GET /api/wallets/my-wallet
     router.get('/my-wallet', async (req, res) => {
         try {
-            const walletInfo = await walletService.getMyWalletInfo();
+            const useTestKey = req.query.useTestKey === 'true';
+            logger.info(`Recupero info wallet con useTestKey: ${useTestKey}`);
+            const walletInfo = await walletService.getMyWalletInfo(useTestKey);
             res.json(walletInfo);
         } catch (error) {
             logger.error('Errore nel recupero info wallet:', error);
@@ -86,6 +89,53 @@ function initializeRoutes(socketManager) {
             logger.error('Errore nella creazione del wallet di test:', error);
             res.status(500).json({ 
                 error: 'Errore nella creazione del wallet di test',
+                details: error.message 
+            });
+        }
+    });
+
+    // POST /api/wallets/send-test-transaction
+    router.post('/send-test-transaction', async (req, res) => {
+        try {
+            const { amount, useTestKey = true } = req.body;
+            
+            // Crea un wallet random come destinazione
+            const destinationWallet = Keypair.generate();
+            
+            // Invia la transazione usando il wallet di test
+            const result = await walletService.sendTestTransaction(
+                amount,
+                destinationWallet.publicKey.toString(),
+                useTestKey
+            );
+
+            res.json({
+                signature: result,
+                message: 'Transazione di test inviata con successo'
+            });
+        } catch (error) {
+            logger.error('Errore nell\'invio della transazione di test:', error);
+            res.status(500).json({ 
+                error: 'Errore nell\'invio della transazione di test',
+                details: error.message 
+            });
+        }
+    });
+
+    // POST /api/wallets/simulate-swap
+    router.post('/simulate-swap', async (req, res) => {
+        try {
+            const { useTestKey = true } = req.body;
+            const result = await walletService.simulateTokenSwap(useTestKey);
+            
+            res.json({
+                ...result,
+                message: 'Swap simulato con successo'
+            });
+        } catch (error) {
+            logger.error('Errore nella simulazione dello swap:', error);
+            res.status(500).json({ 
+                error: 'Errore nella simulazione dello swap',
                 details: error.message 
             });
         }

@@ -1,29 +1,32 @@
 export interface TokenDetails {
     address: string;
     symbol: string;
-    createdAt: number;
-    dexScreenerUrl: string;
-    priceUsd: string;
+    decimals?: number;
+    priceUsd?: string;
+    dexScreenerUrl?: string;
+    createdAt?: number;
+}
+
+export interface TokenChange {
+    tokenAddress: string;
+    preAmount: string;
+    postAmount: string;
+    decimals?: number;
 }
 
 export interface Transaction {
     signature: string;
     timestamp: string;
     wallet: string;
-    type: 'send' | 'receive';
+    type: 'send' | 'receive' | 'swap';
     amount_sol: number;
     success: boolean;
-    blockTime?: number;
     token?: TokenDetails;
-    logMessages?: string[];
-    rawLogs?: string[];
-    tokenChanges?: {
-        tokenAddress: string;
-        preAmount: string;
-        postAmount: string;
-    }[];
     tokenSymbol?: string;
     tokenAddress?: string;
+    tokenAmount?: number;
+    tokenChanges?: TokenChange[];
+    logMessages?: string[];
     age?: number;
 }
 

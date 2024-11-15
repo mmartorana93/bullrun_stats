@@ -1,4 +1,4 @@
-#!/Users/manuelmartorana/Projects/Apps/crypto/solana_tracker/venv/bin/python3.11
+#!/Users/manuelmartorana/Projects/Apps/crypto/solana_tracker/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
