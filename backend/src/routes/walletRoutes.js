@@ -26,11 +26,25 @@ function initializeRoutes(socketManager, walletService) {
                 return res.status(400).json({ error: "Wallet address required" });
             }
 
-            if (await walletService.startMonitoring(wallet, socketManager.emitTransaction.bind(socketManager))) {
-                return res.json({ message: "Wallet added successfully" });
+            // Verifica se il wallet è già monitorato
+            const currentWallets = await walletService.loadWallets();
+            if (currentWallets.includes(wallet)) {
+                return res.status(400).json({ error: "Wallet già monitorato" });
             }
 
-            res.status(400).json({ error: "Wallet already monitored" });
+            // Avvia il monitoraggio
+            const success = await walletService.startMonitoring(
+                wallet, 
+                socketManager.emitTransaction.bind(socketManager)
+            );
+
+            if (success) {
+                // Salva il nuovo wallet nel file JSON
+                await walletService.saveWallets([...currentWallets, wallet]);
+                return res.json({ message: "Wallet aggiunto con successo" });
+            }
+
+            res.status(500).json({ error: "Errore nell'avvio del monitoraggio" });
         } catch (error) {
             logger.error('Error adding wallet:', error);
             res.status(500).json({ error: 'Failed to add wallet' });
@@ -41,12 +55,23 @@ function initializeRoutes(socketManager, walletService) {
     router.delete('/:wallet', async (req, res) => {
         try {
             const { wallet } = req.params;
-
-            if (await walletService.stopMonitoring(wallet)) {
-                return res.json({ message: "Wallet removed successfully" });
+            const currentWallets = await walletService.loadWallets();
+            
+            if (!currentWallets.includes(wallet)) {
+                return res.status(404).json({ error: "Wallet non trovato" });
             }
 
-            res.status(404).json({ error: "Wallet not found" });
+            // Ferma il monitoraggio
+            const success = await walletService.stopMonitoring(wallet);
+            
+            if (success) {
+                // Rimuovi il wallet dal file JSON
+                const updatedWallets = currentWallets.filter(w => w !== wallet);
+                await walletService.saveWallets(updatedWallets);
+                return res.json({ message: "Wallet rimosso con successo" });
+            }
+
+            res.status(500).json({ error: "Errore nella rimozione del monitoraggio" });
         } catch (error) {
             logger.error('Error removing wallet:', error);
             res.status(500).json({ error: 'Failed to remove wallet' });

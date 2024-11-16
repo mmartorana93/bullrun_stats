@@ -161,12 +161,18 @@ const TransactionLog: React.FC = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  // Limita il numero massimo di transazioni memorizzate
+  const MAX_TRANSACTIONS = 1000;
+
   useEffect(() => {
     if (!socket) return;
 
-    // Ascolta nuove transazioni
     socket.on('newTransaction', (transaction: Transaction) => {
-      setTransactions(prev => [transaction, ...prev]);
+      setTransactions(prev => {
+        const newTx = [transaction, ...prev];
+        // Mantiene solo le ultime MAX_TRANSACTIONS transazioni
+        return newTx.slice(0, MAX_TRANSACTIONS);
+      });
     });
 
     return () => {

@@ -9,9 +9,9 @@ const transactionTracker = require('../utils/transactionTracker');
 
 // Token di test noti sulla devnet
 const TEST_TOKENS = {
-    USDC_DEV: new PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU'),
-    SRM_DEV: new PublicKey('SNSNkV9zfG5ZKWQs6x4hxvBRV6s8SqMfSGCtECDvdMd'),
-    RAY_DEV: new PublicKey('RaYSHhicZ9PwPwBn6AHJpyPxpDwRpf8HM2M4vbVVBzG'),
+    USDC: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+    SRM: new PublicKey('SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt'),
+    RAY: new PublicKey('4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R'),
 };
 
 class WalletService {
@@ -51,6 +51,21 @@ class WalletService {
         } catch (error) {
             logger.error('Errore nell\'inizializzazione dei wallet:', error);
         }
+
+        // Carica i wallet salvati all'avvio e inizia il monitoraggio
+        this.initializeMonitoring();
+    }
+
+    async initializeMonitoring() {
+        try {
+            const savedWallets = await this.loadWallets();
+            for (const wallet of savedWallets) {
+                await this.startMonitoring(wallet, this.socketManager.emitTransaction.bind(this.socketManager));
+            }
+            logger.info(`Inizializzato monitoraggio per ${savedWallets.length} wallet`);
+        } catch (error) {
+            logger.error('Errore nell\'inizializzazione del monitoraggio:', error);
+        }
     }
 
     async loadWallets() {
@@ -66,11 +81,17 @@ class WalletService {
         }
     }
 
-    async saveWallets() {
-        await fs.writeFile(
-            path.join(__dirname, '../../wallets.json'),
-            JSON.stringify(Array.from(this.monitoredWallets))
-        );
+    async saveWallets(wallets) {
+        try {
+            await fs.writeFile(
+                path.join(__dirname, '../../wallets.json'),
+                JSON.stringify(wallets)
+            );
+            this.monitoredWallets = new Set(wallets);
+        } catch (error) {
+            logger.error('Errore nel salvataggio dei wallet:', error);
+            throw error;
+        }
     }
 
     async startMonitoring(walletAddress, emitTransaction) {
@@ -130,7 +151,9 @@ class WalletService {
                 logger.info(`[WebSocket] Subscription ID ottenuto per ${walletAddress}: ${subscriptionId}`);
                 this.monitorThreads.set(walletAddress, subscriptionId);
                 this.monitoredWallets.add(walletAddress);
-                await this.saveWallets();
+                
+                await this.saveWallets(Array.from(this.monitoredWallets));
+                
                 logger.info(`Monitoraggio avviato con successo per ${walletAddress}`);
                 return true;
             } catch (error) {
@@ -152,7 +175,8 @@ class WalletService {
                 
                 this.monitorThreads.delete(walletAddress);
                 this.monitoredWallets.delete(walletAddress);
-                await this.saveWallets();
+                
+                await this.saveWallets(Array.from(this.monitoredWallets));
                 
                 logger.info(`Monitoraggio fermato con successo per ${walletAddress}`);
                 return true;
@@ -162,7 +186,7 @@ class WalletService {
                 // Cleanup forzato in caso di errore
                 this.monitorThreads.delete(walletAddress);
                 this.monitoredWallets.delete(walletAddress);
-                await this.saveWallets();
+                await this.saveWallets(Array.from(this.monitoredWallets));
                 
                 logger.info(`Cleanup forzato completato per ${walletAddress}`);
                 return true; // Ritorniamo true anche in caso di errore per indicare che il wallet è stato rimosso
@@ -173,12 +197,11 @@ class WalletService {
 
     async getMyWalletInfo() {
         try {
-            // Determina quale wallet usare basandosi sull'RPC URL
-            const isDevnet = config.SOLANA_RPC_URL.includes('devnet');
-            const walletAddress = isDevnet ? this.testWalletAddress : this.mainWalletAddress;
+            // Usa sempre il mainWallet invece di controllare se è devnet
+            const walletAddress = this.mainWalletAddress;
 
             if (!walletAddress) {
-                throw new Error(`${isDevnet ? 'TEST' : 'MAIN'}_WALLET non inizializzato correttamente`);
+                throw new Error('MAIN_WALLET non inizializzato correttamente');
             }
 
             const publicKey = new PublicKey(walletAddress);
@@ -186,8 +209,8 @@ class WalletService {
 
             return {
                 address: walletAddress,
-                balance: balance / 1e9, // Converti lamports in SOL
-                isTestWallet: isDevnet
+                balance: balance / 1e9,
+                isTestWallet: false
             };
         } catch (error) {
             logger.error('Errore nel recupero info wallet:', error);
@@ -300,7 +323,7 @@ class WalletService {
             const tokenAccount = await getOrCreateAssociatedTokenAccount(
                 this.connection,
                 keypair,
-                TEST_TOKENS.USDC_DEV,
+                TEST_TOKENS.USDC,
                 keypair.publicKey
             );
 
@@ -310,7 +333,7 @@ class WalletService {
             const transaction = new Transaction().add(
                 SystemProgram.transfer({
                     fromPubkey: keypair.publicKey,
-                    toPubkey: TEST_TOKENS.USDC_DEV,
+                    toPubkey: TEST_TOKENS.USDC,
                     lamports: 0.1 * LAMPORTS_PER_SOL
                 })
             );
@@ -340,7 +363,7 @@ class WalletService {
             
             const transactionDetails = {
                 signature,
-                tokenAddress: TEST_TOKENS.USDC_DEV.toString(),
+                tokenAddress: TEST_TOKENS.USDC.toString(),
                 tokenSymbol: 'USDC',
                 amountIn: Math.abs(solDelta),
                 tokenAmount: Math.abs(tokenDelta),
@@ -349,11 +372,11 @@ class WalletService {
                 wallet: keypair.publicKey.toString(),
                 success: true,
                 token: {
-                    address: TEST_TOKENS.USDC_DEV.toString(),
+                    address: TEST_TOKENS.USDC.toString(),
                     symbol: 'USDC',
                     decimals: 6,
                     priceUsd: 1.0,
-                    dexScreenerUrl: `https://dexscreener.com/solana/${TEST_TOKENS.USDC_DEV.toString()}`
+                    dexScreenerUrl: `https://dexscreener.com/solana/${TEST_TOKENS.USDC.toString()}`
                 },
                 preBalances: {
                     sol: preBalance / LAMPORTS_PER_SOL,

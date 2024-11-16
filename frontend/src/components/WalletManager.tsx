@@ -75,6 +75,8 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
       };
     }) => {
       setWalletData(prev => {
+        if (!wallets.includes(data.wallet)) return prev;
+        
         const current = prev[data.wallet] || { balance: 0 };
         
         if (data.type === 'balance' && typeof data.balance === 'number') {
@@ -106,7 +108,7 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
     return () => {
       socket.off('walletUpdate', handleWalletUpdate);
     };
-  }, [socket]);
+  }, [socket, wallets]);
 
   const validateSolanaAddress = (address: string): boolean => {
     return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address);
@@ -118,14 +120,22 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
       return;
     }
 
+    if (wallets.includes(newWallet)) {
+      setError('Questo wallet è già monitorato');
+      return;
+    }
+
     setIsValidating(true);
     try {
       const response = await api.post<WalletResponse>('/api/wallets', {
         wallet: newWallet,
       });
+      
+      const updatedWallets = [...wallets, newWallet];
+      onWalletsUpdate(updatedWallets);
+      
       setSuccess(response.data.message || 'Wallet aggiunto con successo');
       setNewWallet('');
-      onWalletsUpdate([...wallets, newWallet]);
     } catch (error: any) {
       setError(error.response?.data?.error || 'Errore durante l\'aggiunta del wallet');
     } finally {
@@ -135,9 +145,12 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
 
   const handleRemoveWallet = async (wallet: string) => {
     try {
-      const response = await api.delete<WalletResponse>(`/api/wallets/${wallet}`);
-      setSuccess(response.data.message || 'Wallet rimosso con successo');
-      onWalletsUpdate(wallets.filter(w => w !== wallet));
+      await api.delete<WalletResponse>(`/api/wallets/${wallet}`);
+      
+      const updatedWallets = wallets.filter(w => w !== wallet);
+      onWalletsUpdate(updatedWallets);
+      
+      setSuccess('Wallet rimosso con successo');
     } catch (error: any) {
       setError(error.response?.data?.error || 'Errore durante la rimozione del wallet');
     }

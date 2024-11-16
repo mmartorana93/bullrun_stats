@@ -10,6 +10,7 @@ import WalletManager from './components/WalletManager';
 import TransactionLog from './components/TransactionLog';
 import api from './api/config';
 import { WebSocketProvider } from './contexts/WebSocketContext';
+import PersistentTabContent from './components/PersistentTabContent';
 
 function App() {
   const [tabValue, setTabValue] = useState(0);
@@ -93,10 +94,23 @@ function App() {
               </Tabs>
             </Box>
 
-            {tabValue === 0 && <WalletManager wallets={wallets} onWalletsUpdate={setWallets} />}
-            {tabValue === 1 && <TransactionLog />}
-            {tabValue === 2 && <LPTracking />}
-            {tabValue === 3 && <BullRunStats />}
+            <Box sx={{ p: 3, height: 'calc(100% - 64px)' }}>
+              <PersistentTabContent value={tabValue} index={0}>
+                <WalletManager wallets={wallets} onWalletsUpdate={setWallets} />
+              </PersistentTabContent>
+              
+              <PersistentTabContent value={tabValue} index={1}>
+                <TransactionLog />
+              </PersistentTabContent>
+              
+              <PersistentTabContent value={tabValue} index={2}>
+                <LPTracking />
+              </PersistentTabContent>
+              
+              <PersistentTabContent value={tabValue} index={3}>
+                <BullRunStats />
+              </PersistentTabContent>
+            </Box>
           </Box>
         </Box>
       </ThemeProvider>
