@@ -48,6 +48,19 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
   const { socket, isConnected } = useWebSocket();
 
   useEffect(() => {
+    const fetchWallets = async () => {
+      try {
+        const response = await api.get('/api/wallets');
+        onWalletsUpdate(response.data);
+      } catch (error: any) {
+        setError(error.response?.data?.error || 'Errore durante il caricamento dei wallet');
+      }
+    };
+
+    fetchWallets();
+  }, []);
+
+  useEffect(() => {
     if (!socket) return;
 
     const handleWalletUpdate = (data: {

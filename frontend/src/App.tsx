@@ -44,61 +44,63 @@ function App() {
   });
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <Box sx={{ 
-        minHeight: '100vh',
-        bgcolor: 'background.default',
-        position: 'relative'
-      }}>
-        <Header 
-          address={myWallet.address} 
-          balance={myWallet.balance}
-          isTestWallet={myWallet.isTestWallet}
-        />
-        
-        <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs 
-              value={tabValue} 
-              onChange={handleTabChange} 
-              centered
-              sx={{
-                '& .MuiTab-root': {
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  py: 2
-                }
-              }}
-            >
-              <Tab label="Gestione Wallet" />
-              <Tab label="Log Transazioni" />
-              <Tab 
-                icon={
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <span>LP Tracking</span>
-                    <BetaIcon color="warning" fontSize="small" />
-                  </Stack>
-                }
-              />
-              <Tab 
-                icon={
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <span>BullRun Stats</span>
-                    <BetaIcon color="warning" fontSize="small" />
-                  </Stack>
-                }
-              />
-            </Tabs>
-          </Box>
+    <WebSocketProvider>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Box sx={{ 
+          minHeight: '100vh',
+          bgcolor: 'background.default',
+          position: 'relative'
+        }}>
+          <Header 
+            address={myWallet.address} 
+            balance={myWallet.balance}
+            isTestWallet={myWallet.isTestWallet}
+          />
+          
+          <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs 
+                value={tabValue} 
+                onChange={handleTabChange} 
+                centered
+                sx={{
+                  '& .MuiTab-root': {
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    py: 2
+                  }
+                }}
+              >
+                <Tab label="Gestione Wallet" />
+                <Tab label="Log Transazioni" />
+                <Tab 
+                  icon={
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <span>LP Tracking</span>
+                      <BetaIcon color="warning" fontSize="small" />
+                    </Stack>
+                  }
+                />
+                <Tab 
+                  icon={
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <span>BullRun Stats</span>
+                      <BetaIcon color="warning" fontSize="small" />
+                    </Stack>
+                  }
+                />
+              </Tabs>
+            </Box>
 
-          {tabValue === 0 && <WalletManager wallets={wallets} onWalletsUpdate={setWallets} />}
-          {tabValue === 1 && <TransactionLog />}
-          {tabValue === 2 && <LPTracking />}
-          {tabValue === 3 && <BullRunStats />}
+            {tabValue === 0 && <WalletManager wallets={wallets} onWalletsUpdate={setWallets} />}
+            {tabValue === 1 && <TransactionLog />}
+            {tabValue === 2 && <LPTracking />}
+            {tabValue === 3 && <BullRunStats />}
+          </Box>
         </Box>
-      </Box>
-    </ThemeProvider>
+      </ThemeProvider>
+    </WebSocketProvider>
   );
 }
 

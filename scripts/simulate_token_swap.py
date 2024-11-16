@@ -14,11 +14,31 @@ async def simulate_token_swap():
     """Simula uno swap di token usando le API del backend"""
     try:
         async with aiohttp.ClientSession() as session:
-            # 1. Verifica che il server sia attivo
-            async with session.get('http://localhost:5001/health') as response:
-                if response.status != 200:
-                    raise Exception("Backend non raggiungibile")
-                logger.info("Backend raggiungibile")
+            # Test di connessione base
+            logger.info("Tentativo di connessione al backend...")
+            
+            # Test route
+            try:
+                async with session.get('http://localhost:5001/test') as response:
+                    logger.info(f"Test route status: {response.status}")
+                    if response.status == 200:
+                        logger.info("Test route response:", await response.json())
+            except Exception as e:
+                logger.error(f"Errore test route: {str(e)}")
+
+            # Health check
+            try:
+                async with session.get('http://localhost:5001/health') as response:
+                    logger.info(f"Health check status: {response.status}")
+                    if response.status == 200:
+                        logger.info("Health check response:", await response.json())
+                    else:
+                        logger.error(f"Health check failed with status {response.status}")
+                        logger.error("Response:", await response.text())
+                        raise Exception("Backend non raggiungibile")
+            except aiohttp.ClientError as e:
+                logger.error(f"Errore di connessione al backend: {str(e)}")
+                raise Exception(f"Errore di connessione: {str(e)}")
 
             # 2. Ottieni info sul wallet di test
             async with session.get('http://localhost:5001/api/wallets/my-wallet?useTestKey=true') as response:

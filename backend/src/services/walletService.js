@@ -16,6 +16,10 @@ const TEST_TOKENS = {
 
 class WalletService {
     constructor(socketManager) {
+        if (!socketManager) {
+            throw new Error('SocketManager è richiesto per WalletService');
+        }
+        this.socketManager = socketManager;
         this.monitorThreads = new Map();
         this.monitoredWallets = new Set();
         this.connection = new Connection(
@@ -26,7 +30,6 @@ class WalletService {
                 confirmTransactionInitialTimeout: 60000,
             }
         );
-        this.socketManager = socketManager;
         this.backupConnections = config.BACKUP_RPC_URLS.map(url => 
             new Connection(url, { commitment: 'confirmed' })
         );
