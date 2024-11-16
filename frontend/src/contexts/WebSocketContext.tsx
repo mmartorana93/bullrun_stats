@@ -30,7 +30,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     });
 
     socketInstance.on('connect', () => {
-      console.log('WebSocket Connected');
+      console.log('WebSocket Connected with ID:', socketInstance.id);
       setIsConnected(true);
     });
 

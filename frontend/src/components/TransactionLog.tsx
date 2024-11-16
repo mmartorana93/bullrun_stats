@@ -74,7 +74,7 @@ const Row = ({ tx }: { tx: Transaction }) => {
           />
         </TableCell>
         <TableCell>
-          {tx.amount_sol.toFixed(4)} SOL
+          {(tx.amount_sol ?? 0).toFixed(4)} SOL
           {tx.token && tx.tokenAmount && (
             <Typography variant="body2" color="text.secondary">
               {tx.tokenAmount} {tx.token.symbol}
@@ -156,12 +156,23 @@ const Row = ({ tx }: { tx: Transaction }) => {
 };
 
 const TransactionLog: React.FC = () => {
-  const rawTransactions = useTransactions();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { socket } = useWebSocket();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Assicurati che transactions sia sempre un array
-  const transactions = Array.isArray(rawTransactions) ? rawTransactions : [];
+  useEffect(() => {
+    if (!socket) return;
+
+    // Ascolta nuove transazioni
+    socket.on('newTransaction', (transaction: Transaction) => {
+      setTransactions(prev => [transaction, ...prev]);
+    });
+
+    return () => {
+      socket.off('newTransaction');
+    };
+  }, [socket]);
 
   useEffect(() => {
     const logNewTransactions = async () => {

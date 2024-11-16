@@ -27,21 +27,31 @@ export interface BalanceInfo {
 
 export interface Transaction {
     signature: string;
-    timestamp: string;
     wallet: string;
-    type: 'send' | 'receive' | 'swap';
+    type: string;
     amount_sol: number;
-    success: boolean;
-    token?: TokenDetails;
-    tokenSymbol?: string;
-    tokenAddress?: string;
     tokenAmount?: number;
-    links?: Links;
-    preBalances?: BalanceInfo;
-    postBalances?: BalanceInfo;
-    tokenChanges?: TokenChange[];
-    logMessages?: string[];
-    age?: number;
+    success: boolean;
+    timestamp: string | number;
+    token?: {
+        address: string;
+        symbol: string;
+        decimals: number;
+        priceUsd: number;
+        dexScreenerUrl: string;
+    };
+    preBalances?: {
+        sol: number;
+        token: number;
+    };
+    postBalances?: {
+        sol: number;
+        token: number;
+    };
+    links?: {
+        photon: string;
+        rugcheck: string;
+    };
 }
 
 export interface WalletResponse {

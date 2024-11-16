@@ -26,6 +26,8 @@ class SocketManager {
         try {
             logger.info('Emitting transaction:', transactionDetails.signature);
             
+            logger.info('Connected clients:', this.io.engine.clientsCount);
+            
             this.io.emit('newTransaction', {
                 ...transactionDetails,
                 timestamp: Date.now()
