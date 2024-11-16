@@ -33,7 +33,7 @@ async function ensureLogDirectory() {
     }
 }
 
-// Funzione per scrivere nei file di log
+// Funzione unificata per la scrittura dei log
 async function writeLogToFile(filename, message) {
     const logMessage = `${new Date().toISOString()} - ${message}\n`;
     await fs.appendFile(path.join(__dirname, '../../logs', filename), logMessage);

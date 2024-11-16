@@ -128,6 +128,7 @@ const PORT = process.env.PORT || 5001;
 
 async function startServer() {
     try {
+        await ensureLogDirectory();
         // Carica i wallet salvati
         const savedWallets = await walletService.loadWallets();
         for (const wallet of savedWallets) {

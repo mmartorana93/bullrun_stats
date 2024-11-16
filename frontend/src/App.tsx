@@ -9,6 +9,7 @@ import Header from './components/Header';
 import WalletManager from './components/WalletManager';
 import TransactionLog from './components/TransactionLog';
 import api from './api/config';
+import { WebSocketProvider } from './contexts/WebSocketContext';
 
 function App() {
   const [tabValue, setTabValue] = useState(0);

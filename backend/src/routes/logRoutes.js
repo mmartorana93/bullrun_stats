@@ -5,11 +5,21 @@ const path = require('path');
 const { logger } = require('../config/logger');
 
 // GET /api/logs
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        // Qui potresti implementare la logica per recuperare i log
-        // Per ora restituiamo un array vuoto come placeholder
+        const logFiles = await fs.readdir(path.join(__dirname, '../../logs'));
         const logs = [];
+        
+        for (const file of logFiles) {
+            if (file.endsWith('.log')) {
+                const content = await fs.readFile(path.join(__dirname, '../../logs', file), 'utf8');
+                logs.push({
+                    filename: file,
+                    content: content.split('\n').filter(Boolean)
+                });
+            }
+        }
+        
         res.json(logs);
     } catch (error) {
         logger.error('Error getting logs:', error);

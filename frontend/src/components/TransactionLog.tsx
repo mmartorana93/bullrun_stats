@@ -26,6 +26,7 @@ import { Transaction } from '../types';
 import LoggingService from '../services/loggingService';
 import { shortenAddress, formatDate } from '../utils/format';
 import { useTransactions } from '../store/realTimeStore';
+import { useWebSocket } from '../contexts/WebSocketContext';
 
 const Row = ({ tx }: { tx: Transaction }) => {
   const [open, setOpen] = useState(false);

@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 const { Connection, PublicKey } = require('@solana/web3.js');
-const { logger } = require('./src/config/logger');
+const { logger, writeLogToFile } = require('./src/config/logger');
 const axios = require('axios');
 require('dotenv').config();
 const fs = require('fs').promises;
@@ -361,12 +361,6 @@ class LPTracker {
             this.getSolanaPrice();
         }, 30000);
     }
-}
-
-// Funzione per scrivere nei file di log
-async function writeLogToFile(filename, message) {
-    const logMessage = `${new Date().toISOString()} - ${message}\n`;
-    await fs.appendFile(path.join(__dirname, 'logs', filename), logMessage);
 }
 
 module.exports = LPTracker;

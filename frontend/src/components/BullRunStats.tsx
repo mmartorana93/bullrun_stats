@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Box, Typography, Paper, CircularProgress, Grid, Divider, IconButton, Tooltip } from '@mui/material';
-import { getCoinbaseRanking } from '../api/config';
+import { getCoinbaseRanking } from '../api/coinbaseService';
 import { getBitcoinDominance, BitcoinDominanceData } from '../services/cryptoService';
 import coinbaseIcon from '../assets/images/coinbase.png';
 import { useMarketStore } from '../store/marketStore';
