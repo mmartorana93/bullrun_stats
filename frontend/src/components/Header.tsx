@@ -1,13 +1,13 @@
-import { AppBar, Toolbar, Typography, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Box, Chip } from '@mui/material';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 interface HeaderProps {
   address: string;
   balance: number;
-  solPrice: number | null;
+  isTestWallet: boolean;
 }
 
-const Header = ({ address, balance, solPrice }: HeaderProps) => {
+const Header = ({ address, balance, isTestWallet }: HeaderProps) => {
   const truncatedAddress = address ? `${address.slice(0, 4)}...${address.slice(-4)}` : '';
   const balanceText = (!address || balance === 0) 
     ? "Wallet non connesso" 
@@ -25,20 +25,6 @@ const Header = ({ address, balance, solPrice }: HeaderProps) => {
           gap: 2
         }}>
           <Box sx={{ 
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            padding: '8px 16px',
-            borderRadius: '8px',
-            minWidth: '120px',
-            textAlign: 'center'
-          }}>
-            <Typography variant="body2" sx={{ 
-              fontWeight: 'bold',
-              color: solPrice && solPrice > 0 ? 'success.main' : 'text.primary'
-            }}>
-              SOL: {solPrice && solPrice > 0 ? `$${solPrice.toFixed(2)}` : '...'}
-            </Typography>
-          </Box>
-          <Box sx={{ 
             display: 'flex', 
             alignItems: 'center', 
             gap: 2,
@@ -48,12 +34,22 @@ const Header = ({ address, balance, solPrice }: HeaderProps) => {
           }}>
             <AccountBalanceWalletIcon />
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <Typography variant="body2" sx={{ 
-                fontFamily: 'monospace',
-                letterSpacing: '0.5px'
-              }}>
-                {truncatedAddress || 'Non connesso'}
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2" sx={{ 
+                  fontFamily: 'monospace',
+                  letterSpacing: '0.5px'
+                }}>
+                  {truncatedAddress || 'Non connesso'}
+                </Typography>
+                {isTestWallet && (
+                  <Chip 
+                    label="TEST" 
+                    size="small" 
+                    color="warning" 
+                    sx={{ height: '16px' }} 
+                  />
+                )}
+              </Box>
               <Typography variant="body1" sx={{ 
                 color: (!address || balance === 0) ? 'error.main' : 'success.main',
                 fontWeight: 'bold'

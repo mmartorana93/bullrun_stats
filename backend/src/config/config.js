@@ -25,39 +25,14 @@ const config = {
     MAX_MONITORED_WALLETS: parseInt(process.env.MAX_MONITORED_WALLETS || '50'),
     TRANSACTION_HISTORY_LIMIT: parseInt(process.env.TRANSACTION_HISTORY_LIMIT || '100'),
     
-    // RPC Fallbacks (in caso di problemi con l'endpoint principale)
+    // RPC Fallbacks
     BACKUP_RPC_URLS: [
         "https://solana-api.projectserum.com",
         "https://rpc.ankr.com/solana"
     ],
 
     // Logging
-    LOG_LEVEL: process.env.LOG_LEVEL || 'info',
-    LOG_TO_FILE: process.env.LOG_TO_FILE === 'true',
-    LOG_FILE_PATH: process.env.LOG_FILE_PATH || path.join(__dirname, '../../logs/app.log'),
-
-    // WebSocket
-    WS_PING_INTERVAL: parseInt(process.env.WS_PING_INTERVAL || '25000'),
-    WS_PING_TIMEOUT: parseInt(process.env.WS_PING_TIMEOUT || '60000'),
-    WS_CONNECT_TIMEOUT: parseInt(process.env.WS_CONNECT_TIMEOUT || '10000'),
-
-    // Transaction Monitoring
-    TX_CONFIRMATION_TIMEOUT: parseInt(process.env.TX_CONFIRMATION_TIMEOUT || '60000'),
-    TX_RETRY_ATTEMPTS: parseInt(process.env.TX_RETRY_ATTEMPTS || '3'),
-    TX_RETRY_DELAY: parseInt(process.env.TX_RETRY_DELAY || '1000'),
-
-    // Cache Settings
-    CACHE_DURATION: parseInt(process.env.CACHE_DURATION || '300000'), // 5 minuti
-    MAX_CACHE_ITEMS: parseInt(process.env.MAX_CACHE_ITEMS || '1000'),
-
-    // Rate Limiting
-    RATE_LIMIT_WINDOW: parseInt(process.env.RATE_LIMIT_WINDOW || '900000'), // 15 minuti
-    RATE_LIMIT_MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
-
-    // Security
-    CORS_ORIGINS: process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',') : ["http://localhost:3000"],
-    JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key',
-    JWT_EXPIRY: process.env.JWT_EXPIRY || '24h'
+    LOG_LEVEL: process.env.LOG_LEVEL || 'info'
 };
 
 // Validazione della configurazione

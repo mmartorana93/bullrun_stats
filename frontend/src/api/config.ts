@@ -10,7 +10,6 @@ const api = axios.create({
     timeout: 15000
 });
 
-// Interceptor per gestire gli errori
 api.interceptors.response.use(
     response => response,
     error => {
@@ -30,7 +29,6 @@ api.interceptors.response.use(
     }
 );
 
-// Funzione per ottenere il ranking di Coinbase
 export const getCoinbaseRanking = (force: boolean = false) => {
     return api.get('/api/crypto/coinbase-ranking', {
         params: { force }

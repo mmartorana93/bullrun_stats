@@ -30,6 +30,24 @@ class WalletService {
         this.backupConnections = config.BACKUP_RPC_URLS.map(url => 
             new Connection(url, { commitment: 'confirmed' })
         );
+        
+        // Inizializza i wallet usando le chiavi private dal .env
+        try {
+            const testPrivateKey = process.env.SOLANA_PRIVATE_KEY_TEST;
+            const mainPrivateKey = process.env.SOLANA_PRIVATE_KEY;
+
+            if (testPrivateKey) {
+                this.testWallet = Keypair.fromSecretKey(base58.decode(testPrivateKey));
+                this.testWalletAddress = this.testWallet.publicKey.toString();
+            }
+
+            if (mainPrivateKey) {
+                this.mainWallet = Keypair.fromSecretKey(base58.decode(mainPrivateKey));
+                this.mainWalletAddress = this.mainWallet.publicKey.toString();
+            }
+        } catch (error) {
+            logger.error('Errore nell\'inizializzazione dei wallet:', error);
+        }
     }
 
     async loadWallets() {
@@ -150,25 +168,26 @@ class WalletService {
         return false;
     }
 
-    async getMyWalletInfo(useTestKey = false) {
-        const privateKeyEnvVar = useTestKey ? 'SOLANA_PRIVATE_KEY_TEST' : 'WALLET_PRIVATE_KEY';
-        if (!process.env[privateKeyEnvVar]) {
-            throw new Error(`${privateKeyEnvVar} non configurata`);
-        }
-
-        logger.info(`Tentativo di decodifica chiave per ${privateKeyEnvVar}`);
+    async getMyWalletInfo() {
         try {
-            const keypair = Keypair.fromSecretKey(base58.decode(process.env[privateKeyEnvVar]));
-            const walletAddress = keypair.publicKey.toString();
-            
-            logger.info(`Wallet address decodificato: ${walletAddress}`);
-            const balance = await this.connection.getBalance(keypair.publicKey);
+            // Determina quale wallet usare basandosi sull'RPC URL
+            const isDevnet = config.SOLANA_RPC_URL.includes('devnet');
+            const walletAddress = isDevnet ? this.testWalletAddress : this.mainWalletAddress;
+
+            if (!walletAddress) {
+                throw new Error(`${isDevnet ? 'TEST' : 'MAIN'}_WALLET non inizializzato correttamente`);
+            }
+
+            const publicKey = new PublicKey(walletAddress);
+            const balance = await this.connection.getBalance(publicKey);
+
             return {
                 address: walletAddress,
-                balance: balance / 10**9
+                balance: balance / 1e9, // Converti lamports in SOL
+                isTestWallet: isDevnet
             };
         } catch (error) {
-            logger.error(`Errore nella decodifica della chiave: ${error.message}`);
+            logger.error('Errore nel recupero info wallet:', error);
             throw error;
         }
     }

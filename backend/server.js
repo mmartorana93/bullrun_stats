@@ -4,9 +4,7 @@ const { logger, ensureLogDirectory } = require('./src/config/logger');
 const setupExpress = require('./src/config/express');
 const SocketManager = require('./src/websocket/socketManager');
 const initializeWalletRoutes = require('./src/routes/walletRoutes');
-const cryptoRoutes = require('./src/routes/cryptoRoutes');
 const logRoutes = require('./src/routes/logRoutes');
-const cryptoService = require('./src/services/cryptoService');
 const WalletService = require('./src/services/walletService');
 const LPTracker = require('./lpTracker');
 const config = require('./src/config/config');
@@ -36,7 +34,6 @@ ensureLogDirectory();
 
 // Configura le routes
 app.use('/api/wallets', initializeWalletRoutes(socketManager, walletService));
-app.use('/api/crypto', cryptoRoutes);
 app.use('/api/logs', logRoutes);
 app.use('/api/features', featureRoutes);
 
@@ -136,9 +133,6 @@ async function startServer() {
         for (const wallet of savedWallets) {
             await walletService.startMonitoring(wallet, socketManager.emitTransaction.bind(socketManager));
         }
-        
-        // Avvia l'aggiornamento periodico dei dati crypto
-        cryptoService.startPeriodicUpdate();
         
         // Avvia il server
         server.listen(PORT, () => {
