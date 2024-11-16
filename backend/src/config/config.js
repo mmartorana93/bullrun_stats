@@ -19,6 +19,7 @@ const config = {
     
     // Feature Flags
     ENABLE_TEST_FEATURES: process.env.ENABLE_TEST_FEATURES === 'true',
+    ENABLE_LP_TRACKING: process.env.ENABLE_LP_TRACKING === 'false',
     
     // Monitoring Config
     MAX_MONITORED_WALLETS: parseInt(process.env.MAX_MONITORED_WALLETS || '50'),

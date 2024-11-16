@@ -30,11 +30,4 @@ api.interceptors.response.use(
     }
 );
 
-// Funzione per ottenere il ranking di Coinbase
-export const getCoinbaseRanking = (force: boolean = false) => {
-    return api.get('/api/crypto/coinbase-ranking', {
-        params: { force }
-    });
-};
-
-export default api;
+export default api; 

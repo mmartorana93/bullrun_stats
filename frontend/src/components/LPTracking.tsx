@@ -32,6 +32,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useWebSocket } from '../contexts/WebSocketContext';
 import { useRealTimeStore } from '../store/realTimeStore';
 import LoggingService from '../services/loggingService';
+import api from '../api/config';
 
 interface FilterSettings {
     minUsd: number;
@@ -348,6 +349,29 @@ const LPTracking: React.FC = () => {
             </Stack>
         );
     };
+
+    // Aggiungi check per feature flag
+    const [isEnabled, setIsEnabled] = useState(false);
+    
+    useEffect(() => {
+        // Controlla se la feature è abilitata
+        const checkFeatureStatus = async () => {
+            try {
+                const response = await api.get('/api/features/lp-tracking');
+                setIsEnabled(response.data.enabled);
+            } catch (error) {
+                console.error('Errore nel controllo dello stato della feature:', error);
+                setIsEnabled(false);
+            }
+        };
+        
+        checkFeatureStatus();
+    }, []);
+
+    // Se la feature è disabilitata, non renderizzare nulla
+    if (!isEnabled) {
+        return null;
+    }
 
     return (
         <Box sx={{ width: '100%', overflow: 'hidden' }}>            

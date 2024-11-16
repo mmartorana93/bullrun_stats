@@ -9,6 +9,8 @@ const logRoutes = require('./src/routes/logRoutes');
 const cryptoService = require('./src/services/cryptoService');
 const WalletService = require('./src/services/walletService');
 const LPTracker = require('./lpTracker');
+const config = require('./src/config/config');
+const featureRoutes = require('./src/routes/featureRoutes');
 
 // Inizializza l'app Express
 const app = setupExpress();
@@ -22,8 +24,12 @@ const socketManager = new SocketManager(server);
 // Inizializza il WalletService con il socketManager
 const walletService = new WalletService(socketManager);
 
-// Inizializza LP Tracker e rendilo disponibile globalmente
-global.lpTracker = new LPTracker(socketManager.io);
+// Modifica l'inizializzazione del LP Tracker
+if (config.ENABLE_LP_TRACKING) {
+    global.lpTracker = new LPTracker(socketManager.io);
+} else {
+    logger.info('LP Tracking feature disabilitata');
+}
 
 // Assicurati che la directory dei log esista
 ensureLogDirectory();
@@ -32,6 +38,7 @@ ensureLogDirectory();
 app.use('/api/wallets', initializeWalletRoutes(socketManager, walletService));
 app.use('/api/crypto', cryptoRoutes);
 app.use('/api/logs', logRoutes);
+app.use('/api/features', featureRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -67,8 +74,8 @@ async function gracefulShutdown(signal) {
             await new Promise(resolve => socketManager.io.close(resolve));
         }
 
-        // Ferma il LP Tracker
-        if (global.lpTracker) {
+        // Ferma il LP Tracker solo se abilitato
+        if (config.ENABLE_LP_TRACKING && global.lpTracker) {
             logger.info('Arresto LP Tracker...');
             global.lpTracker.stop();
         }
@@ -136,7 +143,7 @@ async function startServer() {
         // Avvia il server
         server.listen(PORT, () => {
             logger.info(`Server in esecuzione sulla porta ${PORT}`);
-            if (global.lpTracker) {
+            if (config.ENABLE_LP_TRACKING && global.lpTracker) {
                 global.lpTracker.start();
             }
         });
