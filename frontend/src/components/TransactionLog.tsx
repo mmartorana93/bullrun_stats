@@ -28,6 +28,8 @@ import { shortenAddress, formatDate } from '../utils/format';
 import { useTransactions } from '../store/realTimeStore';
 import { useWebSocket } from '../contexts/WebSocketContext';
 
+const notificationSound = new Audio('/notification.mp3');
+
 const Row = ({ tx }: { tx: Transaction }) => {
   const [open, setOpen] = useState(false);
 
@@ -168,9 +170,10 @@ const TransactionLog: React.FC = () => {
     if (!socket) return;
 
     socket.on('newTransaction', (transaction: Transaction) => {
+      notificationSound.play().catch(err => console.log('Audio play failed:', err));
+      
       setTransactions(prev => {
         const newTx = [transaction, ...prev];
-        // Mantiene solo le ultime MAX_TRANSACTIONS transazioni
         return newTx.slice(0, MAX_TRANSACTIONS);
       });
     });

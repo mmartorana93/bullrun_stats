@@ -23,6 +23,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { WalletResponse } from '../types';
 import api from '../api/config';
 import { useWebSocket } from '../contexts/WebSocketContext';
+import { useRealTimeStore } from '../store/realTimeStore';
 
 interface WalletManagerProps {
   wallets: string[];
@@ -46,6 +47,7 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
   const [isValidating, setIsValidating] = useState(false);
   const [walletData, setWalletData] = useState<Record<string, WalletData>>({});
   const { socket, isConnected } = useWebSocket();
+  const { walletStatuses, updateWalletsStatus } = useRealTimeStore();
 
   useEffect(() => {
     const fetchWallets = async () => {
@@ -109,6 +111,18 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
       socket.off('walletUpdate', handleWalletUpdate);
     };
   }, [socket, wallets]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('walletsStatus', ({ wallets, status }) => {
+      updateWalletsStatus(wallets, status === 'connected');
+    });
+
+    return () => {
+      socket.off('walletsStatus');
+    };
+  }, [socket, updateWalletsStatus]);
 
   const validateSolanaAddress = (address: string): boolean => {
     return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address);
@@ -243,9 +257,9 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
                             {wallet}
                           </Typography>
                           <Chip 
-                            label={isConnected ? "Connesso" : "Disconnesso"} 
+                            label={walletStatuses[wallet] ? "Connesso" : "Disconnesso"} 
                             size="small" 
-                            color={isConnected ? "success" : "error"}
+                            color={walletStatuses[wallet] ? "success" : "error"}
                             sx={{ ml: 1 }}
                           />
                         </Box>

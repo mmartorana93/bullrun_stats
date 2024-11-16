@@ -10,19 +10,30 @@ const LPTracker = require('./lpTracker');
 const config = require('./src/config/config');
 const featureRoutes = require('./src/routes/featureRoutes');
 const healthRoutes = require('./src/routes/healthRoutes');
+const cors = require('cors');
 
 try {
     // Inizializza l'app Express
     const app = setupExpress();
 
+    // Configura CORS
+    app.use(cors({
+        origin: process.env.FRONTEND_URL || "http://localhost:3000",
+        methods: ["GET", "POST"],
+        credentials: true
+    }));
+
     // Crea il server HTTP
     const server = http.createServer(app);
 
-    // Inizializza Socket.IO
-    const socketManager = new SocketManager(server);
+    // Prima crea il WalletService senza socketManager
+    const walletService = new WalletService();
 
-    // Inizializza il WalletService con il socketManager
-    const walletService = new WalletService(socketManager);
+    // Poi crea il SocketManager con il walletService
+    const socketManager = new SocketManager(server, walletService);
+
+    // Infine collega il socketManager al walletService
+    walletService.setSocketManager(socketManager);
 
     // Aggiungi middleware di logging per tutte le richieste
     app.use((req, res, next) => {

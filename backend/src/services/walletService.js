@@ -15,11 +15,7 @@ const TEST_TOKENS = {
 };
 
 class WalletService {
-    constructor(socketManager) {
-        if (!socketManager) {
-            throw new Error('SocketManager è richiesto per WalletService');
-        }
-        this.socketManager = socketManager;
+    constructor() {
         this.monitorThreads = new Map();
         this.monitoredWallets = new Set();
         this.connection = new Connection(
@@ -54,6 +50,35 @@ class WalletService {
 
         // Carica i wallet salvati all'avvio e inizia il monitoraggio
         this.initializeMonitoring();
+        this.setupHealthCheck();
+    }
+
+    setSocketManager(socketManager) {
+        this.socketManager = socketManager;
+    }
+
+    setupHealthCheck() {
+        setInterval(async () => {
+            for (const [wallet, subscriptionId] of this.monitorThreads) {
+                try {
+                    logger.debug(`Active subscription for ${wallet}: ${subscriptionId}`);
+                    // Verifica che la subscription sia ancora attiva
+                    const isActive = await this.connection.getSlot();
+                    if (!isActive) {
+                        logger.warn(`Subscription ${subscriptionId} per ${wallet} non attiva, riconnessione...`);
+                        await this.restartMonitoring(wallet);
+                    }
+                } catch (error) {
+                    logger.error(`Health check error for ${wallet}:`, error);
+                    await this.restartMonitoring(wallet);
+                }
+            }
+        }, 30000); // Check ogni 30s
+    }
+
+    async restartMonitoring(wallet) {
+        await this.stopMonitoring(wallet);
+        await this.startMonitoring(wallet, this.socketManager.emitTransaction.bind(this.socketManager));
     }
 
     async initializeMonitoring() {
@@ -95,73 +120,78 @@ class WalletService {
     }
 
     async startMonitoring(walletAddress, emitTransaction) {
-        if (this.monitoredWallets.size >= config.MAX_MONITORED_WALLETS) {
-            throw new Error(`Limite massimo di wallet monitorati (${config.MAX_MONITORED_WALLETS}) raggiunto`);
-        }
+        try {
+            if (!this.connection) {
+                logger.error('Connection not initialized');
+                return false;
+            }
 
-        if (!this.monitorThreads.has(walletAddress)) {
-            try {
-                const publicKey = new PublicKey(walletAddress);
-                logger.info(`Iniziando il monitoraggio per il wallet: ${walletAddress}`);
+            logger.info(`Starting monitoring for wallet: ${walletAddress}`);
 
-                const subscriptionId = this.connection.onLogs(
-                    publicKey,
-                    async (logs) => {
-                        const signature = logs.signature;
-                        
-                        if (transactionTracker.isProcessed(signature)) {
-                            logger.info(`[WebSocket] Signature ${signature} già processata, skip`);
-                            return;
-                        }
+            if (this.monitorThreads.has(walletAddress)) {
+                logger.warn(`Wallet ${walletAddress} already being monitored`);
+                return true;
+            }
 
-                        logger.info(`[WebSocket] Ricevuto log per ${walletAddress}:`, {
-                            signature,
-                            logs: logs.logs,
-                            err: logs.err
-                        });
+            // Verifica che l'indirizzo sia valido
+            const pubKey = new PublicKey(walletAddress);
+            
+            // Sottoscrizione ai log delle transazioni
+            const subscriptionId = this.connection.onLogs(
+                pubKey,
+                async (logs) => {
+                    try {
+                        if (!logs.err) {
+                            const signature = logs.signature;
+                            
+                            // Evita duplicati
+                            if (transactionTracker.isProcessed(signature)) {
+                                return;
+                            }
+                            transactionTracker.markAsProcessed(signature);
 
-                        try {
-                            const tx = await this.getTransactionWithRetry(signature);
+                            logger.info(`New transaction detected for ${walletAddress}: ${signature}`);
 
-                            if (!tx) {
-                                logger.warn(`[WebSocket] Nessuna transazione trovata per signature ${signature}`);
+                            // Recupera i dettagli della transazione
+                            const transaction = await this.getTransactionWithRetry(signature);
+                            if (!transaction) {
+                                logger.warn(`Transaction ${signature} not found`);
                                 return;
                             }
 
-                            const preBalance = tx.meta.preBalances[0] / 10**9;
-                            const postBalance = tx.meta.postBalances[0] / 10**9;
-                            const amount = Math.abs(postBalance - preBalance);
-                            const type = postBalance > preBalance ? 'receive' : 'send';
-
-                            await emitTransaction(
-                                signature,
-                                walletAddress,
-                                amount,
-                                type
-                            );
-
-                            transactionTracker.markAsProcessed(signature);
-                        } catch (error) {
-                            logger.error(`[WebSocket] Error processing transaction:`, error);
+                            // Emetti la transazione
+                            if (emitTransaction) {
+                                emitTransaction({
+                                    signature,
+                                    wallet: walletAddress,
+                                    type: 'transaction',
+                                    amount_sol: transaction.meta?.postBalances[0] 
+                                        ? (transaction.meta.preBalances[0] - transaction.meta.postBalances[0]) / LAMPORTS_PER_SOL 
+                                        : 0,
+                                    success: !logs.err,
+                                    timestamp: Date.now()
+                                });
+                            }
                         }
-                    },
-                    'confirmed'
-                );
+                    } catch (error) {
+                        logger.error(`Error processing transaction for ${walletAddress}:`, error);
+                    }
+                },
+                'confirmed'
+            );
 
-                logger.info(`[WebSocket] Subscription ID ottenuto per ${walletAddress}: ${subscriptionId}`);
-                this.monitorThreads.set(walletAddress, subscriptionId);
-                this.monitoredWallets.add(walletAddress);
-                
-                await this.saveWallets(Array.from(this.monitoredWallets));
-                
-                logger.info(`Monitoraggio avviato con successo per ${walletAddress}`);
-                return true;
-            } catch (error) {
-                logger.error(`[WebSocket] Error starting monitoring for ${walletAddress}:`, error);
-                return false;
-            }
+            logger.info(`[WebSocket] Subscription ID obtained for ${walletAddress}: ${subscriptionId}`);
+            this.monitorThreads.set(walletAddress, subscriptionId);
+            this.monitoredWallets.add(walletAddress);
+            
+            await this.saveWallets(Array.from(this.monitoredWallets));
+            
+            logger.info(`Monitoring successfully started for ${walletAddress}`);
+            return true;
+        } catch (error) {
+            logger.error(`[WebSocket] Error starting monitoring for ${walletAddress}:`, error);
+            return false;
         }
-        return false;
     }
 
     async stopMonitoring(walletAddress) {
@@ -402,6 +432,20 @@ class WalletService {
             logger.error('Errore nella simulazione dello swap:', error.message);
             throw new Error(`Errore nella simulazione dello swap: ${error.message}`);
         }
+    }
+
+    async startMonitoringWithRetry(wallet, maxAttempts = 5) {
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                const success = await this.startMonitoring(wallet);
+                if (success) return true;
+            } catch (error) {
+                const delay = Math.min(1000 * Math.pow(2, attempt - 1), 30000);
+                logger.warn(`Tentativo ${attempt} fallito per ${wallet}, retry in ${delay}ms`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+        return false;
     }
 }
 

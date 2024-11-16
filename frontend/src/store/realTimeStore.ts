@@ -57,6 +57,9 @@ interface RealTimeState {
     setIsLoading: (loading: boolean) => void;
     subscribeToUpdates: () => void;
     unsubscribeFromUpdates: () => void;
+    walletStatuses: Record<string, boolean>;
+    updateWalletStatus: (wallet: string, isConnected: boolean) => void;
+    updateWalletsStatus: (wallets: string[], status: boolean) => void;
 }
 
 type IncomingTransaction = BaseIncomingTransaction;
@@ -239,7 +242,23 @@ export const useRealTimeStore = create<RealTimeState>((set, get) => ({
         socket.off('existingTransactions');
         socket.off('newPool');
         socket.off('newTransaction');
-    }
+    },
+
+    walletStatuses: {},
+    updateWalletStatus: (wallet, isConnected) => 
+        set((state) => ({
+            walletStatuses: {
+                ...state.walletStatuses,
+                [wallet]: isConnected
+            }
+        })),
+    updateWalletsStatus: (wallets, status) => 
+        set((state) => ({
+            walletStatuses: wallets.reduce((acc, wallet) => ({
+                ...acc,
+                [wallet]: status
+            }), {})
+        }))
 }));
 
 export const useTransactions = () => useRealTimeStore((state: RealTimeState) => state.transactions);

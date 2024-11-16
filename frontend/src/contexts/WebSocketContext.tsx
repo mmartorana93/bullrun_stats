@@ -12,58 +12,86 @@ const WebSocketContext = createContext<WebSocketContextType>({
   isConnected: false
 });
 
-const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5001';
-
-let globalSocket: Socket | null = null;
-
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const socketRef = useRef<Socket | null>(null);
+  const reconnectAttempts = useRef(0);
+  const maxReconnectAttempts = 5;
+  const { updateWalletsStatus } = useRealTimeStore();
 
   useEffect(() => {
-    // Assicurati che l'URL sia corretto
-    const socketInstance = io(process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001', {
-      transports: ['websocket'],
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-    });
+    const connectSocket = () => {
+      const socket = io(process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001', {
+        transports: ['websocket'],
+        reconnection: true,
+        reconnectionAttempts: maxReconnectAttempts,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 20000,
+      });
 
-    socketInstance.on('connect', () => {
-      console.log('WebSocket Connected with ID:', socketInstance.id);
-      setIsConnected(true);
-    });
+      socket.on('connect', () => {
+        console.log('WebSocket connesso');
+        setIsConnected(true);
+        reconnectAttempts.current = 0;
+      });
 
-    socketInstance.on('disconnect', () => {
-      console.log('WebSocket Disconnected');
-      setIsConnected(false);
-    });
+      socket.on('walletsStatus', (data) => {
+        console.log('Received walletsStatus:', data);
+        if (data.wallets && data.status) {
+          updateWalletsStatus(data.wallets, data.status === 'connected');
+        }
+      });
 
-    socketInstance.on('connect_error', (error) => {
-      console.error('WebSocket Connection Error:', error);
-      setIsConnected(false);
-    });
+      socket.on('disconnect', (reason) => {
+        console.log('WebSocket disconnesso:', reason);
+        setIsConnected(false);
+      });
 
-    setSocket(socketInstance);
+      socket.on('connect_error', (error) => {
+        console.error('Errore connessione WebSocket:', error);
+        if (reconnectAttempts.current >= maxReconnectAttempts) {
+          socket.disconnect();
+        }
+      });
+
+      socket.on('newTransaction', (data) => {
+        console.log('Received new transaction:', data);
+      });
+
+      socket.on('walletUpdate', (data) => {
+        console.log('Received wallet update:', data);
+      });
+
+      // Ping ogni 30s per mantenere la connessione
+      const pingInterval = setInterval(() => {
+        if (socket.connected) {
+          socket.emit('ping');
+        }
+      }, 30000);
+
+      socketRef.current = socket;
+
+      return () => {
+        clearInterval(pingInterval);
+        socket.disconnect();
+      };
+    };
+
+    connectSocket();
 
     return () => {
-      socketInstance.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
     };
   }, []);
 
   return (
-    <WebSocketContext.Provider value={{ socket, isConnected }}>
+    <WebSocketContext.Provider value={{ socket: socketRef.current, isConnected }}>
       {children}
     </WebSocketContext.Provider>
   );
 };
 
-export const useWebSocket = () => {
-  const context = useContext(WebSocketContext);
-  if (!context) {
-    throw new Error('useWebSocket must be used within a WebSocketProvider');
-  }
-  return context;
-};
-
-export {};
+export const useWebSocket = () => useContext(WebSocketContext);

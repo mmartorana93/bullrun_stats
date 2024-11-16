@@ -10,8 +10,8 @@ if (!fs.existsSync(envPath)) {
 
 const config = {
     // RPC Endpoints
-    SOLANA_RPC_URL: process.env.SOLANA_MAINNET_RPC || process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com",
-    SOLANA_WS_URL: process.env.SOLANA_MAINNET_WS || process.env.SOLANA_WS_URL || "wss://api.mainnet-beta.solana.com",
+    SOLANA_RPC_URL: process.env.SOLANA_MAINNET_RPC || "https://api.mainnet-beta.solana.com",
+    SOLANA_WS_URL: process.env.SOLANA_MAINNET_WS || "wss://api.mainnet-beta.solana.com",
     
     // Server Config
     PORT: process.env.PORT || 5001,

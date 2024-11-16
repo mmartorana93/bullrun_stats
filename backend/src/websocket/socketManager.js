@@ -4,17 +4,43 @@ const { logger } = require('../config/logger');
 const transactionTracker = require('../utils/transactionTracker');
 
 class SocketManager {
-    constructor(server) {
+    constructor(server, walletService) {
+        if (!walletService) {
+            throw new Error('WalletService è richiesto per SocketManager');
+        }
+        this.walletService = walletService;
+
         this.io = new Server(server, {
             cors: {
                 origin: process.env.FRONTEND_URL || "http://localhost:3000",
-                methods: ["GET", "POST"]
+                methods: ["GET", "POST"],
+                credentials: true,
+                allowedHeaders: ["my-custom-header"]
             },
-            transports: ['websocket']
+            allowEIO3: true,
+            transports: ['websocket'],
+            pingTimeout: 60000,
+            pingInterval: 25000
         });
 
         this.io.on('connection', (socket) => {
             logger.info('Client connected:', socket.id);
+            
+            const monitoredWallets = Array.from(this.walletService.monitoredWallets);
+            logger.info('Sending wallet status to client:', {
+                walletsCount: monitoredWallets.length,
+                wallets: monitoredWallets
+            });
+            
+            socket.emit('walletsStatus', {
+                wallets: monitoredWallets,
+                status: 'connected'
+            });
+            
+            socket.on('ping', () => {
+                socket.emit('pong');
+                logger.debug('Ping received, sent pong');
+            });
             
             socket.on('disconnect', () => {
                 logger.info('Client disconnected:', socket.id);
@@ -24,8 +50,14 @@ class SocketManager {
 
     emitTransaction(transactionDetails) {
         try {
-            logger.info('Emitting transaction:', transactionDetails.signature);
+            logger.debug('Transaction details:', JSON.stringify(transactionDetails));
+            logger.info(`Emitting transaction for wallet ${transactionDetails.wallet}`);
             
+            if (!this.io) {
+                logger.error('Socket.io instance not initialized');
+                return;
+            }
+
             logger.info('Connected clients:', this.io.engine.clientsCount);
             
             this.io.emit('newTransaction', {
