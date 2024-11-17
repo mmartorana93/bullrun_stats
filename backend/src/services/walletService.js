@@ -18,6 +18,7 @@ class WalletService {
     constructor() {
         this.monitorThreads = new Map();
         this.monitoredWallets = new Set();
+        this.pausedWallets = new Set();
         this.connection = new Connection(
             config.SOLANA_RPC_URL,
             {
@@ -61,6 +62,9 @@ class WalletService {
         setInterval(async () => {
             for (const [wallet, subscriptionId] of this.monitorThreads) {
                 try {
+                    // Salta il controllo per i wallet in pausa
+                    if (this.pausedWallets.has(wallet)) continue;
+
                     logger.debug(`Active subscription for ${wallet}: ${subscriptionId}`);
                     // Verifica che la subscription sia ancora attiva
                     const isActive = await this.connection.getSlot();
@@ -77,6 +81,11 @@ class WalletService {
     }
 
     async restartMonitoring(wallet) {
+        // Non riavviare il monitoraggio se il wallet è in pausa
+        if (this.pausedWallets.has(wallet)) {
+            logger.info(`Skipping restart for paused wallet: ${wallet}`);
+            return;
+        }
         await this.stopMonitoring(wallet);
         await this.startMonitoring(wallet, this.socketManager.emitTransaction.bind(this.socketManager));
     }
@@ -85,7 +94,10 @@ class WalletService {
         try {
             const savedWallets = await this.loadWallets();
             for (const wallet of savedWallets) {
-                await this.startMonitoring(wallet, this.socketManager.emitTransaction.bind(this.socketManager));
+                // Non avviare il monitoraggio per i wallet in pausa
+                if (!this.pausedWallets.has(wallet)) {
+                    await this.startMonitoring(wallet, this.socketManager.emitTransaction.bind(this.socketManager));
+                }
             }
             logger.info(`Inizializzato monitoraggio per ${savedWallets.length} wallet`);
         } catch (error) {
@@ -119,8 +131,52 @@ class WalletService {
         }
     }
 
+    async pauseWallet(walletAddress) {
+        try {
+            logger.info(`Pausing monitoring for wallet: ${walletAddress}`);
+            
+            // Aggiungi il wallet alla lista dei wallet in pausa
+            this.pausedWallets.add(walletAddress);
+            
+            // Ferma il monitoraggio attivo
+            if (this.monitorThreads.has(walletAddress)) {
+                await this.stopMonitoring(walletAddress);
+            }
+            
+            logger.info(`Successfully paused monitoring for ${walletAddress}`);
+            return true;
+        } catch (error) {
+            logger.error(`Error pausing monitoring for ${walletAddress}:`, error);
+            return false;
+        }
+    }
+
+    async resumeWallet(walletAddress) {
+        try {
+            logger.info(`Resuming monitoring for wallet: ${walletAddress}`);
+            
+            // Rimuovi il wallet dalla lista dei wallet in pausa
+            this.pausedWallets.delete(walletAddress);
+            
+            // Riavvia il monitoraggio
+            await this.startMonitoring(walletAddress, this.socketManager.emitTransaction.bind(this.socketManager));
+            
+            logger.info(`Successfully resumed monitoring for ${walletAddress}`);
+            return true;
+        } catch (error) {
+            logger.error(`Error resuming monitoring for ${walletAddress}:`, error);
+            return false;
+        }
+    }
+
     async startMonitoring(walletAddress, emitTransaction) {
         try {
+            // Non avviare il monitoraggio se il wallet è in pausa
+            if (this.pausedWallets.has(walletAddress)) {
+                logger.info(`Skipping monitoring for paused wallet: ${walletAddress}`);
+                return true;
+            }
+
             if (!this.connection) {
                 logger.error('Connection not initialized');
                 return false;
@@ -141,6 +197,11 @@ class WalletService {
                 pubKey,
                 async (logs) => {
                     try {
+                        // Non processare le transazioni se il wallet è in pausa
+                        if (this.pausedWallets.has(walletAddress)) {
+                            return;
+                        }
+
                         if (!logs.err) {
                             const signature = logs.signature;
                             
@@ -204,9 +265,12 @@ class WalletService {
                 logger.info(`[WebSocket] Listener rimosso con successo per ${walletAddress}`);
                 
                 this.monitorThreads.delete(walletAddress);
-                this.monitoredWallets.delete(walletAddress);
                 
-                await this.saveWallets(Array.from(this.monitoredWallets));
+                // Non rimuovere dalla lista dei wallet monitorati se è in pausa
+                if (!this.pausedWallets.has(walletAddress)) {
+                    this.monitoredWallets.delete(walletAddress);
+                    await this.saveWallets(Array.from(this.monitoredWallets));
+                }
                 
                 logger.info(`Monitoraggio fermato con successo per ${walletAddress}`);
                 return true;
@@ -215,11 +279,13 @@ class WalletService {
                 
                 // Cleanup forzato in caso di errore
                 this.monitorThreads.delete(walletAddress);
-                this.monitoredWallets.delete(walletAddress);
-                await this.saveWallets(Array.from(this.monitoredWallets));
+                if (!this.pausedWallets.has(walletAddress)) {
+                    this.monitoredWallets.delete(walletAddress);
+                    await this.saveWallets(Array.from(this.monitoredWallets));
+                }
                 
                 logger.info(`Cleanup forzato completato per ${walletAddress}`);
-                return true; // Ritorniamo true anche in caso di errore per indicare che il wallet è stato rimosso
+                return true;
             }
         }
         return false;
@@ -435,6 +501,12 @@ class WalletService {
     }
 
     async startMonitoringWithRetry(wallet, maxAttempts = 5) {
+        // Non tentare il monitoraggio se il wallet è in pausa
+        if (this.pausedWallets.has(wallet)) {
+            logger.info(`Skipping monitoring for paused wallet: ${wallet}`);
+            return true;
+        }
+
         for (let attempt = 1; attempt <= maxAttempts; attempt++) {
             try {
                 const success = await this.startMonitoring(wallet);
@@ -450,4 +522,3 @@ class WalletService {
 }
 
 module.exports = WalletService;
-

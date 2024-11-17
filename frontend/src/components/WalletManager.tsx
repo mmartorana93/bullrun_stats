@@ -20,6 +20,8 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import AddIcon from '@mui/icons-material/Add';
+import PauseIcon from '@mui/icons-material/Pause';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { WalletResponse } from '../types';
 import api from '../api/config';
 import { useWebSocket } from '../contexts/WebSocketContext';
@@ -46,6 +48,7 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
   const [success, setSuccess] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [walletData, setWalletData] = useState<Record<string, WalletData>>({});
+  const [pausedWallets, setPausedWallets] = useState<Set<string>>(new Set());
   const { socket, isConnected } = useWebSocket();
   const { walletStatuses, updateWalletsStatus } = useRealTimeStore();
 
@@ -77,7 +80,7 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
       };
     }) => {
       setWalletData(prev => {
-        if (!wallets.includes(data.wallet)) return prev;
+        if (!wallets.includes(data.wallet) || pausedWallets.has(data.wallet)) return prev;
         
         const current = prev[data.wallet] || { balance: 0 };
         
@@ -110,7 +113,7 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
     return () => {
       socket.off('walletUpdate', handleWalletUpdate);
     };
-  }, [socket, wallets]);
+  }, [socket, wallets, pausedWallets]);
 
   useEffect(() => {
     if (!socket) return;
@@ -168,6 +171,22 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
     } catch (error: any) {
       setError(error.response?.data?.error || 'Errore durante la rimozione del wallet');
     }
+  };
+
+  const handleTogglePause = (wallet: string) => {
+    setPausedWallets(prev => {
+      const newPausedWallets = new Set(prev);
+      if (newPausedWallets.has(wallet)) {
+        newPausedWallets.delete(wallet);
+        socket?.emit('resumeWallet', { wallet });
+        setSuccess('Monitoraggio wallet ripreso');
+      } else {
+        newPausedWallets.add(wallet);
+        socket?.emit('pauseWallet', { wallet });
+        setSuccess('Monitoraggio wallet in pausa');
+      }
+      return newPausedWallets;
+    });
   };
 
   const handleCopyAddress = (address: string) => {
@@ -257,9 +276,9 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
                             {wallet}
                           </Typography>
                           <Chip 
-                            label={walletStatuses[wallet] ? "Connesso" : "Disconnesso"} 
+                            label={pausedWallets.has(wallet) ? "In Pausa" : (walletStatuses[wallet] ? "Connesso" : "Disconnesso")}
                             size="small" 
-                            color={walletStatuses[wallet] ? "success" : "error"}
+                            color={pausedWallets.has(wallet) ? "warning" : (walletStatuses[wallet] ? "success" : "error")}
                             sx={{ ml: 1 }}
                           />
                         </Box>
@@ -281,6 +300,16 @@ const WalletManager: React.FC<WalletManagerProps> = ({ wallets, onWalletsUpdate 
                           sx={{ mr: 1 }}
                         >
                           <ContentCopyIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title={pausedWallets.has(wallet) ? "Riprendi monitoraggio" : "Metti in pausa"}>
+                        <IconButton
+                          edge="end"
+                          onClick={() => handleTogglePause(wallet)}
+                          color="primary"
+                          sx={{ mr: 1 }}
+                        >
+                          {pausedWallets.has(wallet) ? <PlayArrowIcon /> : <PauseIcon />}
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Rimuovi wallet">

@@ -41,6 +41,36 @@ class SocketManager {
                 socket.emit('pong');
                 logger.debug('Ping received, sent pong');
             });
+
+            socket.on('pauseWallet', async ({ wallet }) => {
+                logger.info(`Received pause request for wallet: ${wallet}`);
+                const success = await this.walletService.pauseWallet(wallet);
+                if (success) {
+                    this.io.emit('walletUpdate', {
+                        wallet,
+                        type: 'status',
+                        status: 'paused'
+                    });
+                    logger.info(`Successfully paused monitoring for ${wallet}`);
+                } else {
+                    logger.error(`Failed to pause monitoring for ${wallet}`);
+                }
+            });
+
+            socket.on('resumeWallet', async ({ wallet }) => {
+                logger.info(`Received resume request for wallet: ${wallet}`);
+                const success = await this.walletService.resumeWallet(wallet);
+                if (success) {
+                    this.io.emit('walletUpdate', {
+                        wallet,
+                        type: 'status',
+                        status: 'resumed'
+                    });
+                    logger.info(`Successfully resumed monitoring for ${wallet}`);
+                } else {
+                    logger.error(`Failed to resume monitoring for ${wallet}`);
+                }
+            });
             
             socket.on('disconnect', () => {
                 logger.info('Client disconnected:', socket.id);
