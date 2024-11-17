@@ -14,7 +14,8 @@ import {
   Link,
   IconButton,
   Collapse,
-  Tooltip
+  Tooltip,
+  Stack
 } from '@mui/material';
 import {
   KeyboardArrowDown,
@@ -27,6 +28,11 @@ import LoggingService from '../services/loggingService';
 import { shortenAddress, formatDate } from '../utils/format';
 import { useTransactions } from '../store/realTimeStore';
 import { useWebSocket } from '../contexts/WebSocketContext';
+
+const getSolscanUrl = (type: 'wallet' | 'tx', value: string) => {
+  const baseUrl = 'https://solscan.io';
+  return type === 'wallet' ? `${baseUrl}/account/${value}` : `${baseUrl}/tx/${value}`;
+};
 
 const Row = ({ tx }: { tx: Transaction }) => {
   const [open, setOpen] = useState(false);
@@ -44,12 +50,22 @@ const Row = ({ tx }: { tx: Transaction }) => {
           </IconButton>
         </TableCell>
         <TableCell>
-          <Tooltip title="Copia indirizzo">
-            <IconButton size="small" onClick={() => copyToClipboard(tx.wallet)}>
-              <ContentCopy fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          {shortenAddress(tx.wallet)}
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Tooltip title="Copia indirizzo">
+              <IconButton size="small" onClick={() => copyToClipboard(tx.wallet)}>
+                <ContentCopy fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Link
+              href={getSolscanUrl('wallet', tx.wallet)}
+              target="_blank"
+              rel="noopener"
+              sx={{ display: 'flex', alignItems: 'center', color: 'primary.main', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            >
+              {shortenAddress(tx.wallet)}
+              <OpenInNew fontSize="small" sx={{ ml: 0.5 }} />
+            </Link>
+          </Stack>
         </TableCell>
         <TableCell>
           {tx.token && (
@@ -99,18 +115,26 @@ const Row = ({ tx }: { tx: Transaction }) => {
                 Dettagli Transazione
               </Typography>
               
-              <Typography variant="subtitle2" gutterBottom>
-                Signature:
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="subtitle2">Signature:</Typography>
                 <Tooltip title="Copia signature">
                   <IconButton size="small" onClick={() => copyToClipboard(tx.signature)}>
                     <ContentCopy fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                {shortenAddress(tx.signature)}
-              </Typography>
+                <Link
+                  href={getSolscanUrl('tx', tx.signature)}
+                  target="_blank"
+                  rel="noopener"
+                  sx={{ display: 'flex', alignItems: 'center', color: 'primary.main', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+                >
+                  {shortenAddress(tx.signature)}
+                  <OpenInNew fontSize="small" sx={{ ml: 0.5 }} />
+                </Link>
+              </Stack>
 
               {tx.token && (
-                <Box sx={{ mb: 2 }}>
+                <Box sx={{ mb: 2, mt: 2 }}>
                   <Typography variant="subtitle2">Token Details:</Typography>
                   <Typography variant="body2">
                     Address: {shortenAddress(tx.token.address)}
