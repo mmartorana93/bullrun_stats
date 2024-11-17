@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Paper,
   Table,
@@ -27,8 +27,6 @@ import LoggingService from '../services/loggingService';
 import { shortenAddress, formatDate } from '../utils/format';
 import { useTransactions } from '../store/realTimeStore';
 import { useWebSocket } from '../contexts/WebSocketContext';
-
-const notificationSound = new Audio('/notification.mp3');
 
 const Row = ({ tx }: { tx: Transaction }) => {
   const [open, setOpen] = useState(false);
@@ -162,15 +160,43 @@ const TransactionLog: React.FC = () => {
   const { socket } = useWebSocket();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Limita il numero massimo di transazioni memorizzate
   const MAX_TRANSACTIONS = 1000;
 
   useEffect(() => {
+    // Inizializza l'audio e precaricalo
+    audioRef.current = new Audio('/notification.mp3');
+    audioRef.current.load();
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (!socket) return;
 
-    socket.on('newTransaction', (transaction: Transaction) => {
-      notificationSound.play().catch(err => console.log('Audio play failed:', err));
+    socket.on('newTransaction', async (transaction: Transaction) => {
+      try {
+        if (audioRef.current) {
+          // Resetta l'audio al punto iniziale
+          audioRef.current.currentTime = 0;
+          // Riproduci il suono
+          const playPromise = audioRef.current.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(error => {
+              console.error('Errore riproduzione audio:', error);
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Errore gestione audio:', error);
+      }
       
       setTransactions(prev => {
         const newTx = [transaction, ...prev];
@@ -228,7 +254,7 @@ const TransactionLog: React.FC = () => {
         Log delle Transazioni
       </Typography>
 
-      <TableContainer component={Paper} sx={{ maxHeight: 'calc(100vh - 400px)' }}>
+      <TableContainer component={Paper} sx={{ maxHeight: 'calc(100vh - 200px)' }}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
