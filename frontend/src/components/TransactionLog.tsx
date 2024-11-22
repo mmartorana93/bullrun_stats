@@ -25,7 +25,7 @@ import {
 } from '@mui/icons-material';
 import { Transaction } from '../types';
 import LoggingService from '../services/loggingService';
-import { shortenAddress, formatDate } from '../utils/format';
+import { shortenAddress, formatDate, formatTimeAgo } from '../utils/format';
 import { useTransactions } from '../store/realTimeStore';
 import { useWebSocket } from '../contexts/WebSocketContext';
 
@@ -83,6 +83,13 @@ const Row = ({ tx }: { tx: Transaction }) => {
           )}
         </TableCell>
         <TableCell>
+          {tx.token?.createdAt && (
+            <Tooltip title={formatDate(tx.token.createdAt * 1000)}>
+              <span>{formatTimeAgo(tx.token.createdAt)}</span>
+            </Tooltip>
+          )}
+        </TableCell>
+        <TableCell>
           <Chip
             label={tx.type.toUpperCase()}
             color={tx.type === 'swap' ? 'warning' : tx.type === 'receive' ? 'success' : 'error'}
@@ -108,7 +115,7 @@ const Row = ({ tx }: { tx: Transaction }) => {
       </TableRow>
 
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
@@ -142,6 +149,12 @@ const Row = ({ tx }: { tx: Transaction }) => {
                     Price: ${tx.token.priceUsd}
                     <br />
                     Amount: {tx.tokenAmount} {tx.token.symbol}
+                    {tx.token.createdAt && (
+                      <>
+                        <br />
+                        Created: {formatDate(tx.token.createdAt * 1000)}
+                      </>
+                    )}
                   </Typography>
                   <Box sx={{ mt: 1, display: 'flex', gap: 2 }}>
                     <Link href={tx.token.dexScreenerUrl} target="_blank" rel="noopener">
@@ -285,6 +298,7 @@ const TransactionLog: React.FC = () => {
               <TableCell />
               <TableCell>Wallet</TableCell>
               <TableCell>Token</TableCell>
+              <TableCell>Created</TableCell>
               <TableCell>Type</TableCell>
               <TableCell>Amount</TableCell>
               <TableCell>Status</TableCell>

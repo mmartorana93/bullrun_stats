@@ -2,8 +2,10 @@ export interface TokenInfo {
   symbol: string;
   address: string;
   decimals: number;
-  priceUsd: string;
+  priceUsd: string | number;
   dexScreenerUrl: string;
+  createdAt?: number;
+  name?: string;
 }
 
 export interface Links {
@@ -57,4 +59,4 @@ export interface WalletResponse {
   balance: number;
   transactions?: Transaction[];
   message?: string;
-} 
+}

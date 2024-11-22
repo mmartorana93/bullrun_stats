@@ -1,10 +1,11 @@
-export interface TokenDetails {
+export interface TokenInfo {
     address: string;
     symbol: string;
     decimals: number;
-    priceUsd: string;
+    priceUsd: number;
     dexScreenerUrl: string;
     createdAt?: number;
+    name?: string;
 }
 
 export interface TokenChange {
@@ -15,7 +16,7 @@ export interface TokenChange {
 }
 
 export interface Links {
-    dexScreener: string;
+    dexscreener: string;
     photon: string;
     rugcheck: string;
 }
@@ -33,13 +34,7 @@ export interface Transaction {
     tokenAmount?: number;
     success: boolean;
     timestamp: string | number;
-    token?: {
-        address: string;
-        symbol: string;
-        decimals: number;
-        priceUsd: number;
-        dexScreenerUrl: string;
-    };
+    token?: TokenInfo;
     preBalances?: {
         sol: number;
         token: number;

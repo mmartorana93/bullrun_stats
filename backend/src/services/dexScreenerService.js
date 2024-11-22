@@ -10,11 +10,15 @@ class DexScreenerService {
                 // Preferisci il pair di Raydium se disponibile
                 const pair = response.data.pairs.find(p => p.dexId === 'raydium') || response.data.pairs[0];
                 
+                // Converti il timestamp di creazione da millisecondi a secondi
+                const createdAt = pair.pairCreatedAt ? Math.floor(pair.pairCreatedAt / 1000) : null;
+                
                 return {
                     address: tokenAddress,
                     symbol: pair.baseToken.symbol,
                     name: pair.baseToken.name,
                     priceUsd: parseFloat(pair.priceUsd) || 0,
+                    createdAt: createdAt,
                     dexScreenerUrl: `https://dexscreener.com/solana/${tokenAddress}`,
                     links: {
                         dexscreener: `https://dexscreener.com/solana/${tokenAddress}`,
