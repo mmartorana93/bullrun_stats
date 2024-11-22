@@ -8,10 +8,16 @@ if (!fs.existsSync(envPath)) {
     console.warn('.env file non trovato, uso valori di default');
 }
 
+const determineNetwork = (url) => {
+    if (url.includes('devnet')) return 'devnet';
+    if (url.includes('testnet')) return 'testnet';
+    return 'mainnet';
+};
+
 const config = {
     // RPC Endpoints
-    SOLANA_RPC_URL: process.env.SOLANA_MAINNET_RPC || "https://api.mainnet-beta.solana.com",
-    SOLANA_WS_URL: process.env.SOLANA_MAINNET_WS || "wss://api.mainnet-beta.solana.com",
+    SOLANA_RPC_URL: process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com",
+    SOLANA_WS_URL: process.env.SOLANA_WS_URL || "wss://api.mainnet-beta.solana.com",
     
     // Server Config
     PORT: process.env.PORT || 5001,
@@ -35,6 +41,11 @@ const config = {
     LOG_LEVEL: process.env.LOG_LEVEL || 'info'
 };
 
+// Determina e logga la rete in uso
+const network = determineNetwork(config.SOLANA_RPC_URL);
+console.log(`\x1b[33m[Network Configuration]\x1b[0m Connecting to Solana ${network}`);
+config.NETWORK = network;
+
 // Validazione della configurazione
 const validateConfig = () => {
     if (!config.SOLANA_RPC_URL) {
@@ -53,4 +64,4 @@ try {
     process.exit(1);
 }
 
-module.exports = config; 
+module.exports = config;

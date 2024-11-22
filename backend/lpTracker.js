@@ -5,6 +5,7 @@ const axios = require('axios');
 require('dotenv').config();
 const fs = require('fs').promises;
 const path = require('path');
+const config = require('./src/config/config');
 
 const WRAPPED_SOL_ADDRESS = "So11111111111111111111111111111111111111112";
 
@@ -12,8 +13,9 @@ class LPTracker {
     constructor(io) {
         this.io = io;
         this.pools = new Map();
-        this.connection = new Connection(process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com");
-        this.wsEndpoint = process.env.SOLANA_WS_URL || "wss://api.mainnet-beta.solana.com";
+        logger.info(`Inizializzando connessione Solana su ${config.NETWORK} (${config.SOLANA_RPC_URL})`);
+        this.connection = new Connection(config.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com");
+        this.wsEndpoint = config.SOLANA_WS_URL || "wss://api.mainnet-beta.solana.com";
         this.raydiumProgramId = new PublicKey("675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8");
         this.ws = null;
         this.reconnectAttempts = 0;
@@ -89,7 +91,7 @@ class LPTracker {
             });
 
             this.ws.on('open', () => {
-                logger.info('WebSocket connesso');
+                logger.info(`WebSocket connesso su ${config.NETWORK}`);
                 this.reconnectAttempts = 0;
                 this.lastPongTime = Date.now();
                 this.subscribeToProgram();

@@ -39,6 +39,7 @@ yarn-error.log*
 venv/
 *.pyc
 get-pip.py
+SOLWalletTracker.py
 
 # Specific project files
 backend/wallets.json
