@@ -6,6 +6,7 @@ const base58 = require('bs58');
 const { logger } = require('../config/logger');
 const config = require('../config/config');
 const transactionTracker = require('../utils/transactionTracker');
+const DexScreenerService = require('./dexScreenerService');
 
 // Token di test noti sulla devnet
 const TEST_TOKENS = {
@@ -220,9 +221,33 @@ class WalletService {
                                 return;
                             }
 
-                            // Emetti la transazione
+                            // Cerca il token address nelle pre/post token balances
+                            let tokenAddress = null;
+                            let tokenAmount = null;
+                            const preTokenBalances = transaction.meta?.preTokenBalances || [];
+                            const postTokenBalances = transaction.meta?.postTokenBalances || [];
+
+                            for (const balance of [...preTokenBalances, ...postTokenBalances]) {
+                                if (balance.owner === walletAddress) {
+                                    tokenAddress = balance.mint;
+                                    tokenAmount = balance.uiTokenAmount?.uiAmount || null;
+                                    break;
+                                }
+                            }
+
+                            // Se abbiamo trovato un token address, ottieni i dettagli da DexScreener
+                            let tokenDetails = null;
+                            if (tokenAddress) {
+                                logger.info(`Fetching token details for ${tokenAddress}`);
+                                tokenDetails = await DexScreenerService.getTokenDetails(tokenAddress);
+                                if (tokenDetails) {
+                                    logger.info(`Token details found: ${JSON.stringify(tokenDetails)}`);
+                                }
+                            }
+
+                            // Emetti la transazione con i dettagli del token
                             if (emitTransaction) {
-                                emitTransaction({
+                                const transactionDetails = {
                                     signature,
                                     wallet: walletAddress,
                                     type: 'transaction',
@@ -230,8 +255,20 @@ class WalletService {
                                         ? (transaction.meta.preBalances[0] - transaction.meta.postBalances[0]) / LAMPORTS_PER_SOL 
                                         : 0,
                                     success: !logs.err,
-                                    timestamp: Date.now()
-                                });
+                                    timestamp: Date.now(),
+                                    token: tokenDetails,
+                                    tokenAmount: tokenAmount,
+                                    preBalances: {
+                                        sol: transaction.meta?.preBalances[0] / LAMPORTS_PER_SOL || 0,
+                                        token: preTokenBalances[0]?.uiTokenAmount?.uiAmount || 0
+                                    },
+                                    postBalances: {
+                                        sol: transaction.meta?.postBalances[0] / LAMPORTS_PER_SOL || 0,
+                                        token: postTokenBalances[0]?.uiTokenAmount?.uiAmount || 0
+                                    }
+                                };
+
+                                emitTransaction(transactionDetails);
                             }
                         }
                     } catch (error) {
