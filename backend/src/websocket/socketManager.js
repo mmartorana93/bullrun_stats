@@ -1,6 +1,6 @@
 const { Server } = require('socket.io');
 const { Connection, PublicKey } = require('@solana/web3.js');
-const { logger } = require('../config/logger');
+const { logger, writeLogToFile } = require('../config/logger');
 const transactionTracker = require('../utils/transactionTracker');
 
 class SocketManager {
@@ -78,10 +78,25 @@ class SocketManager {
         });
     }
 
-    emitTransaction(transactionDetails) {
+    async emitTransaction(transactionDetails) {
         try {
             logger.debug('Transaction details:', JSON.stringify(transactionDetails));
             logger.info(`Emitting transaction for wallet ${transactionDetails.wallet}`);
+            
+            // Log dettagliato della transazione nel file transactionsLogs
+            const detailedLog = JSON.stringify({
+                timestamp: new Date().toISOString(),
+                wallet: transactionDetails.wallet,
+                signature: transactionDetails.signature,
+                type: transactionDetails.type,
+                amountIn: transactionDetails.amountIn,
+                amountOut: transactionDetails.amountOut,
+                tokenIn: transactionDetails.tokenIn,
+                tokenOut: transactionDetails.tokenOut,
+                rawData: transactionDetails
+            }, null, 2);
+
+            await writeLogToFile('transactionsLogs', detailedLog);
             
             if (!this.io) {
                 logger.error('Socket.io instance not initialized');
