@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { logger } = require('./logger');
+const logRoutes = require('../routes/logRoutes');
 
 function setupExpress() {
     const app = express();
@@ -13,6 +14,9 @@ function setupExpress() {
 
     app.use(cors());
     app.use(express.json());
+
+    // Registra le route per il logging
+    app.use('/api/logs', logRoutes);
 
     return app;
 }

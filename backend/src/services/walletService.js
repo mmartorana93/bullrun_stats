@@ -7,6 +7,7 @@ const { logger } = require('../config/logger');
 const config = require('../config/config');
 const transactionTracker = require('../utils/transactionTracker');
 const DexScreenerService = require('./dexScreenerService');
+const RugcheckService = require('./rugcheckService');
 
 // Token di test noti sulla devnet
 const TEST_TOKENS = {
@@ -235,13 +236,28 @@ class WalletService {
                                 }
                             }
 
-                            // Se abbiamo trovato un token address, ottieni i dettagli da DexScreener
+                            // Se abbiamo trovato un token address, ottieni i dettagli
                             let tokenDetails = null;
                             if (tokenAddress) {
                                 logger.info(`Fetching token details for ${tokenAddress}`);
+                                
+                                // Prima prova con DexScreener
                                 tokenDetails = await DexScreenerService.getTokenDetails(tokenAddress);
+                                logger.info(`DexScreener response: ${JSON.stringify(tokenDetails)}`);
+
+                                // Se non ci sono dati su DexScreener e il token termina con "pump", prova con Rugcheck
+                                if (!tokenDetails && tokenAddress.toLowerCase().endsWith('pump')) {
+                                    logger.info(`Token address ends with 'pump', trying Rugcheck for ${tokenAddress}`);
+                                    try {
+                                        tokenDetails = await RugcheckService.getTokenDetails(tokenAddress);
+                                        logger.info(`Rugcheck response: ${JSON.stringify(tokenDetails)}`);
+                                    } catch (error) {
+                                        logger.error(`Error fetching from Rugcheck: ${error.message}`);
+                                    }
+                                }
+
                                 if (tokenDetails) {
-                                    logger.info(`Token details found: ${JSON.stringify(tokenDetails)}`);
+                                    logger.info(`Final token details: ${JSON.stringify(tokenDetails)}`);
                                 }
                             }
 
@@ -268,6 +284,7 @@ class WalletService {
                                     }
                                 };
 
+                                logger.info(`Emitting transaction details: ${JSON.stringify(transactionDetails)}`);
                                 emitTransaction(transactionDetails);
                             }
                         }
