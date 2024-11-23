@@ -51,6 +51,7 @@ combined.log
 error.log
 lptracker-error.log
 lptracker.log
+backend/logs/transactionsLogs
 
 # Exclude queries folder
 /queries/

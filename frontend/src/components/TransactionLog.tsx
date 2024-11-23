@@ -275,9 +275,10 @@ const TransactionLog: React.FC = () => {
   };
 
   const filteredTransactions = useMemo(() => {
-    return [...transactions].sort((a, b) => 
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    );
+    // Filtra solo le transazioni che hanno un token (swap) e ordina per timestamp
+    return [...transactions]
+      .filter(tx => tx.token !== null) // Mostra solo gli swap
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }, [transactions]);
 
   // Calcola l'indice di inizio e fine per la paginazione
@@ -288,7 +289,7 @@ const TransactionLog: React.FC = () => {
   return (
     <Box>
       <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-        Log delle Transazioni
+        Log delle Transazioni (Solo Swap)
       </Typography>
 
       <TableContainer component={Paper} sx={{ maxHeight: 'calc(100vh - 200px)' }}>
