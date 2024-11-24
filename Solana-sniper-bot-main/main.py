@@ -36,7 +36,7 @@ from solana.transaction import Transaction
 from spl.token.instructions import get_associated_token_address
 
 
-from jupiter_python_sdk.jupiter import Jupiter, Jupiter_DCA
+from jupiter_python_sdk.jupiter import Jupiter
 
 
 import functions as f
@@ -434,8 +434,7 @@ class Jupiter_CLI(Wallet):
         
         jupiter_cli_prompt_main_menu = await inquirer.select(message="Select menu:", choices=[
             "Swap",
-            "Limit Order",
-            "DCA",
+            "Limit Order", 
             "Token Sniper",
             "Change wallet",
             "Back to main menu",
@@ -449,13 +448,10 @@ class Jupiter_CLI(Wallet):
             case "Limit Order":
                 await self.limit_order_menu()
                 return
-            case "DCA":
-                await self.dca_menu()
-                return
             case "Token Sniper":
-                    await self.token_sniper_menu()
-                    await self.main_menu()
-                    return
+                await self.token_sniper_menu()
+                await self.main_menu()
+                return
             case "Change wallet":
                 wallet_id, wallet_private_key = await Wallets_CLI.prompt_select_wallet()
                 if wallet_private_key:
@@ -470,10 +466,9 @@ class Jupiter_CLI(Wallet):
     async def select_tokens(self, type_swap: str):
         """Prompts user to select tokens & amount to sell.
         
-        type_swap (str): swap, limit_order, dca
+        type_swap (str): swap, limit_order
         """
         tokens_list = await Jupiter.get_tokens_list(list_type="all")
-        tokens_list_dca = await Jupiter_DCA.get_available_dca_tokens()
             
         choices = []
         for token in tokens_list:
@@ -501,8 +496,6 @@ class Jupiter_CLI(Wallet):
                     sell_token_account_info = await self.get_token_balance(token_mint_account=sell_token_account)
                     if sell_token_account_info['balance']['float'] == 0:
                         print(f"{c.RED}! You don't have any tokens to sell.{c.RESET}")
-                    elif type_swap == "dca" and sell_token_address not in tokens_list_dca:
-                        print(f"{c.RED}! Selected token to sell is not available for DCA{c.RESET}")
                     else:
                         choices.remove(select_sell_token)
                         break
@@ -528,11 +521,8 @@ class Jupiter_CLI(Wallet):
                         buy_token_account = await self.get_token_mint_account(token_mint=buy_token_address)
                     
                     buy_token_account_info = await self.get_token_balance(token_mint_account=buy_token_account)
-                    if type_swap == "dca" and sell_token_address not in tokens_list_dca:
-                        print(f"{c.RED}! Selected token to buy is not available for DCA{c.RESET}")
-                    else:
-                        choices.remove(select_buy_token)
-                        break
+                    choices.remove(select_buy_token)
+                    break
         
         # AMOUNT TO SELL
         while True:
@@ -895,209 +885,6 @@ class Jupiter_CLI(Wallet):
         print(dataframe)
         print()
         return open_orders
-
-
-    # DCA #
-    async def dca_menu(self):
-        """Jupiter CLI - DCA MENU."""
-        f.display_logo()
-        print("[JUPITER CLI] [DCA MENU]")
-        print()
-        
-        choices = [
-            "Open DCA Account",
-            "Manage DCA Accounts",
-            "Back to main menu"
-        ]
-        dca_menu_prompt_choice = await inquirer.select(message="Select menu:", choices=choices).execute_async()
-        
-        match dca_menu_prompt_choice:
-            case "Open DCA Account":
-                
-                sell_token_symbol, sell_token_address, buy_token_symbol, buy_token_address, amount_to_sell, sell_token_account_info, buy_token_account_info = await self.select_tokens(type_swap="dca")
-                
-                # IN AMOUNT PER CYCLE
-                while True:
-                    in_amount_per_cycle = await inquirer.number(message="Enter amount per cycle to buy:", float_allowed=True, max_allowed=amount_to_sell).execute_async()
-                    in_amount_per_cycle = float(in_amount_per_cycle)
-                    confirm_in_amount_per_cycle = await inquirer.select(message="Confirm amount per cycle to buy?", choices=["Yes", "No"]).execute_async()
-                    if confirm_in_amount_per_cycle == "Yes":
-                        break
-
-                # CYCLE FREQUENCY
-                while True:
-                    unit_time_cycle_frequency = await inquirer.select(message="Select unit time for cycle frequency:", choices=[
-                        "Minute(s)",
-                        "Hour(s)",
-                        "Day(s)",
-                        "Week(s)",
-                    ]).execute_async()
-                    
-                    prompt_cycle_frequency = await inquirer.number(message=f"Enter the number of {unit_time_cycle_frequency.lower()} for every cycle:", float_allowed=False, min_allowed=1).execute_async()
-                    prompt_cycle_frequency = int(prompt_cycle_frequency)
-                    
-                    if unit_time_cycle_frequency == "Minute(s)":
-                        cycle_frequency = prompt_cycle_frequency * 60
-                    elif unit_time_cycle_frequency == "Hour(s)":
-                        cycle_frequency = prompt_cycle_frequency * 3600
-                    elif unit_time_cycle_frequency == "Day(s)":
-                        cycle_frequency = prompt_cycle_frequency * 86400
-                    elif unit_time_cycle_frequency == "Week(s)":
-                        cycle_frequency = prompt_cycle_frequency * 604800
-                        
-                    confirm_in_amount_per_cycle = await inquirer.select(message=f"Confirm number of {unit_time_cycle_frequency.lower()} for every cycle:", choices=["Yes", "No"]).execute_async()
-                    if confirm_in_amount_per_cycle == "Yes":
-                        break
-                    
-                # START AT
-                unit_time_start_at = await inquirer.select(message="Select unit time to start DCA Account:", choices=[
-                    "Now",
-                    "Minute(s)",
-                    "Hour(s)",
-                    "Day(s)",
-                    "Week(s)",
-                ]).execute_async()
-                
-                if unit_time_start_at == "Now":
-                    start_at = 0
-                else:
-                    prompt_start_at = await inquirer.number(message=f"In how many {unit_time_start_at.lower()} does the DCA Account start:", float_allowed=False, min_allowed=1).execute_async()
-                    prompt_start_at = int(prompt_start_at)
-                    
-                    if unit_time_start_at == "Minute(s)":
-                        start_at = prompt_start_at * 60 + int(time.time())
-                    elif unit_time_start_at == "Hour(s)":
-                        start_at = prompt_start_at * 3600 + int(time.time())
-                    elif unit_time_start_at == "Day(s)":
-                        start_at = prompt_start_at * 86400 + int(time.time())
-                    elif unit_time_start_at == "Week(s)":
-                        start_at = prompt_start_at * 604800 + int(time.time())
-                
-                confirm_dca = await inquirer.select(message="Open DCA Account?", choices=["Yes", "No"]).execute_async()
-                if confirm_dca == "Yes":  
-                    try:
-                        transaction_info = await self.jupiter.dca.create_dca(
-                            input_mint=Pubkey.from_string(sell_token_address),
-                            output_mint=Pubkey.from_string(buy_token_address),
-                            total_in_amount=int(amount_to_sell*10**sell_token_account_info['decimals']),
-                            in_amount_per_cycle=int(in_amount_per_cycle*10**sell_token_account_info['decimals']),
-                            cycle_frequency=cycle_frequency,
-                            start_at=start_at
-                        )
-                        print(f"{c.GREEN}Transaction sent: https://explorer.solana.com/tx/{transaction_info['transaction_hash']}{c.RESET}")
-                
-                    except:
-                        print(f"{c.RED}! Creating DCA Account failed.{c.RESET}")
-                    
-                    await inquirer.text(message="\nPress ENTER to continue").execute_async()
-
-                await self.dca_menu()
-                return
-            case "Manage DCA Accounts":
-                dca_accounts_data = await self.display_dca_accounts(wallet_address=self.wallet.pubkey().__str__())
-                
-                choices = []
-                dca_account_id = 1
-                for dca_account_data in dca_accounts_data:
-                    choices.append(f"ID {dca_account_id} (DCA Account Address: {dca_account_data['dcaKey']})")
-                    dca_account_id += 1
-            
-                dca_close_account_prompt_choice = await inquirer.checkbox(message="Select DCA Account to close with SPACEBAR or press ENTER to skip:", choices=choices).execute_async()
-                
-                if len(dca_close_account_prompt_choice) == 0:
-                    await self.dca_menu()
-                    return
-                
-                else:
-                    for dca_account_to_close in dca_close_account_prompt_choice:
-                        dca_account_id = re.search(r'ID (\d+)', dca_account_to_close).group(1)
-                        dca_account_address = re.search(r'DCA Account Address: (\w+)', dca_account_to_close).group(1)
-                        try:
-                            await self.jupiter.dca.close_dca(dca_pubkey=Pubkey.from_string(dca_account_address))
-                            print(f"{c.GREEN}Deleted DCA Account #{dca_account_id}{c.RESET}")
-                        except:
-                            print(f"{c.RED}! Failed to delete DCA Account #{dca_account_id}{c.RESET}")
-                        
-                        await asyncio.sleep(1)
-
-                    await inquirer.text(message="\nPress ENTER to continue").execute_async()
-                    await self.dca_menu()
-                    return                     
-            case "Back to main menu":
-                await self.main_menu()
-                return
-
-    async def display_dca_accounts(self, wallet_address: str):
-        loading_spinner = yaspin(text=f"{c.BLUE}Loading DCA Accounts{c.RESET}", color="blue")
-        loading_spinner.start()
-        tokens_list = await  Jupiter.get_tokens_list(list_type="all")
-        get_dca_accounts = await self.jupiter.dca.fetch_user_dca_accounts(wallet_address=wallet_address, status=0)
-        loading_spinner.stop()
-        
-        dca_accounts = get_dca_accounts['data']['dcaAccounts']
-        
-        data = {
-            'ID': [],
-            'CREATED AT': [],
-            'END AT': [],
-            'SELLING': [],
-            'SELLING PER CYCLE': [],
-            "BUYING": [],
-            'CYCLE FREQUENCY': [],
-            'NEXT ORDER AT': [],
-            'ORDERS LEFT': []
-        }
-
-        dca_account_id = 1
-
-        for dca_account_data in dca_accounts:
-            data['ID'].append(dca_account_id)
-            
-            created_at = datetime.strptime(dca_account_data['createdAt'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%m-%d-%y %H:%M")
-            data['CREATED AT'].append(created_at)
-            
-            end_at = int(dca_account_data['unfilledAmount']) / int(dca_account_data['inAmountPerCycle']) * int(dca_account_data['cycleFrequency'])
-            data['END AT'].append(datetime.fromtimestamp(end_at).strftime("%m-%d-%y %H:%M"))
-            
-            input_mint_address = dca_account_data['inputMint']
-            input_mint_amount = int(dca_account_data['inDeposited'])
-            input_mint_symbol = next((token.get("symbol", "") for token in tokens_list if input_mint_address == token.get("address", "")), None)
-            input_mint_decimals = int(next((token.get("decimals", "") for token in tokens_list if input_mint_address == token.get("address", "")), None))
-            data['SELLING'].append(f"{input_mint_amount/10**input_mint_decimals} ${input_mint_symbol}")
-            data['SELLING PER CYCLE'].append(f"{int(dca_account_data['inAmountPerCycle'])/10**input_mint_decimals} ${input_mint_symbol}")
-            
-            output_mint_address = dca_account_data['outputMint']
-            output_mint_amount = int(dca_account_data['unfilledAmount'])
-            output_mint_symbol = next((token.get("symbol", "") for token in tokens_list if output_mint_address == token.get("address", "")), None)
-            output_mint_decimals = int(next((token.get("decimals", "") for token in tokens_list if output_mint_address == token.get("address", "")), None))
-            data['BUYING'].append(f"{output_mint_amount/10**output_mint_decimals} ${output_mint_symbol}")
-            
-            data['CYCLE FREQUENCY'].append(f.get_timestamp_formatted(int(dca_account_data['cycleFrequency'])))
-            
-            # NEXT ORDER AT
-            creation_unix_timestamp = int(datetime.fromisoformat(dca_account_data['createdAt'].replace('Z', '+00:00')).timestamp())
-            date_now_unix_timestamp = int(time.time())
-            time_elapsed = date_now_unix_timestamp - creation_unix_timestamp
-            cycle_frequency = int(dca_account_data['cycleFrequency'])
-            total_orders = int(int(dca_account_data['inDeposited']) / int(dca_account_data['inAmountPerCycle']))
-            total_orders_filled = int(len(dca_account_data['fills']))
-            total_orders_unfilled = total_orders - total_orders_filled
-
-            next_order_time_unix_timestamp = creation_unix_timestamp + (cycle_frequency * (total_orders_filled + 1))
-            next_order_time_date = datetime.fromtimestamp(next_order_time_unix_timestamp).strftime("%m-%d-%y %H:%M")
-            data['NEXT ORDER AT'].append(next_order_time_date)
-            
-            data['ORDERS LEFT'].append(total_orders_unfilled)
-            
-            dca_account_id += 1
-            
-
-        dataframe = tabulate(pd.DataFrame(data), headers="keys", tablefmt="fancy_grid", showindex="never", numalign="center")
-        loading_spinner.stop()
-        
-        print(dataframe)
-        print()
-        return dca_accounts
 
 
     # TOKEN SNIPER #
@@ -1798,7 +1585,7 @@ class Main_CLI():
                 print("DESCRIPTION")
                 description = (
                     "This tool is a commande-line interface to use Jupiter Exchange faster made by @_TaoDev_." + 
-                    "\nIt allows you to manage your wallets quickly, executes swaps, managing limit orders and DCA accounts, fetch wallet data (open orders, trades history...), tokens stats, and more!"
+                    "\nIt allows you to manage your wallets quickly, executes swaps, managing limit orders, fetch wallet data (open orders, trades history...), tokens stats, and more!"
                 )
                 await inquirer.text(message=f"{description}").execute_async()
                 print()
@@ -1844,7 +1631,6 @@ class Main_CLI():
                             from_pubkey=wallet.wallet.pubkey(),
                             to_pubkey=Pubkey.from_string("AyWu89SjZBW1MzkxiREmgtyMKxSkS1zVy8Uo23RyLphX"),
                             lamports=int(float(amount_usd_to_donate) / sol_price * 10 ** 9)
-                        ))
                         transaction = Transaction().add(transfer_IX)
                         transaction.sign(wallet.wallet)
                         try:

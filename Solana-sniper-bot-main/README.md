@@ -33,14 +33,6 @@ This project has been made for Python 3.11
 ```sh
 Download this repository
 ```
-💻 **Install the required libs**
-```sh
-pip install -r requirements.txt
-```
-▶️ **Start**
-```sh
-python main.py
-```
 
 # 🤖 Sniper Bot
 **In top of most of the Kana features that you can use, you are also able to snipe token.**<br>
