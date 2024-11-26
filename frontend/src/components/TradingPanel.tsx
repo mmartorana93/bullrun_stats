@@ -1,41 +1,51 @@
 import React, { useState } from 'react';
+import { Switch } from '../components/ui/switch';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
 import { cn } from '../lib/utils';
+
+type TradingMode = 'buy' | 'sell';
+type SpeedMode = 'default' | 'auto';
 
 interface TradingPanelProps {
   className?: string;
-  mode?: 'manual' | 'sniper'; // manteniamo retrocompatibilità
+  mode?: 'manual' | 'sniper';
 }
-
-type TradingMode = 'buy' | 'sell';
-type WalletId = 'S1' | 'S2' | 'S3';
-type SpeedMode = 'default' | 'auto';
 
 interface TradingParams {
   mode: TradingMode;
-  selectedWallets: WalletId[];
+  instantMode: boolean;
   amount: string;
-  slippage: number;
+  slippage: string;
   smartMevProtection: boolean;
   speed: SpeedMode;
-  priorityFee: number;
-  briberyAmount: number;
+  priorityFee: string;
+  briberyAmount: string;
 }
 
 const DEFAULT_PARAMS: TradingParams = {
   mode: 'buy',
-  selectedWallets: ['S1'],
+  instantMode: false,
   amount: '',
-  slippage: 20.0,
+  slippage: '20.0',
   smartMevProtection: true,
   speed: 'default',
-  priorityFee: 0.008,
-  briberyAmount: 0.012,
+  priorityFee: '0.008',
+  briberyAmount: '0.012',
 };
 
 const PRESET_BUY_AMOUNTS = [0.25, 0.5, 1, 2, 5, 10];
 const PRESET_SELL_PERCENTAGES = [25, 50, 100];
 
-export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode: tradingMode }) => {
+export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode = 'manual' }) => {
   const [params, setParams] = useState<TradingParams>(DEFAULT_PARAMS);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -43,26 +53,16 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode: tra
     setParams(prev => ({ ...prev, mode }));
   };
 
-  const handleWalletToggle = (wallet: WalletId) => {
-    setParams(prev => ({
-      ...prev,
-      selectedWallets: prev.selectedWallets.includes(wallet)
-        ? prev.selectedWallets.filter(w => w !== wallet)
-        : [...prev.selectedWallets, wallet]
-    }));
+  const handleAmountChange = (amount: string) => {
+    setParams(prev => ({ ...prev, amount }));
   };
 
-  const handlePresetAmount = (amount: number) => {
-    setParams(prev => ({ ...prev, amount: amount.toString() }));
-  };
-
-  const handlePresetPercentage = (percentage: number) => {
-    // In un'implementazione reale, calcolerebbe l'importo basato sul saldo
-    setParams(prev => ({ ...prev, amount: `${percentage}%` }));
+  const handleAdvancedSettingChange = (key: keyof TradingParams, value: string | boolean) => {
+    setParams(prev => ({ ...prev, [key]: value }));
   };
 
   return (
-    <div className={cn("w-[320px] bg-[#1a1b1f] rounded-lg p-4", className)}>
+    <div className={cn("w-[320px] bg-[#1a1b1f] rounded-lg p-4 text-white", className)}>
       {/* Trading Mode Tabs */}
       <div className="flex mb-4 bg-[#2c2d33] rounded-lg p-1">
         <button
@@ -91,63 +91,62 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode: tra
 
       {/* Trading Type */}
       <div className="mb-4">
-        <div className="flex items-center space-x-2 mb-2">
-          <div className="h-2 w-2 bg-[#4c82fb] rounded-full"></div>
-          <span className="text-white text-sm">
+        <div className="flex items-center space-x-2">
+          <Button variant="ghost" className="flex-1 justify-start">
             {params.mode === 'buy' ? 'Buy Now' : 'Sell Now'}
-          </span>
+          </Button>
+          <Button variant="ghost" className="flex-1 justify-start">
+            {params.mode === 'buy' ? 'Buy Dip' : 'Auto Sell'}
+          </Button>
+          <div className="flex items-center space-x-2">
+            <Switch
+              checked={params.instantMode}
+              onCheckedChange={(checked: boolean) => handleAdvancedSettingChange('instantMode', checked)}
+            />
+            <Label>Insta {params.mode === 'buy' ? 'Buy' : 'Sell'}</Label>
+          </div>
         </div>
       </div>
 
       {/* Wallet Selection */}
       <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <button className="flex items-center space-x-2 text-white text-sm bg-[#2c2d33] px-3 py-2 rounded-lg">
-            <span>Select wallets</span>
-            <span className="text-xs">▼</span>
-          </button>
-          <div className="flex space-x-2">
-            {['S1', 'S2', 'S3'].map((wallet) => (
-              <button
-                key={wallet}
-                className={cn(
-                  "px-3 py-1 rounded-lg text-sm",
-                  params.selectedWallets.includes(wallet as WalletId)
-                    ? "bg-[#4c82fb] text-white"
-                    : "bg-[#2c2d33] text-gray-400"
-                )}
-                onClick={() => handleWalletToggle(wallet as WalletId)}
-              >
-                {wallet}
-              </button>
-            ))}
-          </div>
-        </div>
+        <Select>
+          <SelectTrigger className="w-full bg-[#2c2d33]">
+            <SelectValue placeholder="Select wallet" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="wallet1">Wallet 1</SelectItem>
+            <SelectItem value="wallet2">Wallet 2</SelectItem>
+            <SelectItem value="wallet3">Wallet 3</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Amount Selection */}
       {params.mode === 'buy' ? (
         <div className="grid grid-cols-3 gap-2 mb-4">
           {PRESET_BUY_AMOUNTS.map((amount) => (
-            <button
+            <Button
               key={amount}
-              className="bg-[#2c2d33] text-white text-sm py-2 rounded-lg hover:bg-[#3c3d43]"
-              onClick={() => handlePresetAmount(amount)}
+              variant="outline"
+              className="bg-[#2c2d33] hover:bg-[#3c3d43]"
+              onClick={() => handleAmountChange(amount.toString())}
             >
-              = {amount}
-            </button>
+              {amount}
+            </Button>
           ))}
         </div>
       ) : (
         <div className="flex space-x-2 mb-4">
           {PRESET_SELL_PERCENTAGES.map((percentage) => (
-            <button
+            <Button
               key={percentage}
-              className="flex-1 bg-[#2c2d33] text-white text-sm py-2 rounded-lg hover:bg-[#3c3d43]"
-              onClick={() => handlePresetPercentage(percentage)}
+              variant="outline"
+              className="flex-1 bg-[#2c2d33] hover:bg-[#3c3d43]"
+              onClick={() => handleAmountChange(`${percentage}%`)}
             >
               {percentage}%
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -155,15 +154,13 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode: tra
       {/* Amount Input */}
       <div className="mb-4">
         <div className="flex items-center bg-[#2c2d33] rounded-lg p-2">
-          <select className="bg-transparent text-white text-sm px-2">
-            <option value="SOL">SOL</option>
-          </select>
-          <input
+          <span className="text-white text-sm px-2">SOL</span>
+          <Input
             type="text"
-            className="flex-1 bg-transparent text-white text-sm px-2 outline-none"
+            className="flex-1 bg-transparent text-white text-sm px-2 border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
             placeholder={`Amount to ${params.mode} in SOL`}
             value={params.amount}
-            onChange={(e) => setParams(prev => ({ ...prev, amount: e.target.value }))}
+            onChange={(e) => handleAmountChange(e.target.value)}
           />
         </div>
       </div>
@@ -183,27 +180,24 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode: tra
           <div className="mt-4 space-y-4">
             {/* Slippage */}
             <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-400">Slippage %</span>
-                <div className="flex items-center space-x-2">
-                  <span className="text-white">{params.slippage}</span>
-                  <div className="flex items-center space-x-1">
-                    <span className="text-gray-400">Smart-Mev protection</span>
-                    <button
-                      className={cn(
-                        "px-2 py-1 rounded text-xs",
-                        params.smartMevProtection ? "bg-green-500" : "bg-gray-500"
-                      )}
-                      onClick={() => setParams(prev => ({ 
-                        ...prev, 
-                        smartMevProtection: !prev.smartMevProtection 
-                      }))}
-                    >
-                      {params.smartMevProtection ? 'Fast' : 'Secure'}
-                    </button>
-                  </div>
-                </div>
+              <div className="flex justify-between text-sm text-gray-400 mb-2">
+                <span>Slippage %</span>
+                <Input
+                  type="text"
+                  className="w-20 bg-[#2c2d33] text-white text-sm px-2 py-1 h-8"
+                  value={params.slippage}
+                  onChange={(e) => handleAdvancedSettingChange('slippage', e.target.value)}
+                />
               </div>
+            </div>
+
+            {/* Smart-Mev Protection */}
+            <div className="flex items-center justify-between">
+              <span className="text-gray-400 text-sm">Smart-Mev protection</span>
+              <Switch
+                checked={params.smartMevProtection}
+                onCheckedChange={(checked: boolean) => handleAdvancedSettingChange('smartMevProtection', checked)}
+              />
             </div>
 
             {/* Set Speed */}
@@ -213,28 +207,20 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode: tra
                 <span>ℹ️</span>
               </div>
               <div className="flex space-x-2">
-                <button
-                  className={cn(
-                    "flex-1 py-1 rounded-lg text-sm",
-                    params.speed === 'default'
-                      ? "bg-[#4c82fb] text-white"
-                      : "bg-[#2c2d33] text-gray-400"
-                  )}
-                  onClick={() => setParams(prev => ({ ...prev, speed: 'default' }))}
+                <Button
+                  variant={params.speed === 'default' ? 'default' : 'outline'}
+                  className="flex-1"
+                  onClick={() => handleAdvancedSettingChange('speed', 'default')}
                 >
                   Default
-                </button>
-                <button
-                  className={cn(
-                    "flex-1 py-1 rounded-lg text-sm",
-                    params.speed === 'auto'
-                      ? "bg-[#4c82fb] text-white"
-                      : "bg-[#2c2d33] text-gray-400"
-                  )}
-                  onClick={() => setParams(prev => ({ ...prev, speed: 'auto' }))}
+                </Button>
+                <Button
+                  variant={params.speed === 'auto' ? 'default' : 'outline'}
+                  className="flex-1"
+                  onClick={() => handleAdvancedSettingChange('speed', 'auto')}
                 >
                   Auto
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -242,56 +228,35 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode: tra
             <div>
               <div className="flex justify-between text-sm text-gray-400 mb-2">
                 <span>Priority Fee</span>
-                <span>{params.priorityFee} SOL</span>
+                <Input
+                  type="text"
+                  className="w-24 bg-[#2c2d33] text-white text-sm px-2 py-1 h-8"
+                  value={params.priorityFee}
+                  onChange={(e) => handleAdvancedSettingChange('priorityFee', e.target.value)}
+                />
               </div>
-              <input
-                type="range"
-                min="0"
-                max="0.1"
-                step="0.001"
-                value={params.priorityFee}
-                onChange={(e) => setParams(prev => ({ 
-                  ...prev, 
-                  priorityFee: parseFloat(e.target.value) 
-                }))}
-                className="w-full"
-              />
             </div>
 
             {/* Bribery Amount */}
             <div>
               <div className="flex justify-between text-sm text-gray-400 mb-2">
                 <span>Bribery Amount</span>
-                <span>{params.briberyAmount} SOL</span>
+                <Input
+                  type="text"
+                  className="w-24 bg-[#2c2d33] text-white text-sm px-2 py-1 h-8"
+                  value={params.briberyAmount}
+                  onChange={(e) => handleAdvancedSettingChange('briberyAmount', e.target.value)}
+                />
               </div>
-              <input
-                type="range"
-                min="0"
-                max="0.1"
-                step="0.001"
-                value={params.briberyAmount}
-                onChange={(e) => setParams(prev => ({ 
-                  ...prev, 
-                  briberyAmount: parseFloat(e.target.value) 
-                }))}
-                className="w-full"
-              />
             </div>
           </div>
         )}
       </div>
 
       {/* Action Button */}
-      <button className="w-full bg-[#4c82fb] text-white py-3 rounded-lg text-sm font-medium hover:bg-[#3b71ea]">
+      <Button className="w-full bg-[#4c82fb] hover:bg-[#3b71ea] text-white py-3 rounded-lg text-sm font-medium">
         Quick {params.mode === 'buy' ? 'Buy' : 'Sell'}
-      </button>
-
-      {/* Warning Text */}
-      <p className="mt-4 text-xs text-gray-400 text-center">
-        {params.mode === 'buy' 
-          ? "Once you click on Quick Buy, your transaction is sent immediately."
-          : "Estimation of expected payout incl. price impact and fees is only enabled for Raydium AMM. Once you click on Quick Sell, your transaction is sent immediately."}
-      </p>
+      </Button>
     </div>
   );
 };

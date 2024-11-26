@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const path = require('path');
 
 module.exports = function override(config) {
   const fallback = config.resolve.fallback || {};
@@ -41,7 +42,8 @@ module.exports = function override(config) {
   };
   config.resolve.alias = {
     ...config.resolve.alias,
-    'ajv$': 'ajv/dist/ajv.bundle.js'
+    'ajv$': 'ajv/dist/ajv.bundle.js',
+    '@': path.resolve(__dirname, 'src')
   };
   return config;
 };
