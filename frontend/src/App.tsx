@@ -3,6 +3,7 @@ import { Box, Tabs, Tab, Stack, CssBaseline } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import LPTracking from './components/LPTracking';
 import BullRunStats from './components/BullRunStats';
+import MyHoldings from './components/MyHoldings';
 import BetaIcon from '@mui/icons-material/NewReleases';
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
@@ -86,6 +87,13 @@ function App() {
                 <Tab 
                   icon={
                     <Stack direction="row" spacing={1} alignItems="center">
+                      <span>My Holdings</span>
+                    </Stack>
+                  }
+                />
+                <Tab 
+                  icon={
+                    <Stack direction="row" spacing={1} alignItems="center">
                       <span>BullRun Stats</span>
                       <BetaIcon color="warning" fontSize="small" />
                     </Stack>
@@ -106,8 +114,12 @@ function App() {
               <PersistentTabContent value={tabValue} index={2}>
                 <LPTracking />
               </PersistentTabContent>
-              
+
               <PersistentTabContent value={tabValue} index={3}>
+                <MyHoldings />
+              </PersistentTabContent>
+              
+              <PersistentTabContent value={tabValue} index={4}>
                 <BullRunStats />
               </PersistentTabContent>
             </Box>

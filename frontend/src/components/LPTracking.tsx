@@ -33,6 +33,7 @@ import { useWebSocket } from '../contexts/WebSocketContext';
 import { useRealTimeStore } from '../store/realTimeStore';
 import LoggingService from '../services/loggingService';
 import api from '../api/config';
+import TradingPanel from './TradingPanel';
 
 interface FilterSettings {
     minUsd: number;
@@ -256,7 +257,6 @@ const LPTracking: React.FC = () => {
     }, [filters]);
 
     useEffect(() => {
-        // Log new pools when they arrive
         const logNewPools = async () => {
             for (const pool of pools) {
                 await LoggingService.logLPTracking({
@@ -350,11 +350,9 @@ const LPTracking: React.FC = () => {
         );
     };
 
-    // Aggiungi check per feature flag
     const [isEnabled, setIsEnabled] = useState(false);
     
     useEffect(() => {
-        // Controlla se la feature è abilitata
         const checkFeatureStatus = async () => {
             try {
                 const response = await api.get('/api/features/lp-tracking');
@@ -368,108 +366,115 @@ const LPTracking: React.FC = () => {
         checkFeatureStatus();
     }, []);
 
-    // Se la feature è disabilitata, non renderizzare nulla
     if (!isEnabled) {
         return null;
     }
 
     return (
-        <Box sx={{ width: '100%', overflow: 'hidden' }}>            
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" component="div">
-                    Nuove Pool di Liquidità
-                </Typography>
-                <Stack direction="row" spacing={2} alignItems="center">
-                    {isLoading && <CircularProgress size={24} />}
-                    {newPoolsCount > 0 && (
-                        <Badge badgeContent={newPoolsCount} color="primary">
+        <Box sx={{ width: '100%', overflow: 'hidden' }}>
+            <Box sx={{ display: 'flex', gap: 3 }}>
+                <Box sx={{ flex: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Typography variant="h6" component="div">
+                            Nuove Pool di Liquidità
+                        </Typography>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                            {isLoading && <CircularProgress size={24} />}
+                            {newPoolsCount > 0 && (
+                                <Badge badgeContent={newPoolsCount} color="primary">
+                                    <Chip
+                                        label="Nuovi Pool"
+                                        color="primary"
+                                        size="small"
+                                    />
+                                </Badge>
+                            )}
                             <Chip
-                                label="Nuovi Pool"
-                                color="primary"
+                                label={isConnected ? 'Connesso' : 'Connesso (in background)'}
+                                color="success"
                                 size="small"
                             />
-                        </Badge>
-                    )}
-                    <Chip
-                        label={isConnected ? 'Connesso' : 'Connesso (in background)'}
-                        color="success"
-                        size="small"
-                    />
-                </Stack>
+                        </Stack>
+                    </Box>
+
+                    <Paper sx={{ p: 2, mb: 2 }}>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                            <TextField
+                                label="Valore USD Minimo"
+                                type="number"
+                                value={filters.minUsd}
+                                onChange={handleFilterChange('minUsd')}
+                                size="small"
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                }}
+                            />
+                            <TextField
+                                label="Valore USD Massimo"
+                                type="number"
+                                value={filters.maxUsd}
+                                onChange={handleFilterChange('maxUsd')}
+                                size="small"
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                                }}
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={filters.showOnlyInRange}
+                                        onChange={handleFilterChange('showOnlyInRange')}
+                                    />
+                                }
+                                label="Mostra solo in range"
+                            />
+                            <Typography variant="body2" color="textSecondary">
+                                {`Mostrati ${filteredPools.length} pool su ${pools.length} totali`}
+                            </Typography>
+                        </Stack>
+                    </Paper>
+
+                    <TableContainer component={Paper} sx={{ maxHeight: 600 }}>
+                        <Table stickyHeader size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell style={{ width: 50 }} />
+                                    <TableCell>Orario</TableCell>
+                                    <TableCell>Token</TableCell>
+                                    <TableCell align="right">Quantità Token</TableCell>
+                                    <TableCell align="right">SOL</TableCell>
+                                    <TableCell align="right">Valore USD</TableCell>
+                                    <TableCell>Analisi Rischi</TableCell>
+                                    <TableCell>Explorer</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {filteredPools.map((pool) => (
+                                    <ExpandableRow
+                                        key={pool.txId}
+                                        pool={pool}
+                                        isInRange={isInRange(pool)}
+                                        formatTime={formatTime}
+                                        formatUSD={formatUSD}
+                                        getRiskStatus={getRiskStatus}
+                                    />
+                                ))}
+                                {filteredPools.length === 0 && (
+                                    <TableRow>
+                                        <TableCell colSpan={8} align="center">
+                                            Nessun pool di liquidità trovato
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
+                
+                <Box>
+                    <TradingPanel mode="sniper" />
+                </Box>
             </Box>
-
-            <Paper sx={{ p: 2, mb: 2 }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                    <TextField
-                        label="Valore USD Minimo"
-                        type="number"
-                        value={filters.minUsd}
-                        onChange={handleFilterChange('minUsd')}
-                        size="small"
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                        }}
-                    />
-                    <TextField
-                        label="Valore USD Massimo"
-                        type="number"
-                        value={filters.maxUsd}
-                        onChange={handleFilterChange('maxUsd')}
-                        size="small"
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                        }}
-                    />
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={filters.showOnlyInRange}
-                                onChange={handleFilterChange('showOnlyInRange')}
-                            />
-                        }
-                        label="Mostra solo in range"
-                    />
-                    <Typography variant="body2" color="textSecondary">
-                        {`Mostrati ${filteredPools.length} pool su ${pools.length} totali`}
-                    </Typography>
-                </Stack>
-            </Paper>
-
-            <TableContainer component={Paper} sx={{ maxHeight: 600 }}>
-                <Table stickyHeader size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell style={{ width: 50 }} />
-                            <TableCell>Orario</TableCell>
-                            <TableCell>Token</TableCell>
-                            <TableCell align="right">Quantità Token</TableCell>
-                            <TableCell align="right">SOL</TableCell>
-                            <TableCell align="right">Valore USD</TableCell>
-                            <TableCell>Analisi Rischi</TableCell>
-                            <TableCell>Explorer</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredPools.map((pool) => (
-                            <ExpandableRow
-                                key={pool.txId}
-                                pool={pool}
-                                isInRange={isInRange(pool)}
-                                formatTime={formatTime}
-                                formatUSD={formatUSD}
-                                getRiskStatus={getRiskStatus}
-                            />
-                        ))}
-                        {filteredPools.length === 0 && (
-                            <TableRow>
-                                <TableCell colSpan={8} align="center">
-                                    Nessun pool di liquidità trovato
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
         </Box>
     );
 };

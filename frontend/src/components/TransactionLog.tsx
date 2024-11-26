@@ -28,6 +28,7 @@ import LoggingService from '../services/loggingService';
 import { shortenAddress, formatDate, formatTimeAgo } from '../utils/format';
 import { useTransactions } from '../store/realTimeStore';
 import { useWebSocket } from '../contexts/WebSocketContext';
+import TradingPanel from './TradingPanel';
 
 const getSolscanUrl = (type: 'wallet' | 'tx', value: string) => {
   const baseUrl = 'https://solscan.io';
@@ -199,11 +200,9 @@ const TransactionLog: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Limita il numero massimo di transazioni memorizzate
   const MAX_TRANSACTIONS = 1000;
 
   useEffect(() => {
-    // Inizializza l'audio e precaricalo
     audioRef.current = new Audio('/notification.mp3');
     audioRef.current.load();
 
@@ -221,9 +220,7 @@ const TransactionLog: React.FC = () => {
     socket.on('newTransaction', async (transaction: Transaction) => {
       try {
         if (audioRef.current) {
-          // Resetta l'audio al punto iniziale
           audioRef.current.currentTime = 0;
-          // Riproduci il suono
           const playPromise = audioRef.current.play();
           if (playPromise !== undefined) {
             playPromise.catch(error => {
@@ -275,57 +272,61 @@ const TransactionLog: React.FC = () => {
   };
 
   const filteredTransactions = useMemo(() => {
-    // Filtra solo le transazioni che hanno un token (swap) e ordina per timestamp
     return [...transactions]
-      .filter(tx => tx.token !== null) // Mostra solo gli swap
+      .filter(tx => tx.token !== null)
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }, [transactions]);
 
-  // Calcola l'indice di inizio e fine per la paginazione
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);
 
   return (
-    <Box>
-      <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-        Log delle Transazioni (Solo Swap)
-      </Typography>
+    <Box sx={{ display: 'flex', gap: 3 }}>
+      <Box sx={{ flex: 1 }}>
+        <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
+          Log delle Transazioni (Solo Swap)
+        </Typography>
 
-      <TableContainer component={Paper} sx={{ maxHeight: 'calc(100vh - 200px)' }}>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell />
-              <TableCell>Wallet</TableCell>
-              <TableCell>Token</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Timestamp</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedTransactions.map((tx: Transaction) => (
-              <Row key={tx.signature} tx={tx} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 50, 100]}
-        component="div"
-        count={filteredTransactions.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        labelRowsPerPage="Righe per pagina:"
-        labelDisplayedRows={({ from, to, count }) =>
-          `${from}-${to} di ${count !== -1 ? count : `più di ${to}`}`
-        }
-      />
+        <TableContainer component={Paper} sx={{ maxHeight: 'calc(100vh - 200px)' }}>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell />
+                <TableCell>Wallet</TableCell>
+                <TableCell>Token</TableCell>
+                <TableCell>Created</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Timestamp</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paginatedTransactions.map((tx: Transaction) => (
+                <Row key={tx.signature} tx={tx} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50, 100]}
+          component="div"
+          count={filteredTransactions.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          labelRowsPerPage="Righe per pagina:"
+          labelDisplayedRows={({ from, to, count }) =>
+            `${from}-${to} di ${count !== -1 ? count : `più di ${to}`}`
+          }
+        />
+      </Box>
+      
+      <Box>
+        <TradingPanel mode="manual" />
+      </Box>
     </Box>
   );
 };

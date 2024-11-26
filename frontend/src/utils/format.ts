@@ -31,3 +31,33 @@ export const formatTimeAgo = (timestamp: number): string => {
         return `${days}d ago`;
     }
 };
+
+export const formatUSD = (value: number): string => {
+    return new Intl.NumberFormat('it-IT', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(value);
+};
+
+export const formatPercentage = (value: number): string => {
+    return new Intl.NumberFormat('it-IT', {
+        style: 'percent',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        signDisplay: 'always'
+    }).format(value / 100);
+};
+
+export const formatNumber = (value: number, decimals: number = 2): string => {
+    return new Intl.NumberFormat('it-IT', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+    }).format(value);
+};
+
+export const formatTokenAmount = (amount: number, decimals: number = 9): string => {
+    const value = amount / Math.pow(10, decimals);
+    return formatNumber(value, Math.min(decimals, 6));
+};
