@@ -1,7 +1,8 @@
-import { Connection, Keypair, PublicKey } from '@solana/web3.js';
-import { getAssociatedTokenAddress } from '@solana/spl-token';
-import axios from 'axios';
+import { Connection, Keypair } from '@solana/web3.js';
 import { walletService } from './walletService';
+import { pythonSniper } from './pythonSniper';
+import * as fs from 'fs/promises';
+import path from 'path';
 
 interface SnipeConfig {
   tokenAddress: string;
@@ -14,40 +15,86 @@ interface SnipeConfig {
   launchDate?: Date;
 }
 
+interface SwapConfig {
+  tokenAddress: string;
+  tokenName: string;
+  walletId: string;
+  buyAmount: number;
+  slippageBps: number;
+}
+
 interface SnipeStatus {
   status: 'NOT_IN' | 'IN' | 'ERROR' | 'STOP_LOSS' | 'TAKE_PROFIT';
   message?: string;
   data?: any;
 }
 
-interface QuoteResponse {
-  inputMint: string;
-  outputMint: string;
-  amount: string;
-  swapMode: string;
-  slippageBps: number;
-  platformFee?: any;
-  priceImpactPct: number;
-  routePlan: any[];
-  contextSlot: number;
-  timeTaken: number;
-  outAmount: string;
-  otherAmountThreshold: string;
-}
-
 class SnipingService {
   private connection: Connection;
   private activeSnipes: Map<string, NodeJS.Timeout>;
-  private readonly JUPITER_QUOTE_API = 'https://quote-api.jup.ag/v6';
+  private sniperPath: string;
 
   constructor() {
     this.connection = new Connection(process.env.SOLANA_RPC_URL || '');
     this.activeSnipes = new Map();
+    this.sniperPath = path.join(__dirname, '../../../Solana-sniper-bot-main');
+    this.initialize();
+  }
+
+  private async initialize() {
+    try {
+      // Ottieni le informazioni del wallet
+      const walletInfo = walletService.getWalletForSniper();
+
+      // Aggiorna il file wallets.json dello sniper bot
+      const walletsPath = path.join(this.sniperPath, 'wallets.json');
+      await fs.writeFile(
+        walletsPath,
+        JSON.stringify(
+          {
+            "1": {
+              wallet_name: walletInfo.wallet_name,
+              pubkey: walletInfo.pubkey,
+              private_key: walletInfo.private_key
+            }
+          },
+          null,
+          2
+        )
+      );
+
+      // Aggiorna il file config.json dello sniper bot
+      const configPath = path.join(this.sniperPath, 'config.json');
+      await fs.writeFile(
+        configPath,
+        JSON.stringify(
+          {
+            FIRST_LOGIN: false,
+            LAST_WALLET_SELECTED: "1",
+            RPC_URL: process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com"
+          },
+          null,
+          2
+        )
+      );
+
+      // Inizializza il file tokens.json se non esiste
+      const tokensPath = path.join(this.sniperPath, 'tokens.json');
+      try {
+        await fs.access(tokensPath);
+      } catch {
+        await fs.writeFile(tokensPath, JSON.stringify({}, null, 2));
+      }
+    } catch (error) {
+      console.error('Errore nell\'inizializzazione del servizio di sniper:', error);
+      throw error;
+    }
   }
 
   // Metodo pubblico per controllare lo stato di uno snipe
-  isSnipeActive(tokenAddress: string): boolean {
-    return this.activeSnipes.has(tokenAddress);
+  async isSnipeActive(tokenAddress: string): Promise<boolean> {
+    const status = await pythonSniper.getSnipeStatus(tokenAddress);
+    return status !== 'NOT_FOUND' && !status.startsWith('>');
   }
 
   // Metodo pubblico per ottenere tutti gli snipe attivi
@@ -55,100 +102,59 @@ class SnipingService {
     return Array.from(this.activeSnipes.keys());
   }
 
-  private async getQuote(
-    inputMint: string,
-    outputMint: string,
-    amount: number,
-    slippageBps: number
-  ): Promise<QuoteResponse> {
-    const url = `${this.JUPITER_QUOTE_API}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}`;
-    const response = await axios.get(url);
-    return response.data;
-  }
-
-  private async getSwapTransaction(quoteResponse: QuoteResponse, userPublicKey: string): Promise<string> {
-    const response = await axios.post(`${this.JUPITER_QUOTE_API}/swap`, {
-      quoteResponse,
-      userPublicKey,
-      wrapUnwrapSOL: true
-    });
-    return response.data.swapTransaction;
-  }
-
-  async startSnipe(config: SnipeConfig): Promise<SnipeStatus> {
+  async startSnipe(config: SnipeConfig | SwapConfig): Promise<SnipeStatus> {
     try {
       const keypair = walletService.getKeypair(config.walletId);
       if (!keypair) {
         return { status: 'ERROR', message: 'Wallet non trovato' };
       }
 
-      // Se c'è una data di lancio, calcola il delay
-      if (config.launchDate) {
-        const now = new Date();
-        const delay = config.launchDate.getTime() - now.getTime();
-        if (delay > 0) {
-          const timeoutId = setTimeout(() => {
-            this.executeSnipe(config, keypair);
-          }, delay);
-          this.activeSnipes.set(config.tokenAddress, timeoutId);
-          return { 
-            status: 'NOT_IN',
-            message: `Snipe programmato per ${config.launchDate.toLocaleString()}`
-          };
-        }
-      }
+      // Verifica se è uno swap manuale o uno snipe
+      const isManualSwap = !('takeProfit' in config);
 
-      // Se non c'è data di lancio o è già passata, esegui subito
-      return await this.executeSnipe(config, keypair);
-    } catch (error) {
-      console.error('Errore nello snipe:', error);
-      return {
-        status: 'ERROR',
-        message: error instanceof Error ? error.message : 'Errore sconosciuto'
-      };
-    }
-  }
+      if (isManualSwap) {
+        // Configura lo swap manuale
+        const swapConfig = {
+          tokenAddress: config.tokenAddress,
+          tokenName: config.tokenName,
+          walletId: config.walletId,
+          buyAmount: config.buyAmount,
+          slippageBps: config.slippageBps,
+          timestamp: undefined // Usa undefined invece di null
+        };
 
-  private async executeSnipe(config: SnipeConfig, keypair: Keypair): Promise<SnipeStatus> {
-    try {
-      const SOL_MINT = 'So11111111111111111111111111111111111111112';
-      const amountLamports = Math.floor(config.buyAmount * 1e9); // Converti SOL in lamports
+        // Esegui lo swap immediatamente
+        await pythonSniper.addTokenToSnipe(swapConfig);
 
-      // Ottieni la quote per lo swap
-      const quote = await this.getQuote(
-        SOL_MINT,
-        config.tokenAddress,
-        amountLamports,
-        config.slippageBps
-      );
-
-      if (!quote) {
         return {
-          status: 'ERROR',
-          message: 'Nessuna route disponibile per questo token'
+          status: 'IN',
+          message: 'Swap avviato'
+        };
+      } else {
+        // È uno snipe normale
+        const snipeConfig = config as SnipeConfig;
+        const pythonConfig = {
+          tokenAddress: snipeConfig.tokenAddress,
+          tokenName: snipeConfig.tokenName,
+          walletId: snipeConfig.walletId,
+          buyAmount: snipeConfig.buyAmount,
+          takeProfit: snipeConfig.takeProfit,
+          stopLoss: snipeConfig.stopLoss,
+          slippageBps: snipeConfig.slippageBps,
+          timestamp: snipeConfig.launchDate ? Math.floor(snipeConfig.launchDate.getTime() / 1000) : undefined
+        };
+
+        await pythonSniper.addTokenToSnipe(pythonConfig);
+
+        return {
+          status: 'NOT_IN',
+          message: snipeConfig.launchDate 
+            ? `Snipe programmato per ${snipeConfig.launchDate.toLocaleString()}`
+            : 'Snipe avviato'
         };
       }
-
-      // Ottieni la transazione di swap
-      const swapTransaction = await this.getSwapTransaction(
-        quote,
-        keypair.publicKey.toString()
-      );
-
-      // Decodifica e firma la transazione
-      const transaction = Buffer.from(swapTransaction, 'base64');
-      const signedTx = await this.connection.sendRawTransaction(transaction);
-
-      // Avvia il monitoraggio per take profit/stop loss
-      this.startPriceMonitoring(config, keypair);
-
-      return {
-        status: 'IN',
-        message: 'Snipe eseguito con successo',
-        data: { txid: signedTx }
-      };
     } catch (error) {
-      console.error('Errore nell\'esecuzione dello snipe:', error);
+      console.error('Errore nello snipe/swap:', error);
       return {
         status: 'ERROR',
         message: error instanceof Error ? error.message : 'Errore sconosciuto'
@@ -156,91 +162,37 @@ class SnipingService {
     }
   }
 
-  private async getTokenBalance(tokenMint: string, owner: PublicKey): Promise<number> {
+  async stopSnipe(tokenAddress: string): Promise<boolean> {
     try {
-      const tokenAccount = await getAssociatedTokenAddress(
-        new PublicKey(tokenMint),
-        owner
-      );
-      const balance = await this.connection.getTokenAccountBalance(tokenAccount);
-      return Number(balance.value.amount) / Math.pow(10, balance.value.decimals);
+      return await pythonSniper.stopSnipe(tokenAddress);
     } catch (error) {
-      console.error('Errore nel recupero del balance:', error);
-      return 0;
+      console.error('Errore nel fermare lo snipe:', error);
+      return false;
     }
   }
 
-  private async startPriceMonitoring(config: SnipeConfig, keypair: Keypair) {
-    const monitoringInterval = setInterval(async () => {
-      try {
-        const SOL_MINT = 'So11111111111111111111111111111111111111112';
-        const tokenBalance = await this.getTokenBalance(config.tokenAddress, keypair.publicKey);
-        
-        if (tokenBalance > 0) {
-          // Ottieni il prezzo corrente
-          const quote = await this.getQuote(
-            config.tokenAddress,
-            SOL_MINT,
-            Math.floor(tokenBalance * 1e9),
-            config.slippageBps
-          );
-
-          const currentValue = Number(quote.outAmount) / 1e9 * await this.getSOLPrice();
-
-          if (currentValue <= config.stopLoss || currentValue >= config.takeProfit) {
-            // Esegui la vendita
-            await this.executeSell(config, keypair, tokenBalance);
-            clearInterval(monitoringInterval);
-          }
-        }
-      } catch (error) {
-        console.error('Errore nel monitoraggio del prezzo:', error);
+  async getSnipeStatus(tokenAddress: string): Promise<SnipeStatus> {
+    try {
+      const status = await pythonSniper.getSnipeStatus(tokenAddress);
+      
+      switch (status) {
+        case 'NOT_IN':
+          return { status: 'NOT_IN', message: 'In attesa di esecuzione' };
+        case 'IN':
+          return { status: 'IN', message: 'Posizione aperta' };
+        case '> STOP_LOSS':
+          return { status: 'STOP_LOSS', message: 'Stop loss raggiunto' };
+        case '> TAKE_PROFIT':
+          return { status: 'TAKE_PROFIT', message: 'Take profit raggiunto' };
+        case 'ERROR WHEN SWAPPING':
+          return { status: 'ERROR', message: 'Errore durante lo swap' };
+        default:
+          return { status: 'ERROR', message: 'Stato sconosciuto' };
       }
-    }, 5000); // Controlla ogni 5 secondi
-  }
-
-  private async getSOLPrice(): Promise<number> {
-    try {
-      const response = await axios.get('https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT');
-      return Number(response.data.price);
     } catch (error) {
-      console.error('Errore nel recupero del prezzo SOL:', error);
-      return 0;
+      console.error('Errore nel recupero dello stato:', error);
+      return { status: 'ERROR', message: 'Errore nel recupero dello stato' };
     }
-  }
-
-  private async executeSell(config: SnipeConfig, keypair: Keypair, amount: number): Promise<void> {
-    try {
-      const SOL_MINT = 'So11111111111111111111111111111111111111112';
-      const amountLamports = Math.floor(amount * 1e9);
-
-      const quote = await this.getQuote(
-        config.tokenAddress,
-        SOL_MINT,
-        amountLamports,
-        config.slippageBps
-      );
-
-      const swapTransaction = await this.getSwapTransaction(
-        quote,
-        keypair.publicKey.toString()
-      );
-
-      const transaction = Buffer.from(swapTransaction, 'base64');
-      await this.connection.sendRawTransaction(transaction);
-    } catch (error) {
-      console.error('Errore nella vendita:', error);
-    }
-  }
-
-  stopSnipe(tokenAddress: string): boolean {
-    const timeoutId = this.activeSnipes.get(tokenAddress);
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      this.activeSnipes.delete(tokenAddress);
-      return true;
-    }
-    return false;
   }
 }
 

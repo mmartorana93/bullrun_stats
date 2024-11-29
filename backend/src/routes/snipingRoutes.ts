@@ -42,7 +42,7 @@ router.post('/start', async (req, res) => {
 router.post('/stop', async (req, res) => {
   try {
     const { tokenAddress } = req.body;
-    const stopped = snipingService.stopSnipe(tokenAddress);
+    const stopped = await snipingService.stopSnipe(tokenAddress);
     
     res.json({
       success: true,
@@ -62,12 +62,11 @@ router.post('/stop', async (req, res) => {
 router.get('/status/:tokenAddress', async (req, res) => {
   try {
     const { tokenAddress } = req.params;
-    const isActive = snipingService.isSnipeActive(tokenAddress);
+    const status = await snipingService.getSnipeStatus(tokenAddress);
     
     res.json({
       success: true,
-      active: isActive,
-      message: isActive ? 'Snipe attivo' : 'Nessuno snipe attivo'
+      ...status
     });
   } catch (error) {
     console.error('Errore nel recupero dello stato:', error);

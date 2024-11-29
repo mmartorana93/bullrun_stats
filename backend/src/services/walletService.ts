@@ -1,178 +1,89 @@
-import { Connection, Keypair, PublicKey } from '@solana/web3.js';
-import * as bs58 from 'bs58';
-import dotenv from 'dotenv';
+import { Connection, PublicKey, Keypair } from '@solana/web3.js';
+import base58 from 'bs58';
 
-dotenv.config();
-
-export interface Wallet {
-    id: string;
-    name: string;
-    publicKey: string;
+// Definizione dei tipi per logger e config
+interface Logger {
+  error: (message: string, ...args: any[]) => void;
+  info: (message: string, ...args: any[]) => void;
+  warn: (message: string, ...args: any[]) => void;
 }
 
-export interface WalletOperation {
-    success: boolean;
-    message?: string;
-    data?: any;
+interface Config {
+  SOLANA_RPC_URL: string;
+  SOLANA_WS_URL: string;
 }
 
-export interface MonitoredWallet {
-    address: string;
-    status: 'active' | 'paused';
-    lastUpdate: Date;
+// Importazione con tipi
+const { logger } = require('../config/logger') as { logger: Logger };
+const config = require('../config/config') as Config;
+
+interface WalletInfo {
+  address: string;
+  balance: number;
+  isTestWallet: boolean;
 }
 
 class WalletService {
-    private connection: Connection;
-    private wallets: Map<string, Keypair>;
-    private monitoredWallets: Map<string, MonitoredWallet>;
+  private connection: Connection;
+  private mainWallet: Keypair | null = null;
+  private mainWalletAddress: string | null = null;
 
-    constructor() {
-        this.connection = new Connection(process.env.SOLANA_RPC_URL || '');
-        this.wallets = new Map();
-        this.monitoredWallets = new Map();
-        this.initializeWallets();
+  constructor() {
+    this.connection = new Connection(config.SOLANA_RPC_URL, {
+      commitment: 'confirmed',
+      wsEndpoint: config.SOLANA_WS_URL
+    });
+
+    // Inizializza il wallet usando la chiave privata dal .env
+    try {
+      const mainPrivateKey = process.env.SOLANA_PRIVATE_KEY;
+      if (mainPrivateKey) {
+        this.mainWallet = Keypair.fromSecretKey(base58.decode(mainPrivateKey));
+        this.mainWalletAddress = this.mainWallet.publicKey.toString();
+      }
+    } catch (error) {
+      logger.error('Errore nell\'inizializzazione del wallet:', error);
+    }
+  }
+
+  async getMyWalletInfo(): Promise<WalletInfo> {
+    try {
+      if (!this.mainWalletAddress) {
+        throw new Error('MAIN_WALLET non inizializzato correttamente');
+      }
+
+      const publicKey = new PublicKey(this.mainWalletAddress);
+      const balance = await this.connection.getBalance(publicKey);
+
+      return {
+        address: this.mainWalletAddress,
+        balance: balance / 1e9,
+        isTestWallet: false
+      };
+    } catch (error) {
+      logger.error('Errore nel recupero info wallet:', error);
+      throw error;
+    }
+  }
+
+  getWalletForSniper() {
+    if (!this.mainWallet || !this.mainWalletAddress) {
+      throw new Error('MAIN_WALLET non inizializzato correttamente');
     }
 
-    private initializeWallets() {
-        // Carica i wallet dal file .env
-        const walletKeys = Object.keys(process.env)
-            .filter(key => key.startsWith('WALLET_PRIVATE_KEY_'));
+    return {
+      wallet_name: 'Main Wallet',
+      pubkey: this.mainWalletAddress,
+      private_key: process.env.SOLANA_PRIVATE_KEY
+    };
+  }
 
-        walletKeys.forEach(key => {
-            const privateKey = process.env[key];
-            if (privateKey) {
-                try {
-                    const keypair = Keypair.fromSecretKey(bs58.decode(privateKey));
-                    const id = key.replace('WALLET_PRIVATE_KEY_', '');
-                    this.wallets.set(id, keypair);
-                    
-                    // Inizializza il monitoraggio per questo wallet
-                    this.monitoredWallets.set(keypair.publicKey.toString(), {
-                        address: keypair.publicKey.toString(),
-                        status: 'active',
-                        lastUpdate: new Date()
-                    });
-                } catch (error) {
-                    console.error(`Errore nel caricamento del wallet ${key}:`, error);
-                }
-            }
-        });
-    }
-
-    async getWallets(): Promise<Wallet[]> {
-        const walletList: Wallet[] = [];
-        
-        for (const [id, keypair] of this.wallets) {
-            const name = process.env[`WALLET_NAME_${id}`] || `Wallet ${id}`;
-            walletList.push({
-                id,
-                name,
-                publicKey: keypair.publicKey.toString()
-            });
-        }
-
-        return walletList;
-    }
-
-    async getWalletBalance(walletId: string): Promise<WalletOperation> {
-        try {
-            const keypair = this.wallets.get(walletId);
-            if (!keypair) {
-                return { success: false, message: 'Wallet non trovato' };
-            }
-
-            const balance = await this.connection.getBalance(keypair.publicKey);
-            return {
-                success: true,
-                data: {
-                    sol: balance / 1e9,
-                    lamports: balance
-                }
-            };
-        } catch (error) {
-            return {
-                success: false,
-                message: error instanceof Error ? error.message : 'Errore sconosciuto'
-            };
-        }
-    }
-
-    getKeypair(walletId: string): Keypair | null {
-        return this.wallets.get(walletId) || null;
-    }
-
-    async validateAddress(address: string): Promise<boolean> {
-        try {
-            new PublicKey(address);
-            return true;
-        } catch {
-            return false;
-        }
-    }
-
-    // Metodi per il monitoraggio dei wallet
-    async getMonitoredWallets(): Promise<MonitoredWallet[]> {
-        return Array.from(this.monitoredWallets.values());
-    }
-
-    async pauseWallet(address: string): Promise<boolean> {
-        const wallet = this.monitoredWallets.get(address);
-        if (wallet) {
-            wallet.status = 'paused';
-            wallet.lastUpdate = new Date();
-            this.monitoredWallets.set(address, wallet);
-            return true;
-        }
-        return false;
-    }
-
-    async resumeWallet(address: string): Promise<boolean> {
-        const wallet = this.monitoredWallets.get(address);
-        if (wallet) {
-            wallet.status = 'active';
-            wallet.lastUpdate = new Date();
-            this.monitoredWallets.set(address, wallet);
-            return true;
-        }
-        return false;
-    }
-
-    isWalletMonitored(address: string): boolean {
-        return this.monitoredWallets.has(address);
-    }
-
-    getWalletStatus(address: string): 'active' | 'paused' | null {
-        return this.monitoredWallets.get(address)?.status || null;
-    }
-
-    // Metodo per ottenere il saldo SOL in USD
-    async getWalletBalanceUSD(walletId: string): Promise<WalletOperation> {
-        try {
-            const balanceResult = await this.getWalletBalance(walletId);
-            if (!balanceResult.success) {
-                return balanceResult;
-            }
-
-            // Qui potresti aggiungere la logica per ottenere il prezzo SOL/USD
-            // Per ora usiamo un placeholder
-            const solPrice = 100; // Questo dovrebbe essere ottenuto da un price feed
-            const usdBalance = balanceResult.data.sol * solPrice;
-
-            return {
-                success: true,
-                data: {
-                    ...balanceResult.data,
-                    usd: usdBalance
-                }
-            };
-        } catch (error) {
-            return {
-                success: false,
-                message: error instanceof Error ? error.message : 'Errore sconosciuto'
-            };
-        }
-    }
+  getKeypair(walletId: string): Keypair | null {
+    // Per ora restituiamo sempre il wallet principale
+    // In futuro potremmo gestire più wallet
+    return this.mainWallet;
+  }
 }
 
 export const walletService = new WalletService();
+export type { WalletInfo };
