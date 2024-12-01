@@ -3,11 +3,13 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { cn } from '../lib/utils';
 import { walletService, type WalletInfo } from '../services/walletService';
+import { tradingService } from '../services/tradingService';
 
 type TradingMode = 'buy' | 'sell';
 
 interface TradingPanelProps {
   className?: string;
+  mode: 'manual' | 'sniper';
 }
 
 interface TradingParams {
@@ -17,30 +19,44 @@ interface TradingParams {
   tokenAddress: string;
 }
 
+interface QuoteInfo {
+  inAmount: string;
+  outAmount: string;
+  priceImpactPct: number | string;
+}
+
 const DEFAULT_PARAMS: TradingParams = {
   mode: 'buy',
   amount: '',
-  slippage: '1.0', // Default slippage 1%
+  slippage: '2.0',
   tokenAddress: ''
 };
 
-const PRESET_BUY_AMOUNTS = [0.25, 0.5, 1, 2, 5, 10];
+const PRESET_BUY_AMOUNTS = [0.04, 0.08, 1, 2, 5, 10];
 const PRESET_SELL_PERCENTAGES = [25, 50, 100];
 const SOL_ADDRESS = 'So11111111111111111111111111111111111111112';
 
-export const TradingPanel: React.FC<TradingPanelProps> = ({ className }) => {
+export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode }) => {
   const [params, setParams] = useState<TradingParams>(DEFAULT_PARAMS);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [wallet, setWallet] = useState<WalletInfo | null>(null);
+  const [quote, setQuote] = useState<QuoteInfo | null>(null);
 
   useEffect(() => {
     loadWallet();
   }, []);
 
+  useEffect(() => {
+    if (params.amount && params.tokenAddress) {
+      getQuote();
+    }
+  }, [params.amount, params.tokenAddress, params.mode]);
+
   const loadWallet = async () => {
     try {
       const walletInfo = await walletService.getMyWallet();
+      console.log('Wallet caricato:', walletInfo);
       setWallet(walletInfo);
     } catch (error) {
       console.error('Errore nel caricamento del wallet:', error);
@@ -50,6 +66,7 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className }) => {
 
   const handleModeChange = (mode: TradingMode) => {
     setParams(prev => ({ ...prev, mode }));
+    setQuote(null);
   };
 
   const handleAmountChange = (amount: string) => {
@@ -60,24 +77,56 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className }) => {
     setParams(prev => ({ ...prev, [key]: value }));
   };
 
+  const getQuote = async () => {
+    if (!params.tokenAddress || !params.amount) return;
+
+    try {
+      const amount = parseFloat(params.amount);
+      if (isNaN(amount)) return;
+
+      const inputMint = params.mode === 'buy' ? SOL_ADDRESS : params.tokenAddress;
+      const outputMint = params.mode === 'buy' ? params.tokenAddress : SOL_ADDRESS;
+
+      console.log('Richiesta quotazione con parametri:', {
+        inputMint,
+        outputMint,
+        amount
+      });
+
+      const quoteResponse = await tradingService.getQuote(inputMint, outputMint, amount);
+      console.log('Risposta quotazione:', quoteResponse);
+      
+      if (quoteResponse.success && quoteResponse.data) {
+        setQuote({
+          inAmount: quoteResponse.data.inAmount,
+          outAmount: quoteResponse.data.outAmount,
+          priceImpactPct: quoteResponse.data.priceImpactPct || 0
+        });
+        setError(null);
+      } else {
+        setError(quoteResponse.error || 'Errore nel recupero della quotazione');
+        setQuote(null);
+      }
+    } catch (error) {
+      console.error('Errore nel recupero della quotazione:', error);
+      setError('Errore nel recupero della quotazione');
+      setQuote(null);
+    }
+  };
+
   const handleSubmit = async () => {
-    if (!params.tokenAddress || !params.amount || !params.slippage) {
+    if (!params.tokenAddress || !params.amount || !params.slippage || !wallet) {
       setError('Per favore compila tutti i campi richiesti');
       return;
     }
 
-    if (!wallet) {
-      setError('Wallet non disponibile');
-      return;
-    }
-
-    // Validazione dell'importo prima del submit
     const numAmount = parseFloat(params.amount);
     if (isNaN(numAmount) || numAmount <= 0) {
       setError('Inserisci un importo valido');
       return;
     }
-    if (wallet && numAmount > wallet.balance) {
+
+    if (params.mode === 'buy' && wallet && numAmount > wallet.balance) {
       setError('Importo superiore al balance disponibile');
       return;
     }
@@ -86,9 +135,32 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className }) => {
     setError(null);
 
     try {
-      // TODO: Implementare la logica di trading diretta con Jupiter SDK
-      console.log('Trading non ancora implementato');
-      setError('Funzionalità in sviluppo');
+      const inputMint = params.mode === 'buy' ? SOL_ADDRESS : params.tokenAddress;
+      const outputMint = params.mode === 'buy' ? params.tokenAddress : SOL_ADDRESS;
+
+      console.log('Parametri di swap:', {
+        inputMint,
+        outputMint,
+        amount: numAmount,
+        slippageBps: Math.floor(parseFloat(params.slippage) * 100)
+      });
+
+      const result = await tradingService.executeSwap({
+        inputMint,
+        outputMint,
+        amount: numAmount,
+        slippageBps: Math.floor(parseFloat(params.slippage) * 100)
+      });
+
+      console.log('Risultato swap:', result);
+
+      if (result.success) {
+        console.log('Transazione completata:', result.transactionHash);
+        // Aggiorna il wallet dopo lo swap
+        await loadWallet();
+      } else {
+        setError(result.error || 'Errore durante lo swap');
+      }
     } catch (error) {
       console.error('Errore durante lo swap:', error);
       setError(error instanceof Error ? error.message : 'Errore sconosciuto');
@@ -106,6 +178,13 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className }) => {
     return true;
   };
 
+  const formatPriceImpact = (impact: number | string): string => {
+    if (typeof impact === 'number') {
+      return impact.toFixed(2);
+    }
+    return '0.00';
+  };
+
   return (
     <div className={cn("w-[320px] bg-[#1a1b1f] rounded-lg p-4 text-white", className)}>
       {/* Trading Mode Tabs */}
@@ -119,7 +198,7 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className }) => {
           )}
           onClick={() => handleModeChange('buy')}
         >
-          ⚡ Buy
+          {mode === 'sniper' ? '⚡ Snipe' : '⚡ Buy'}
         </button>
         <button
           className={cn(
@@ -191,6 +270,24 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className }) => {
         </div>
       </div>
 
+      {/* Quote Info */}
+      {quote && (
+        <div className="mb-4 p-2 bg-[#2c2d33] rounded-lg text-sm">
+          <div className="flex justify-between mb-1">
+            <span className="text-gray-400">Expected Output:</span>
+            <span>{quote.outAmount} {params.mode === 'buy' ? 'tokens' : 'SOL'}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-400">Price Impact:</span>
+            <span className={cn(
+              parseFloat(formatPriceImpact(quote.priceImpactPct)) > 5 ? "text-red-500" : "text-green-500"
+            )}>
+              {formatPriceImpact(quote.priceImpactPct)}%
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Slippage Input */}
       <div className="mb-4">
         <div className="flex justify-between text-sm text-gray-400 mb-2">
@@ -208,6 +305,20 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className }) => {
         </div>
       </div>
 
+      {/* Wallet Info */}
+      {wallet && (
+        <div className="mb-4 p-2 bg-[#2c2d33] rounded-lg text-sm">
+          <div className="flex justify-between">
+            <span className="text-gray-400">Wallet:</span>
+            <span className="text-xs">{`${wallet.address.slice(0, 6)}...${wallet.address.slice(-4)}`}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-400">Balance:</span>
+            <span>{wallet.balance.toFixed(4)} SOL</span>
+          </div>
+        </div>
+      )}
+
       {/* Error Message */}
       {error && (
         <div className="mb-4 p-2 bg-red-500/20 text-red-500 rounded text-sm">
@@ -221,7 +332,7 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className }) => {
         onClick={handleSubmit}
         disabled={isLoading || !params.tokenAddress || !params.amount || !params.slippage || !wallet}
       >
-        {isLoading ? 'Processing...' : `Quick ${params.mode === 'buy' ? 'Buy' : 'Sell'}`}
+        {isLoading ? 'Processing...' : mode === 'sniper' ? 'Quick Snipe' : `Quick ${params.mode === 'buy' ? 'Buy' : 'Sell'}`}
       </Button>
     </div>
   );

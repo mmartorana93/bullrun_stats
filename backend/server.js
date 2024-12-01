@@ -10,6 +10,7 @@ const LPTracker = require('./lpTracker');
 const config = require('./src/config/config');
 const featureRoutes = require('./src/routes/featureRoutes');
 const healthRoutes = require('./src/routes/healthRoutes');
+const snipingRoutes = require('./src/routes/snipingRoutes');
 const cors = require('cors');
 
 try {
@@ -59,6 +60,7 @@ try {
     // Configura le routes
     app.use('/health', healthRoutes);
     app.use('/api/wallets', initializeWalletRoutes(socketManager, walletService));
+    app.use('/api/sniper', snipingRoutes); // Aggiunte le nuove routes per il trading
 
     // Aggiungi handler per route non trovate
     app.use((req, res) => {
