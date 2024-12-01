@@ -20,7 +20,6 @@ const config = require('../config/config') as Config;
 interface WalletInfo {
   address: string;
   balance: number;
-  isTestWallet: boolean;
 }
 
 class WalletService {
@@ -57,8 +56,7 @@ class WalletService {
 
       return {
         address: this.mainWalletAddress,
-        balance: balance / 1e9,
-        isTestWallet: false
+        balance: balance / 1e9
       };
     } catch (error) {
       logger.error('Errore nel recupero info wallet:', error);

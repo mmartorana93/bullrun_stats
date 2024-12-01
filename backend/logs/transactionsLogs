@@ -3058,3 +3058,63 @@
     }
   }
 }
+2024-11-30T07:43:15.268Z - {
+  "timestamp": "2024-11-30T07:43:15.268Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "4T5RtAbiB2a5A1k5eD5uKekn8Q1yeNmweSuZzRuN3rYqizG52cVgpxBGSCj9XZjAdobRCnCep6PC6r6pgjtJndqZ",
+  "type": "transaction",
+  "rawData": {
+    "signature": "4T5RtAbiB2a5A1k5eD5uKekn8Q1yeNmweSuZzRuN3rYqizG52cVgpxBGSCj9XZjAdobRCnCep6PC6r6pgjtJndqZ",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.150005,
+    "success": true,
+    "timestamp": 1732952595267,
+    "token": null,
+    "tokenAmount": null,
+    "preBalances": {
+      "sol": 1378.708552904,
+      "token": 0
+    },
+    "postBalances": {
+      "sol": 1378.558547904,
+      "token": 0
+    }
+  }
+}
+2024-11-30T07:43:15.427Z - {
+  "timestamp": "2024-11-30T07:43:15.427Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "iMvkhTCGskjtVfHHxr3CkeMdeSguHXo3KHJPVVjtkgQpkVNU1SVBQk68dkJ8cwQDTkyEyxSTkXqkp2LagLMjzgx",
+  "type": "transaction",
+  "rawData": {
+    "signature": "iMvkhTCGskjtVfHHxr3CkeMdeSguHXo3KHJPVVjtkgQpkVNU1SVBQk68dkJ8cwQDTkyEyxSTkXqkp2LagLMjzgx",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": -38.909355829,
+    "success": true,
+    "timestamp": 1732952595427,
+    "token": {
+      "address": "CNT1cbvCxBev8WTjmrhKxXFFfnXzBxoaZSNkhKwtpump",
+      "symbol": "BROKEAGI",
+      "name": "Brokeshire Hathaway",
+      "priceUsd": 0.002136,
+      "createdAt": 1731883245,
+      "dexScreenerUrl": "https://dexscreener.com/solana/CNT1cbvCxBev8WTjmrhKxXFFfnXzBxoaZSNkhKwtpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/CNT1cbvCxBev8WTjmrhKxXFFfnXzBxoaZSNkhKwtpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/FUUa1Z1dWMs7pm2FMkVAGWPZf5pTV276ugUdyNNkNEWf?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/CNT1cbvCxBev8WTjmrhKxXFFfnXzBxoaZSNkhKwtpump"
+      }
+    },
+    "tokenAmount": 5000000,
+    "preBalances": {
+      "sol": 1339.799197075,
+      "token": 453.822497373
+    },
+    "postBalances": {
+      "sol": 1378.708552904,
+      "token": 414.527481401
+    }
+  }
+}

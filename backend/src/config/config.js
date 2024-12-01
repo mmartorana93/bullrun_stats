@@ -24,7 +24,6 @@ const config = {
     FRONTEND_URL: process.env.FRONTEND_URL || "http://localhost:3000",
     
     // Feature Flags
-    ENABLE_TEST_FEATURES: process.env.ENABLE_TEST_FEATURES === 'true',
     ENABLE_LP_TRACKING: process.env.ENABLE_LP_TRACKING === 'false',
     
     // Monitoring Config

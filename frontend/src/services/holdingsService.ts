@@ -13,7 +13,7 @@ export interface TokenHolding {
     sold: number;
     pnl: number | 'N/A';
     pnlPercentage: number | 'N/A';
-    source: 'trading' | 'sniping';
+    source: 'trading';
     lastPrice: number | null;
     lastUpdate: Date;
     error?: string;
@@ -27,7 +27,6 @@ export interface HoldingsStats {
     holdingsCount: number;
     bySource: {
         trading: number;
-        sniping: number;
     };
 }
 
@@ -58,7 +57,7 @@ class HoldingsService {
         }
     }
 
-    async getHoldingsBySource(source: 'trading' | 'sniping'): Promise<TokenHolding[]> {
+    async getHoldingsBySource(source: 'trading'): Promise<TokenHolding[]> {
         try {
             const response = await api.get(`/api/holdings/source/${source}`);
             return response.data.data;

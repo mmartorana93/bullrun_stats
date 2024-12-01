@@ -2,15 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { cn } from '../lib/utils';
-import { snipingService, type SwapConfig } from '../services/snipingService';
 import { walletService, type WalletInfo } from '../services/walletService';
 
 type TradingMode = 'buy' | 'sell';
-type PanelMode = 'manual' | 'sniper';
 
 interface TradingPanelProps {
   className?: string;
-  mode: PanelMode;
 }
 
 interface TradingParams {
@@ -31,7 +28,7 @@ const PRESET_BUY_AMOUNTS = [0.25, 0.5, 1, 2, 5, 10];
 const PRESET_SELL_PERCENTAGES = [25, 50, 100];
 const SOL_ADDRESS = 'So11111111111111111111111111111111111111112';
 
-export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode }) => {
+export const TradingPanel: React.FC<TradingPanelProps> = ({ className }) => {
   const [params, setParams] = useState<TradingParams>(DEFAULT_PARAMS);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -89,21 +86,9 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode }) =
     setError(null);
 
     try {
-      const walletId = walletService.getWalletIdForSniper(wallet.address);
-      
-      const config: SwapConfig = {
-        tokenAddress: params.mode === 'buy' ? params.tokenAddress : SOL_ADDRESS,
-        tokenName: 'Manual Swap',
-        walletId,
-        buyAmount: numAmount,
-        slippageBps: parseFloat(params.slippage) * 100, // Converti da percentuale a bps
-      };
-
-      const result = await snipingService.startSnipe(config);
-      
-      if (!result.success) {
-        throw new Error(result.message);
-      }
+      // TODO: Implementare la logica di trading diretta con Jupiter SDK
+      console.log('Trading non ancora implementato');
+      setError('Funzionalità in sviluppo');
     } catch (error) {
       console.error('Errore durante lo swap:', error);
       setError(error instanceof Error ? error.message : 'Errore sconosciuto');

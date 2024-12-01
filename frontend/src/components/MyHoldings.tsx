@@ -66,8 +66,8 @@ const ExpandableRow: React.FC<ExpandableRowProps> = ({ holding, onCopy }) => {
                             </IconButton>
                         </Tooltip>
                         <Chip
-                            label={holding.source === 'trading' ? 'Trading' : 'Sniping'}
-                            color={holding.source === 'trading' ? 'primary' : 'secondary'}
+                            label="Trading"
+                            color="primary"
                             size="small"
                         />
                     </Stack>
