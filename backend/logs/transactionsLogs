@@ -3934,3 +3934,111 @@
     }
   }
 }
+2024-12-03T12:35:42.371Z - {
+  "timestamp": "2024-12-03T12:35:42.371Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "5Yh237tQcsZXu7AJVLc2C1LB3Bt6iktUwXrKxDhKRxCctytxcPMo4SQJqascKwPZaMc1FZHRYEVezjwurvP591TX",
+  "type": "transaction",
+  "rawData": {
+    "signature": "5Yh237tQcsZXu7AJVLc2C1LB3Bt6iktUwXrKxDhKRxCctytxcPMo4SQJqascKwPZaMc1FZHRYEVezjwurvP591TX",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.000011,
+    "success": true,
+    "timestamp": 1733229342371,
+    "token": {
+      "address": "FdsxfXPTBV1Sk22bf82VwEFTsz6bGcCh4qGqPEBmpump",
+      "symbol": "JOKERAI",
+      "name": "jokerAI",
+      "priceUsd": 0.0001084,
+      "createdAt": 1733105789,
+      "dexScreenerUrl": "https://dexscreener.com/solana/FdsxfXPTBV1Sk22bf82VwEFTsz6bGcCh4qGqPEBmpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/FdsxfXPTBV1Sk22bf82VwEFTsz6bGcCh4qGqPEBmpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/3enwDdoRmKae2PMGrahxPJmRyYjzrJNQzCJVM2jyvRCM?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/FdsxfXPTBV1Sk22bf82VwEFTsz6bGcCh4qGqPEBmpump"
+      }
+    },
+    "tokenAmount": 2130.349,
+    "preBalances": {
+      "sol": 0.409699233,
+      "token": 944.275
+    },
+    "postBalances": {
+      "sol": 0.409688233,
+      "token": 948.6875
+    }
+  }
+}
+2024-12-03T12:40:39.293Z - {
+  "timestamp": "2024-12-03T12:40:39.293Z",
+  "wallet": "JA8PBJ9gBrCe7ofKvbQPtibKzeAwTjr5e1bZhXiwS9UC",
+  "signature": "54Tj2eNfuYyTFCBDFf2Jf1NUsuHhvMwnixvWHurJN1uaDeuzQG1qGWvjAsjQ5FuFvMefmASj2agj41HRpoFrAbmH",
+  "type": "transaction",
+  "rawData": {
+    "signature": "54Tj2eNfuYyTFCBDFf2Jf1NUsuHhvMwnixvWHurJN1uaDeuzQG1qGWvjAsjQ5FuFvMefmASj2agj41HRpoFrAbmH",
+    "wallet": "JA8PBJ9gBrCe7ofKvbQPtibKzeAwTjr5e1bZhXiwS9UC",
+    "type": "transaction",
+    "amount_sol": 0.00204428,
+    "success": true,
+    "timestamp": 1733229639292,
+    "token": {
+      "address": "9BDGGEtijfPCw1czuHo7R6PANTwr5x5nYX6vFBGSPieQ",
+      "symbol": "SLIME",
+      "name": "BRAIN SLIME",
+      "priceUsd": 0.0000141,
+      "createdAt": 1733228179,
+      "dexScreenerUrl": "https://dexscreener.com/solana/9BDGGEtijfPCw1czuHo7R6PANTwr5x5nYX6vFBGSPieQ",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/9BDGGEtijfPCw1czuHo7R6PANTwr5x5nYX6vFBGSPieQ",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/58bfKJRyrkh92mZennRzPwhed574xbtzNRy6BFCwPzpt?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/9BDGGEtijfPCw1czuHo7R6PANTwr5x5nYX6vFBGSPieQ"
+      }
+    },
+    "tokenAmount": null,
+    "preBalances": {
+      "sol": 1.246659082,
+      "token": 0
+    },
+    "postBalances": {
+      "sol": 1.244614802,
+      "token": 0
+    }
+  }
+}
+2024-12-03T12:44:53.027Z - {
+  "timestamp": "2024-12-03T12:44:53.027Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "3oasGRyhaibnPA89LGGXywBFjVEscMrFmrfVMS4YzuotnLuqoces4ugNkVuBU9WDYE8CwyxpeSdjEYpfPzV4zper",
+  "type": "transaction",
+  "rawData": {
+    "signature": "3oasGRyhaibnPA89LGGXywBFjVEscMrFmrfVMS4YzuotnLuqoces4ugNkVuBU9WDYE8CwyxpeSdjEYpfPzV4zper",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.000011,
+    "success": true,
+    "timestamp": 1733229893026,
+    "token": {
+      "address": "FdsxfXPTBV1Sk22bf82VwEFTsz6bGcCh4qGqPEBmpump",
+      "symbol": "JOKERAI",
+      "name": "jokerAI",
+      "priceUsd": 0.000109,
+      "createdAt": 1733105789,
+      "dexScreenerUrl": "https://dexscreener.com/solana/FdsxfXPTBV1Sk22bf82VwEFTsz6bGcCh4qGqPEBmpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/FdsxfXPTBV1Sk22bf82VwEFTsz6bGcCh4qGqPEBmpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/3enwDdoRmKae2PMGrahxPJmRyYjzrJNQzCJVM2jyvRCM?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/FdsxfXPTBV1Sk22bf82VwEFTsz6bGcCh4qGqPEBmpump"
+      }
+    },
+    "tokenAmount": 2140.2576,
+    "preBalances": {
+      "sol": 0.408247233,
+      "token": 948.6875
+    },
+    "postBalances": {
+      "sol": 0.408236233,
+      "token": 953.1
+    }
+  }
+}
