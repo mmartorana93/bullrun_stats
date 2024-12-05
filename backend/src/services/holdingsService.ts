@@ -1,4 +1,5 @@
 import { Connection, PublicKey } from '@solana/web3.js';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { walletService } from './walletService';
 import { EventEmitter } from 'events';
 import axios from 'axios';
@@ -31,6 +32,25 @@ interface TokenBalance {
     amount: number;
     decimals: number;
 }
+
+// Lista di token da ignorare (scam/falliti)
+const BLACKLISTED_TOKENS = [
+    "3rcwsZ86w1npjDBmXBL3XSxxK6TcwSPzXFSuCx2kTFP4",
+    "4PUzYSHYrGGRxPdxHhr9aohhTfsQjkgAEMSYzhSraaBU",
+    "DtqM56GC8n3as12oF6bQ1vCKjR294zygLchN6tgXwq4q",
+    "MWDdkqHWeoGuTS36krDuRjWA1St9yi2SUdQssxLSbNm",
+    "ARQwH1iKsmBLEnArct9Qv7LKyTCSeeC3zB6BVQMNizC6",
+    "3YWLuAW8vPzzZrWLNcfaTKKyEFwukXG6wfP9ej1WDGty",
+    "8VGntkLPxeoS8FCcgA4qvyT4PpYiP2VfCq18stg6iNp4",
+    "FBbWk6kC5r66WgEBKEbVs121qNLRfQwpNfdaKfJanWWL",
+    "Fqs7sHHyzyQh7ZmZq6Jv3uPzrrSXQWe3bHEREhrJpump",
+    "CnHFiwyWA8ppKJ1UYjCFuYXK1HAK91gC4zzxjv4xXxXJ",
+    "8ApwmGqp4anzdW5kqm6N4qNFbLMfbGciijrD2ZBPQz9u",
+    "7xEdKtj6nX2nvqPGayLi4egSWwr53NYSaVZQLRLapump",
+    "HVAn4Z7GazxCDRXvp5MLv9AFrKkxfGLih4sXutedeevk",
+    "Wdh8V9VVh1QwvreuNLmads3B7dK3FUkyGHXwkRPCgPX",
+    "DeDQFhjhM1W8Cftc3Jr6Rhk6d2pq4qrkk4yXebGXp5jB"
+];
 
 class HoldingsService extends EventEmitter {
     private connection: Connection;
@@ -88,6 +108,20 @@ class HoldingsService extends EventEmitter {
             return response.data.data[tokenAddress]?.price || null;
         } catch {
             return null;
+        }
+    }
+
+    private async getTokenInfo(mint: string): Promise<{ symbol: string; name?: string } | null> {
+        try {
+            const response = await axios.get(`https://tokens.jup.ag/token/${mint}`);
+            return {
+                symbol: response.data.symbol || mint.slice(0, 4) + '...',
+                name: response.data.name
+            };
+        } catch {
+            return {
+                symbol: mint.slice(0, 4) + '...'
+            };
         }
     }
 
@@ -228,6 +262,70 @@ class HoldingsService extends EventEmitter {
             holding.lastUpdate = new Date();
         }
         this.emitHoldingsUpdate();
+    }
+
+    async getWalletTokens(walletAddress: string): Promise<{
+        tokens: FormattedHolding[];
+        solBalance: number;
+        solPrice: number;
+        solValue: number;
+        totalValueUSD: number;
+    }> {
+        try {
+            const publicKey = new PublicKey(walletAddress);
+            const tokenAccounts = await this.connection.getParsedTokenAccountsByOwner(
+                publicKey,
+                { programId: TOKEN_PROGRAM_ID }
+            );
+
+            let totalValueUSD = 0;
+            const tokens: TokenHolding[] = [];
+
+            // Processa i token accounts
+            for (const ta of tokenAccounts.value) {
+                const accountData = ta.account.data.parsed.info;
+                const amount = accountData.tokenAmount.uiAmount;
+                const mint = accountData.mint;
+
+                if (amount > 0 && !BLACKLISTED_TOKENS.includes(mint)) {
+                    const price = await this.getTokenPrice(mint);
+                    const tokenInfo = await this.getTokenInfo(mint);
+                    const value = price ? amount * price : 0;
+                    totalValueUSD += value;
+
+                    tokens.push({
+                        symbol: tokenInfo?.symbol || mint.slice(0, 4) + '...',
+                        address: mint,
+                        wallets: [{ address: walletAddress, amount }],
+                        invested: 0, // Non abbiamo questa info per token esterni
+                        remaining: amount,
+                        sold: 0,
+                        pnl: 0,
+                        pnlPercentage: 0,
+                        source: 'trading',
+                        lastPrice: price,
+                        lastUpdate: new Date()
+                    });
+                }
+            }
+
+            // Aggiungi SOL balance
+            const solBalance = await this.connection.getBalance(publicKey) / 1e9;
+            const solPrice = await this.getTokenPrice("So11111111111111111111111111111111111111112") || 0;
+            const solValue = solBalance * solPrice;
+            totalValueUSD += solValue;
+
+            return {
+                tokens: tokens.map(this.formatHolding),
+                solBalance,
+                solPrice,
+                solValue,
+                totalValueUSD
+            };
+        } catch (error) {
+            console.error('Errore nel recupero dei token:', error);
+            throw error;
+        }
     }
 }
 

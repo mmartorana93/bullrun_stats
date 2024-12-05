@@ -62,6 +62,25 @@ router.get('/wallet/:address', async (req, res) => {
     }
 });
 
+// Ottieni tutti i token di un wallet
+router.get('/wallet/:address/tokens', async (req, res) => {
+    try {
+        const { address } = req.params;
+        const walletTokens = await holdingsService.getWalletTokens(address);
+        
+        res.json({
+            success: true,
+            data: walletTokens
+        });
+    } catch (error) {
+        logger.error('Errore nel recupero dei token del wallet:', error);
+        res.status(500).json({
+            success: false,
+            message: error instanceof Error ? error.message : 'Errore interno del server'
+        });
+    }
+});
+
 // Filtra gli holdings per fonte (trading/sniping)
 router.get('/source/:source', async (req, res) => {
     try {

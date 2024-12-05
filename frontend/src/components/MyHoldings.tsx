@@ -10,16 +10,10 @@ import {
     TableRow,
     Typography,
     Stack,
+    CircularProgress,
+    Alert,
 } from '@mui/material';
-
-interface TokenHolding {
-    symbol: string;
-    name?: string;
-    address: string;
-    amount: number;
-    price: number;
-    value: number;
-}
+import { useHoldingsService } from '../hooks/useHoldingsService';
 
 interface HoldingsStats {
     totalValueUSD: number;
@@ -70,12 +64,31 @@ const WalletSummary: React.FC<{ stats: HoldingsStats }> = ({ stats }) => {
 };
 
 const MyHoldings: React.FC = () => {
-    const mockStats: HoldingsStats = {
-        totalValueUSD: 0,
-        solBalance: 0,
-        solPrice: 0,
-        solValue: 0
-    };
+    const { holdings, loading, error } = useHoldingsService();
+
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+            </Alert>
+        );
+    }
+
+    if (!holdings) {
+        return (
+            <Alert severity="info" sx={{ mb: 2 }}>
+                Nessun dato disponibile
+            </Alert>
+        );
+    }
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -83,7 +96,7 @@ const MyHoldings: React.FC = () => {
                 Il Mio Portfolio
             </Typography>
 
-            <WalletSummary stats={mockStats} />
+            <WalletSummary stats={holdings} />
 
             <TableContainer component={Paper}>
                 <Table>
@@ -96,11 +109,30 @@ const MyHoldings: React.FC = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        <TableRow>
-                            <TableCell colSpan={4} align="center">
-                                Nessun token trovato
-                            </TableCell>
-                        </TableRow>
+                        {holdings.tokens.length > 0 ? (
+                            holdings.tokens.map((token) => (
+                                <TableRow key={token.address}>
+                                    <TableCell>
+                                        {token.name || token.symbol}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {token.amount.toLocaleString()}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        ${token.price.toLocaleString()}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        ${token.value.toLocaleString()}
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={4} align="center">
+                                    Nessun token trovato
+                                </TableCell>
+                            </TableRow>
+                        )}
                     </TableBody>
                 </Table>
             </TableContainer>

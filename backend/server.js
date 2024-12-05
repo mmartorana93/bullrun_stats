@@ -11,6 +11,7 @@ const config = require('./src/config/config');
 const featureRoutes = require('./src/routes/featureRoutes');
 const healthRoutes = require('./src/routes/healthRoutes');
 const snipingRoutes = require('./src/routes/snipingRoutes');
+const holdingsRoutes = require('./src/routes/holdingsRoutes'); // Aggiunto import
 const cors = require('cors');
 
 try {
@@ -60,7 +61,8 @@ try {
     // Configura le routes
     app.use('/health', healthRoutes);
     app.use('/api/wallets', initializeWalletRoutes(socketManager, walletService));
-    app.use('/api/sniper', snipingRoutes); // Aggiunte le nuove routes per il trading
+    app.use('/api/sniper', snipingRoutes);
+    app.use('/api/holdings', holdingsRoutes); // Aggiunta registrazione rotte holdings
 
     // Aggiungi handler per route non trovate
     app.use((req, res) => {
