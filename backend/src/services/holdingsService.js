@@ -36,62 +36,54 @@ class HoldingsService {
         this.walletService = new WalletService();
     }
 
-    async getTokenPrice(tokenAddress) {
+    async getBatchTokenInfo(mints) {
+        const tokenMap = new Map();
+        
         try {
-            const cached = this.priceCache.get(tokenAddress);
-            if (cached && Date.now() - cached.timestamp < this.PRICE_CACHE_TTL) {
-                return cached.price;
-            }
-
-            logger.info(`Recupero prezzo per token: ${tokenAddress}`);
-            const response = await fetch(
-                `https://price.jup.ag/v4/price?ids=${tokenAddress}`
+            logger.info('Recupero prezzi batch per:', mints);
+            const priceResponse = await fetch(
+                `https://api.jup.ag/price/v2?ids=${mints.join(',')}`
             );
             
-            if (!response.ok) {
-                logger.error(`Errore nella risposta API dei prezzi: ${response.statusText}`);
-                return null;
+            if (!priceResponse.ok) {
+                logger.error('Errore nella risposta API dei prezzi batch');
+                return tokenMap;
             }
 
-            const data = await response.json();
-            if (data.data[tokenAddress]) {
-                const price = data.data[tokenAddress].price;
-                this.priceCache.set(tokenAddress, {
-                    price,
-                    timestamp: Date.now()
-                });
-                return price;
+            const priceData = await priceResponse.json();
+
+            for (const mint of mints) {
+                try {
+                    const tokenResponse = await fetch(`https://tokens.jup.ag/token/${mint}`);
+                    if (tokenResponse.ok) {
+                        const tokenData = await tokenResponse.json();
+                        const priceInfo = priceData.data[mint];
+                        
+                        tokenMap.set(mint, {
+                            price: priceInfo ? Number(priceInfo.price) : 0,
+                            symbol: tokenData.symbol || mint.slice(0, 4) + '...',
+                            name: tokenData.name
+                        });
+                    } else if (priceData.data[mint]) {
+                        tokenMap.set(mint, {
+                            price: Number(priceData.data[mint].price),
+                            symbol: mint.slice(0, 4) + '...'
+                        });
+                    }
+                } catch (error) {
+                    logger.error(`Errore nel recupero info per token ${mint}:`, error);
+                    if (priceData.data[mint]) {
+                        tokenMap.set(mint, {
+                            price: Number(priceData.data[mint].price),
+                            symbol: mint.slice(0, 4) + '...'
+                        });
+                    }
+                }
             }
-            return null;
         } catch (error) {
-            logger.error('Errore nel recupero del prezzo:', error);
-            return null;
+            logger.error('Errore nel recupero batch dei prezzi:', error);
         }
-    }
-
-    async getTokenInfo(mint) {
-        try {
-            logger.info(`Recupero info per token: ${mint}`);
-            const response = await fetch(`https://tokens.jup.ag/token/${mint}`);
-            
-            if (!response.ok) {
-                logger.warn(`Token info non trovate per: ${mint}`);
-                return {
-                    symbol: mint.slice(0, 4) + '...'
-                };
-            }
-
-            const data = await response.json();
-            return {
-                symbol: data.symbol || mint.slice(0, 4) + '...',
-                name: data.name
-            };
-        } catch (error) {
-            logger.error('Errore nel recupero info token:', error);
-            return {
-                symbol: mint.slice(0, 4) + '...'
-            };
-        }
+        return tokenMap;
     }
 
     async getMyTokens() {
@@ -110,6 +102,19 @@ class HoldingsService {
                 { programId: TOKEN_PROGRAM_ID }
             );
 
+            // Raccogli prima tutti i mint rilevanti
+            const relevantMints = tokenAccounts.value
+                .map(ta => ta.account.data.parsed.info)
+                .filter(info => info.tokenAmount.uiAmount > 0)
+                .filter(info => !BLACKLISTED_TOKENS.includes(info.mint))
+                .map(info => info.mint);
+
+            // Aggiungi SOL
+            relevantMints.push("So11111111111111111111111111111111111111112");
+
+            // Recupera info per tutti i token in una volta
+            const tokenInfo = await this.getBatchTokenInfo(relevantMints);
+
             let totalValueUSD = 0;
             const tokens = [];
 
@@ -120,17 +125,16 @@ class HoldingsService {
                 const mint = accountData.mint;
 
                 if (amount > 0 && !BLACKLISTED_TOKENS.includes(mint)) {
-                    const price = await this.getTokenPrice(mint);
-                    const tokenInfo = await this.getTokenInfo(mint);
-                    const value = price ? amount * price : 0;
+                    const info = tokenInfo.get(mint);
+                    const value = info?.price ? amount * info.price : 0;
                     totalValueUSD += value;
 
                     tokens.push({
-                        symbol: tokenInfo.symbol,
-                        name: tokenInfo.name,
+                        symbol: info?.symbol || mint.slice(0, 4) + '...',
+                        name: info?.name,
                         address: mint,
                         amount,
-                        price: price || 0,
+                        price: info?.price || 0,
                         value
                     });
                 }
@@ -138,7 +142,8 @@ class HoldingsService {
 
             // Aggiungi SOL balance
             const solBalance = walletInfo.balance;
-            const solPrice = await this.getTokenPrice("So11111111111111111111111111111111111111112") || 0;
+            const solInfo = tokenInfo.get("So11111111111111111111111111111111111111112");
+            const solPrice = solInfo?.price || 0;
             const solValue = solBalance * solPrice;
             totalValueUSD += solValue;
 

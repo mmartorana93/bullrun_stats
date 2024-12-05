@@ -4186,3 +4186,99 @@
     }
   }
 }
+2024-12-05T06:18:03.444Z - {
+  "timestamp": "2024-12-05T06:18:03.444Z",
+  "wallet": "ASgMU6xBCGAFEQqm42z672pYjBkuX7qbFT7gnaxzDwTu",
+  "signature": "bwfBNBRHvXVgR3FGkFxD6KxEGwmMMwdab6W3gwRemKEQhyLG3c2BqPT3uNX7tN41EYpntZ47cSA3Tjvg65FKnMv",
+  "type": "transaction",
+  "rawData": {
+    "signature": "bwfBNBRHvXVgR3FGkFxD6KxEGwmMMwdab6W3gwRemKEQhyLG3c2BqPT3uNX7tN41EYpntZ47cSA3Tjvg65FKnMv",
+    "wallet": "ASgMU6xBCGAFEQqm42z672pYjBkuX7qbFT7gnaxzDwTu",
+    "type": "transaction",
+    "amount_sol": 10.10209428,
+    "success": true,
+    "timestamp": 1733379483443,
+    "token": {
+      "address": "H2mSNg4ayRJ6A4TAjsjshudQc4tFTDHiLDXEE8hfpump",
+      "symbol": "⚡️",
+      "name": "First Bitcoin Cult",
+      "priceUsd": 0.0007655,
+      "createdAt": 1733368559,
+      "dexScreenerUrl": "https://dexscreener.com/solana/H2mSNg4ayRJ6A4TAjsjshudQc4tFTDHiLDXEE8hfpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/H2mSNg4ayRJ6A4TAjsjshudQc4tFTDHiLDXEE8hfpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/EKAfPr2kCigwBhDeZYwV891CAYdtDnv1MBeAHZcZ4WwZ?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/H2mSNg4ayRJ6A4TAjsjshudQc4tFTDHiLDXEE8hfpump"
+      }
+    },
+    "tokenAmount": 2620034.592587,
+    "preBalances": {
+      "sol": 21.329078794,
+      "token": 345.56154737
+    },
+    "postBalances": {
+      "sol": 11.226984514,
+      "token": 2620034.592587
+    }
+  }
+}
+2024-12-05T06:18:14.682Z - {
+  "timestamp": "2024-12-05T06:18:14.682Z",
+  "wallet": "ASgMU6xBCGAFEQqm42z672pYjBkuX7qbFT7gnaxzDwTu",
+  "signature": "3G8vxz8ak6sUMTZNFBpsPEUv8X1c7uv5Liu9vAPCCh9PGiFg5KBo3tetTFvKdAYENpbs4RDRQhTM3EnXBjgkxnVq",
+  "type": "transaction",
+  "rawData": {
+    "signature": "3G8vxz8ak6sUMTZNFBpsPEUv8X1c7uv5Liu9vAPCCh9PGiFg5KBo3tetTFvKdAYENpbs4RDRQhTM3EnXBjgkxnVq",
+    "wallet": "ASgMU6xBCGAFEQqm42z672pYjBkuX7qbFT7gnaxzDwTu",
+    "type": "transaction",
+    "amount_sol": 0.005005793,
+    "success": true,
+    "timestamp": 1733379494682,
+    "token": null,
+    "tokenAmount": null,
+    "preBalances": {
+      "sol": 11.226984514,
+      "token": 0
+    },
+    "postBalances": {
+      "sol": 11.221978721,
+      "token": 0
+    }
+  }
+}
+2024-12-05T06:20:34.268Z - {
+  "timestamp": "2024-12-05T06:20:34.267Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "redkRhVyCxwhwa1wGdwHt2w9XWJy7CjbSiVKejpk8f9UV4m7hn7KzSUWXY1myJZY11AukP4NSHo71A3nw5SE5V9",
+  "type": "transaction",
+  "rawData": {
+    "signature": "redkRhVyCxwhwa1wGdwHt2w9XWJy7CjbSiVKejpk8f9UV4m7hn7KzSUWXY1myJZY11AukP4NSHo71A3nw5SE5V9",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733379634267,
+    "token": {
+      "address": "4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+      "symbol": "INTJ",
+      "name": "INTJ AI Agent",
+      "priceUsd": 0.0001015,
+      "createdAt": 1733240307,
+      "dexScreenerUrl": "https://dexscreener.com/solana/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/6zubgecKWeYxjDf3pc7keJXXjtrNJAS3sXN87BN8t4Gr?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump"
+      }
+    },
+    "tokenAmount": 1658.6141,
+    "preBalances": {
+      "sol": 0.474827579,
+      "token": 1004.5464
+    },
+    "postBalances": {
+      "sol": 0.474815379,
+      "token": 1011.5712
+    }
+  }
+}
