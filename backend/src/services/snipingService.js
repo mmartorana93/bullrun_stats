@@ -3,6 +3,7 @@ const { TOKEN_PROGRAM_ID } = require('@solana/spl-token');
 const fetch = require('node-fetch');
 const { logger } = require('../config/logger');
 const WalletService = require('./walletService');
+const raydiumService = require('./raydiumService');
 
 class SnipingService {
   constructor() {
@@ -43,74 +44,31 @@ class SnipingService {
         throw new Error('Wallet non disponibile');
       }
 
-      // 1. Ottieni la quotazione
-      logger.info('Richiesta quotazione...');
-      const quoteUrl = `${this.jupiterApiEndpoint}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}`;
-      logger.info('URL quotazione:', quoteUrl);
+      // Determina se input/output sono SOL
+      const isInputSol = inputMint === "So11111111111111111111111111111111111111112";
+      const isOutputSol = outputMint === "So11111111111111111111111111111111111111112";
 
-      const quoteResponse = await fetch(quoteUrl);
-      if (!quoteResponse.ok) {
-        const errorData = await quoteResponse.text();
-        throw new Error(`Errore nella richiesta della quotazione: ${errorData}`);
-      }
-
-      const quoteData = await quoteResponse.json();
-      logger.info('Quotazione ricevuta:', quoteData);
-
-      // 2. Ottieni la transazione di swap
-      logger.info('Richiesta transazione swap...');
-      const swapRequestBody = {
-        // Passa l'intera quotazione come richiesto dalla documentazione
-        quoteResponse: quoteData,
-        userPublicKey: walletKeypair.publicKey.toString(),
-        // Configura le opzioni di swap
-        wrapUnwrapSOL: true,
-        // Opzioni aggiuntive per ottimizzare la transazione
-        computeUnitPriceMicroLamports: 1000,
-        asLegacyTransaction: true
-      };
-
-      logger.info('Body richiesta swap:', swapRequestBody);
-
-      const swapResponse = await fetch(`${this.jupiterApiEndpoint}/swap`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
+      // Esegui lo swap tramite Raydium
+      const swapResult = await raydiumService.executeSwap(
+        {
+          inputMint,
+          outputMint,
+          amount,
+          slippageBps,
+          isInputSol,
+          isOutputSol
         },
-        body: JSON.stringify(swapRequestBody)
-      });
-
-      if (!swapResponse.ok) {
-        const errorData = await swapResponse.text();
-        logger.error('Errore nella risposta di swap:', errorData);
-        throw new Error(`Errore nella richiesta di swap: ${errorData}`);
-      }
-
-      const swapData = await swapResponse.json();
-      logger.info('Risposta swap ricevuta:', swapData);
-
-      // 3. Deserializza e firma la transazione
-      logger.info('Preparazione della transazione...');
-      const swapTransactionBuf = Buffer.from(swapData.swapTransaction, 'base64');
-      const transaction = Transaction.from(swapTransactionBuf);
-
-      // 4. Invia la transazione
-      logger.info('Invio transazione...');
-      const signedTx = await this.connection.sendTransaction(
-        transaction,
-        [walletKeypair],
-        { 
-          skipPreflight: true,
-          maxRetries: 3,
-          preflightCommitment: 'confirmed'
-        }
+        walletKeypair
       );
 
-      logger.info('Transazione completata:', signedTx);
+      if (!swapResult.success) {
+        throw new Error(swapResult.error);
+      }
+
       return {
         success: true,
-        transactionHash: signedTx,
-        message: 'Swap eseguito con successo'
+        transactionHash: swapResult.signatures[0], // Ritorna la prima signature
+        message: 'Swap eseguito con successo tramite Raydium'
       };
 
     } catch (error) {
@@ -131,24 +89,15 @@ class SnipingService {
 
       logger.info(`Richiesta quotazione per ${amount} da ${inputMint} a ${outputMint}`);
       
-      const url = `${this.jupiterApiEndpoint}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=50`;
-      logger.info('URL quotazione:', url);
+      // Ottieni quotazione tramite Raydium
+      const quoteResult = await raydiumService.getQuote(
+        inputMint,
+        outputMint,
+        amount,
+        50 // slippage default
+      );
 
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        logger.error('Errore nella risposta della quotazione:', errorData);
-        throw new Error(`Errore nella richiesta della quotazione: ${errorData}`);
-      }
-
-      const quoteData = await response.json();
-      logger.info('Dati quotazione ricevuti:', quoteData);
-
-      return {
-        success: true,
-        data: quoteData // Ritorna l'intera risposta della quotazione
-      };
+      return quoteResult;
 
     } catch (error) {
       logger.error('Errore dettagliato nella quotazione:', error);

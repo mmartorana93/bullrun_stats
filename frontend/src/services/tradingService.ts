@@ -1,11 +1,17 @@
 import api from '../api/config';
 import { AxiosError } from 'axios';
+import { TRADING_CONSTANTS } from '../lib/constants/trading';
 
-interface SwapParams {
+interface OptimizedSwapParams {
   inputMint: string;
   outputMint: string;
   amount: number;
   slippageBps: number;
+  isInputSol: boolean;
+  isOutputSol: boolean;
+  priorityFee: number;
+  skipPreflight: boolean;
+  maxRetries: number;
 }
 
 interface QuoteResponse {
@@ -28,112 +34,63 @@ interface ApiErrorResponse {
 }
 
 class TradingService {
-  async executeSwap(params: SwapParams): Promise<SwapResponse> {
+  async executeSwap(params: OptimizedSwapParams): Promise<SwapResponse> {
     try {
-      // Converti l'amount in lamports
-      const lamports = Math.floor(params.amount * 1e9).toString();
-      
-      // Assicurati che tutti i parametri siano nel formato corretto
-      const formattedParams = {
-        inputMint: params.inputMint,
-        outputMint: params.outputMint,
-        amount: lamports,
-        slippageBps: Math.floor(params.slippageBps)
-      };
-
-      console.log('Parametri di swap:', {
-        ...formattedParams,
-        amountInSol: params.amount,
-        amountInLamports: lamports
+      console.log('[TradingService] Invio richiesta swap:', {
+        ...params,
+        isInputSol: params.inputMint === TRADING_CONSTANTS.SOL_ADDRESS
       });
-      
-      const response = await api.post('/api/sniper/swap', formattedParams);
-      
-      if (!response.data.success) {
-        throw new Error(response.data.error || 'Errore durante lo swap');
-      }
 
+      const response = await api.post('/api/sniper/swap', params);
+      console.log('[TradingService] Risposta swap ricevuta:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Errore durante lo swap:', error);
-      
+      console.error('[TradingService] Errore swap:', error);
       if (error instanceof AxiosError && error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        
-        const errorData = error.response.data as ApiErrorResponse;
-        const errorMessage = errorData.error || errorData.message || error.message;
-        
-        if (errorData.details) {
-          console.error('Error details:', errorData.details);
-        }
-        
-        return {
-          success: false,
-          error: errorMessage
-        };
+        console.error('[TradingService] Dettagli errore swap:', {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
       }
-
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Errore sconosciuto durante lo swap'
-      };
+      throw error;
     }
   }
 
   async getQuote(inputMint: string, outputMint: string, amount: number): Promise<QuoteResponse> {
     try {
-      // Converti l'amount in lamports
-      const lamports = Math.floor(amount * 1e9).toString();
+      const amountToSend = inputMint === TRADING_CONSTANTS.SOL_ADDRESS ? 
+        Math.floor(amount * 1e9).toString() : 
+        amount.toString();
 
-      console.log('Richiesta quotazione:', {
+      console.log('[TradingService] Invio richiesta quote:', {
         inputMint,
         outputMint,
-        amountInSol: amount,
-        amountInLamports: lamports
+        originalAmount: amount,
+        convertedAmount: amountToSend,
+        isInputSol: inputMint === TRADING_CONSTANTS.SOL_ADDRESS
       });
 
       const response = await api.get('/api/sniper/quote', {
         params: {
           inputMint,
           outputMint,
-          amount: lamports
+          amount: amountToSend
         }
       });
 
-      // La risposta contiene l'intera quotazione da Jupiter
-      if (response.data.success && response.data.data) {
-        return {
-          success: true,
-          data: response.data.data // Passa l'intera risposta della quotazione
-        };
-      }
-
+      console.log('[TradingService] Risposta quote ricevuta:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Errore nel recupero della quotazione:', error);
-      
+      console.error('[TradingService] Errore quote:', error);
       if (error instanceof AxiosError && error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        
-        const errorData = error.response.data as ApiErrorResponse;
-        const errorMessage = errorData.error || errorData.message || error.message;
-        
-        if (errorData.details) {
-          console.error('Error details:', errorData.details);
-        }
-        
-        return {
-          success: false,
-          error: errorMessage
-        };
+        console.error('[TradingService] Dettagli errore:', {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
       }
-
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Errore nel recupero della quotazione'
-      };
+      throw error;
     }
   }
 

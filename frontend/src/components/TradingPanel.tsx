@@ -4,6 +4,8 @@ import { Input } from './ui/input';
 import { cn } from '../lib/utils';
 import { walletService, type WalletInfo } from '../services/walletService';
 import { tradingService } from '../services/tradingService';
+import { TRADING_CONSTANTS } from '../lib/constants/trading';
+import { AxiosError } from 'axios';
 
 type TradingMode = 'buy' | 'sell';
 
@@ -19,6 +21,24 @@ interface TradingParams {
   tokenAddress: string;
 }
 
+interface SwapBaseParams {
+  inputMint: string;
+  outputMint: string;
+  amount: number;
+  isInputSol: boolean;
+  isOutputSol: boolean;
+}
+
+interface OptimizedSwapParams extends SwapBaseParams {
+  slippageBps: number;
+  priorityFee: number;
+  skipPreflight: boolean;
+  maxRetries: number;
+  computeUnitPriceMicroLamports: number;
+  wrapSol: boolean;
+  unwrapSol: boolean;
+}
+
 interface QuoteInfo {
   inAmount: string;
   outAmount: string;
@@ -32,16 +52,13 @@ const DEFAULT_PARAMS: TradingParams = {
   tokenAddress: ''
 };
 
-const PRESET_BUY_AMOUNTS = [0.04, 0.08, 1, 2, 5, 10];
-const PRESET_SELL_PERCENTAGES = [25, 50, 100];
-const SOL_ADDRESS = 'So11111111111111111111111111111111111111112';
-
 export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode }) => {
   const [params, setParams] = useState<TradingParams>(DEFAULT_PARAMS);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [wallet, setWallet] = useState<WalletInfo | null>(null);
   const [quote, setQuote] = useState<QuoteInfo | null>(null);
+  const [tradeSpeed, setTradeSpeed] = useState<'SNIPE' | 'FAST' | 'NORMAL'>('NORMAL');
 
   useEffect(() => {
     loadWallet();
@@ -84,34 +101,67 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode }) =
       const amount = parseFloat(params.amount);
       if (isNaN(amount)) return;
 
-      const inputMint = params.mode === 'buy' ? SOL_ADDRESS : params.tokenAddress;
-      const outputMint = params.mode === 'buy' ? params.tokenAddress : SOL_ADDRESS;
+      const inputMint = params.mode === 'buy' ? TRADING_CONSTANTS.SOL_ADDRESS : params.tokenAddress;
+      const outputMint = params.mode === 'buy' ? params.tokenAddress : TRADING_CONSTANTS.SOL_ADDRESS;
 
-      console.log('Richiesta quotazione con parametri:', {
+      console.log('[TradingPanel] Richiesta quotazione:', {
+        mode: params.mode,
         inputMint,
         outputMint,
-        amount
+        amount,
+        isInputSol: inputMint === TRADING_CONSTANTS.SOL_ADDRESS
       });
 
       const quoteResponse = await tradingService.getQuote(inputMint, outputMint, amount);
-      console.log('Risposta quotazione:', quoteResponse);
+      console.log('[TradingPanel] Risposta quotazione:', quoteResponse);
       
       if (quoteResponse.success && quoteResponse.data) {
+        console.log('[TradingPanel] Quote data:', {
+          inAmount: quoteResponse.data.inAmount,
+          outAmount: quoteResponse.data.outAmount,
+          priceImpact: quoteResponse.data.priceImpact
+        });
+        
         setQuote({
           inAmount: quoteResponse.data.inAmount,
           outAmount: quoteResponse.data.outAmount,
-          priceImpactPct: quoteResponse.data.priceImpactPct || 0
+          priceImpactPct: quoteResponse.data.priceImpact || 0
         });
         setError(null);
       } else {
+        console.error('[TradingPanel] Errore quotazione:', quoteResponse.error);
         setError(quoteResponse.error || 'Errore nel recupero della quotazione');
         setQuote(null);
       }
     } catch (error) {
-      console.error('Errore nel recupero della quotazione:', error);
+      console.error('[TradingPanel] Errore catch quotazione:', error);
+      if (error instanceof AxiosError && error.response) {
+        console.error('[TradingPanel] Response error:', {
+          status: error.response.status,
+          data: error.response.data
+        });
+      }
       setError('Errore nel recupero della quotazione');
       setQuote(null);
     }
+  };
+
+  const getOptimizedParams = (baseParams: SwapBaseParams): OptimizedSwapParams => {
+    const preset = TRADING_CONSTANTS.TRADE_PRESETS[tradeSpeed];
+    
+    return {
+      ...baseParams,
+      amount: baseParams.isInputSol ? 
+        Math.floor(baseParams.amount * 1e9) : 
+        baseParams.amount,
+      slippageBps: Math.floor(parseFloat(params.slippage) * 100),
+      priorityFee: preset.priorityFee,
+      skipPreflight: preset.skipPreflight,
+      maxRetries: preset.maxRetries,
+      computeUnitPriceMicroLamports: preset.priorityFee,
+      wrapSol: baseParams.isInputSol,
+      unwrapSol: baseParams.isOutputSol
+    };
   };
 
   const handleSubmit = async () => {
@@ -135,28 +185,27 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode }) =
     setError(null);
 
     try {
-      const inputMint = params.mode === 'buy' ? SOL_ADDRESS : params.tokenAddress;
-      const outputMint = params.mode === 'buy' ? params.tokenAddress : SOL_ADDRESS;
+      const inputMint = params.mode === 'buy' ? TRADING_CONSTANTS.SOL_ADDRESS : params.tokenAddress;
+      const outputMint = params.mode === 'buy' ? params.tokenAddress : TRADING_CONSTANTS.SOL_ADDRESS;
+      const isInputSol = inputMint === TRADING_CONSTANTS.SOL_ADDRESS;
+      const isOutputSol = outputMint === TRADING_CONSTANTS.SOL_ADDRESS;
 
-      console.log('Parametri di swap:', {
+      const baseParams: SwapBaseParams = {
         inputMint,
         outputMint,
         amount: numAmount,
-        slippageBps: Math.floor(parseFloat(params.slippage) * 100)
-      });
+        isInputSol,
+        isOutputSol
+      };
 
-      const result = await tradingService.executeSwap({
-        inputMint,
-        outputMint,
-        amount: numAmount,
-        slippageBps: Math.floor(parseFloat(params.slippage) * 100)
-      });
+      const optimizedParams = getOptimizedParams(baseParams);
 
-      console.log('Risultato swap:', result);
+      console.log('Parametri ottimizzati di swap:', optimizedParams);
+
+      const result = await tradingService.executeSwap(optimizedParams);
 
       if (result.success) {
         console.log('Transazione completata:', result.transactionHash);
-        // Aggiorna il wallet dopo lo swap
         await loadWallet();
       } else {
         setError(result.error || 'Errore durante lo swap');
@@ -188,7 +237,7 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode }) =
   return (
     <div className={cn("w-[320px] bg-[#1a1b1f] rounded-lg p-4 text-white", className)}>
       {/* Trading Mode Tabs */}
-      <div className="flex mb-4 bg-[#2c2d33] rounded-lg p-1">
+      <div className="flex mb-2 bg-[#2c2d33] rounded-lg p-1">
         <button
           className={cn(
             "flex-1 py-2 px-4 rounded-md text-sm font-medium",
@@ -209,8 +258,60 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode }) =
           )}
           onClick={() => handleModeChange('sell')}
         >
-          🔄 Sell
+          �� Sell
         </button>
+      </div>
+
+      {/* Quick Trade Buttons - Spostati qui */}
+      <div className="grid grid-cols-3 gap-1.5 mb-4">
+        <Button
+          variant="destructive"
+          onClick={() => {
+            setTradeSpeed('SNIPE');
+            handleParamChange('slippage', (TRADING_CONSTANTS.TRADE_PRESETS.SNIPE.slippageBps / 100).toString());
+          }}
+          className={cn(
+            "bg-red-600 hover:bg-red-700 px-2 h-8 text-xs",
+            tradeSpeed === 'SNIPE' && "ring-2 ring-red-400"
+          )}
+        >
+          <div className="flex items-center justify-center space-x-1">
+            <span>🚀</span>
+            <span>Snipe</span>
+          </div>
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            setTradeSpeed('FAST');
+            handleParamChange('slippage', (TRADING_CONSTANTS.TRADE_PRESETS.FAST.slippageBps / 100).toString());
+          }}
+          className={cn(
+            "bg-yellow-600 hover:bg-yellow-700 px-2 h-8 text-xs",
+            tradeSpeed === 'FAST' && "ring-2 ring-yellow-400"
+          )}
+        >
+          <div className="flex items-center justify-center space-x-1">
+            <span>⚡</span>
+            <span>Fast</span>
+          </div>
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setTradeSpeed('NORMAL');
+            handleParamChange('slippage', (TRADING_CONSTANTS.TRADE_PRESETS.NORMAL.slippageBps / 100).toString());
+          }}
+          className={cn(
+            "bg-blue-900 hover:bg-blue-800 text-white px-2 h-8 text-xs",
+            tradeSpeed === 'NORMAL' && "ring-2 ring-blue-400"
+          )}
+        >
+          <div className="flex items-center justify-center space-x-1">
+            <span>🔄</span>
+            <span>Normal</span>
+          </div>
+        </Button>
       </div>
 
       {/* Token Input */}
@@ -229,7 +330,7 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode }) =
       {/* Amount Selection */}
       {params.mode === 'buy' ? (
         <div className="grid grid-cols-3 gap-2 mb-4">
-          {PRESET_BUY_AMOUNTS.map((amount) => (
+          {TRADING_CONSTANTS.PRESET_BUY_AMOUNTS.map((amount) => (
             <Button
               key={amount}
               variant="outline"
@@ -237,13 +338,13 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode }) =
               onClick={() => handleAmountChange(amount.toString())}
               disabled={!wallet || amount > wallet.balance}
             >
-              {amount}
+              {amount < 0.1 ? amount.toFixed(3) : amount.toFixed(2)}
             </Button>
           ))}
         </div>
       ) : (
         <div className="flex space-x-2 mb-4">
-          {PRESET_SELL_PERCENTAGES.map((percentage) => (
+          {TRADING_CONSTANTS.PRESET_SELL_PERCENTAGES.map((percentage) => (
             <Button
               key={percentage}
               variant="outline"
@@ -325,6 +426,24 @@ export const TradingPanel: React.FC<TradingPanelProps> = ({ className, mode }) =
           {error}
         </div>
       )}
+
+      {/* Trade Speed Info - Mantenuto */}
+      <div className="mb-4 p-2 bg-[#2c2d33] rounded-lg text-sm">
+        <div className="flex justify-between mb-1">
+          <span className="text-gray-400">Mode:</span>
+          <span className={cn(
+            tradeSpeed === 'SNIPE' && "text-red-400",
+            tradeSpeed === 'FAST' && "text-yellow-400",
+            tradeSpeed === 'NORMAL' && "text-blue-400"
+          )}>
+            {tradeSpeed}
+          </span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-400">Slippage:</span>
+          <span>{params.slippage}%</span>
+        </div>
+      </div>
 
       {/* Action Button */}
       <Button 

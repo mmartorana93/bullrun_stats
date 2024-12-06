@@ -4282,3 +4282,1035 @@
     }
   }
 }
+2024-12-05T06:27:09.026Z - {
+  "timestamp": "2024-12-05T06:27:09.026Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "tS8gEhcqUj6fk3uhXJptZMn718sEcxbs6fypjBq2soivscNvMRmzD9X7kyKjaaQpkDeFN3mJqMAhg877GvY32k8",
+  "type": "transaction",
+  "rawData": {
+    "signature": "tS8gEhcqUj6fk3uhXJptZMn718sEcxbs6fypjBq2soivscNvMRmzD9X7kyKjaaQpkDeFN3mJqMAhg877GvY32k8",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733380029026,
+    "token": {
+      "address": "4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+      "symbol": "INTJ",
+      "name": "INTJ AI Agent",
+      "priceUsd": 0.000125,
+      "createdAt": 1733240307,
+      "dexScreenerUrl": "https://dexscreener.com/solana/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/6zubgecKWeYxjDf3pc7keJXXjtrNJAS3sXN87BN8t4Gr?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump"
+      }
+    },
+    "tokenAmount": 1670.2128,
+    "preBalances": {
+      "sol": 0.473607579,
+      "token": 1011.5712
+    },
+    "postBalances": {
+      "sol": 0.473595379,
+      "token": 1018.596
+    }
+  }
+}
+2024-12-05T06:29:44.184Z - {
+  "timestamp": "2024-12-05T06:29:44.184Z",
+  "wallet": "ECCKBDWX3MkEcf3bULbLBb9FvrEQLsmPMFTKFpvjzqgP",
+  "signature": "5fTpX3Gs4WLp9x6WSwhyHoygTJM9CviDfxbkXnbaXRAVVUusSFEBp8YJbkFTpcC4eaWtuiLqpNaqZmLLGZRNPxEa",
+  "type": "transaction",
+  "rawData": {
+    "signature": "5fTpX3Gs4WLp9x6WSwhyHoygTJM9CviDfxbkXnbaXRAVVUusSFEBp8YJbkFTpcC4eaWtuiLqpNaqZmLLGZRNPxEa",
+    "wallet": "ECCKBDWX3MkEcf3bULbLBb9FvrEQLsmPMFTKFpvjzqgP",
+    "type": "transaction",
+    "amount_sol": 0.0000071,
+    "success": true,
+    "timestamp": 1733380184184,
+    "token": null,
+    "tokenAmount": null,
+    "preBalances": {
+      "sol": 2.873783832,
+      "token": 0
+    },
+    "postBalances": {
+      "sol": 2.873776732,
+      "token": 0
+    }
+  }
+}
+2024-12-05T06:29:45.038Z - {
+  "timestamp": "2024-12-05T06:29:45.038Z",
+  "wallet": "ECCKBDWX3MkEcf3bULbLBb9FvrEQLsmPMFTKFpvjzqgP",
+  "signature": "3nkpZHc11yM4wbLyn6FekFbhZsUpMmJJo9q9HNqo7FuMrdFr5qzTfVQSquv4arbFua8sidUPZhV2hZkjXVM4Y3dF",
+  "type": "transaction",
+  "rawData": {
+    "signature": "3nkpZHc11yM4wbLyn6FekFbhZsUpMmJJo9q9HNqo7FuMrdFr5qzTfVQSquv4arbFua8sidUPZhV2hZkjXVM4Y3dF",
+    "wallet": "ECCKBDWX3MkEcf3bULbLBb9FvrEQLsmPMFTKFpvjzqgP",
+    "type": "transaction",
+    "amount_sol": -6.066780524,
+    "success": true,
+    "timestamp": 1733380185038,
+    "token": {
+      "address": "CEyqpXcqxSYxJEZY91HurPKErPZsKK9ggJQrNmWLpump",
+      "symbol": "DDD",
+      "name": "DENY DEFEND DEPOSE",
+      "priceUsd": 0.00009188,
+      "createdAt": 1733374494,
+      "dexScreenerUrl": "https://dexscreener.com/solana/CEyqpXcqxSYxJEZY91HurPKErPZsKK9ggJQrNmWLpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/CEyqpXcqxSYxJEZY91HurPKErPZsKK9ggJQrNmWLpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/35CG8cdp4xLgutVUeN3himEdFoeBCzBLBtKebjcZGfZC?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/CEyqpXcqxSYxJEZY91HurPKErPZsKK9ggJQrNmWLpump"
+      }
+    },
+    "tokenAmount": 17452409.934621,
+    "preBalances": {
+      "sol": 407.59051942,
+      "token": 89.718424233
+    },
+    "postBalances": {
+      "sol": 413.657299944,
+      "token": 83.519650977
+    }
+  }
+}
+2024-12-05T06:30:34.325Z - {
+  "timestamp": "2024-12-05T06:30:34.325Z",
+  "wallet": "ASgMU6xBCGAFEQqm42z672pYjBkuX7qbFT7gnaxzDwTu",
+  "signature": "4JuFjKKUtfkMoWefAgCTNhDkJTXG1tvNBypmYgcHjKnWPKLZmM5o1hKLRwpm4jAVP75VKXohb93wFRXhUsUH3jJU",
+  "type": "transaction",
+  "rawData": {
+    "signature": "4JuFjKKUtfkMoWefAgCTNhDkJTXG1tvNBypmYgcHjKnWPKLZmM5o1hKLRwpm4jAVP75VKXohb93wFRXhUsUH3jJU",
+    "wallet": "ASgMU6xBCGAFEQqm42z672pYjBkuX7qbFT7gnaxzDwTu",
+    "type": "transaction",
+    "amount_sol": 0.005005088,
+    "success": true,
+    "timestamp": 1733380234325,
+    "token": null,
+    "tokenAmount": null,
+    "preBalances": {
+      "sol": 1.121923721,
+      "token": 0
+    },
+    "postBalances": {
+      "sol": 1.116918633,
+      "token": 0
+    }
+  }
+}
+2024-12-05T06:30:34.422Z - {
+  "timestamp": "2024-12-05T06:30:34.422Z",
+  "wallet": "ASgMU6xBCGAFEQqm42z672pYjBkuX7qbFT7gnaxzDwTu",
+  "signature": "2nvZBDg135YuENWA2WP5DP8CsKFRsCmpgoP6Y79Yfs1SwZZkb9XVAwPB7rNLTpL2Ev8MyqgVc8aCyfckPdE89SHJ",
+  "type": "transaction",
+  "rawData": {
+    "signature": "2nvZBDg135YuENWA2WP5DP8CsKFRsCmpgoP6Y79Yfs1SwZZkb9XVAwPB7rNLTpL2Ev8MyqgVc8aCyfckPdE89SHJ",
+    "wallet": "ASgMU6xBCGAFEQqm42z672pYjBkuX7qbFT7gnaxzDwTu",
+    "type": "transaction",
+    "amount_sol": 10.100055,
+    "success": true,
+    "timestamp": 1733380234422,
+    "token": {
+      "address": "H2mSNg4ayRJ6A4TAjsjshudQc4tFTDHiLDXEE8hfpump",
+      "symbol": "⚡️",
+      "name": "First Bitcoin Cult",
+      "priceUsd": 0.0007265,
+      "createdAt": 1733368559,
+      "dexScreenerUrl": "https://dexscreener.com/solana/H2mSNg4ayRJ6A4TAjsjshudQc4tFTDHiLDXEE8hfpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/H2mSNg4ayRJ6A4TAjsjshudQc4tFTDHiLDXEE8hfpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/EKAfPr2kCigwBhDeZYwV891CAYdtDnv1MBeAHZcZ4WwZ?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/H2mSNg4ayRJ6A4TAjsjshudQc4tFTDHiLDXEE8hfpump"
+      }
+    },
+    "tokenAmount": 2620034.592587,
+    "preBalances": {
+      "sol": 11.221978721,
+      "token": 340.707562386
+    },
+    "postBalances": {
+      "sol": 1.121923721,
+      "token": 350.707562386
+    }
+  }
+}
+2024-12-05T06:34:14.008Z - {
+  "timestamp": "2024-12-05T06:34:14.008Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "4UTk5VCnuNk4qVnK7wCP4KWZRpyFKVCgdzsbRy1h71xKGTiVrmN7Y7vpVnb8xYsFvriKb3DYHijNou1qgCAjTmi4",
+  "type": "transaction",
+  "rawData": {
+    "signature": "4UTk5VCnuNk4qVnK7wCP4KWZRpyFKVCgdzsbRy1h71xKGTiVrmN7Y7vpVnb8xYsFvriKb3DYHijNou1qgCAjTmi4",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733380454008,
+    "token": {
+      "address": "4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+      "symbol": "INTJ",
+      "name": "INTJ AI Agent",
+      "priceUsd": 0.0001409,
+      "createdAt": 1733240307,
+      "dexScreenerUrl": "https://dexscreener.com/solana/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/6zubgecKWeYxjDf3pc7keJXXjtrNJAS3sXN87BN8t4Gr?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump"
+      }
+    },
+    "tokenAmount": 1681.8115,
+    "preBalances": {
+      "sol": 0.472387579,
+      "token": 1018.596
+    },
+    "postBalances": {
+      "sol": 0.472375379,
+      "token": 1025.6208
+    }
+  }
+}
+2024-12-05T06:40:15.167Z - {
+  "timestamp": "2024-12-05T06:40:15.166Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "62hHb9BYg1Tzog6rhqzSFyioMp7EKaevDniMgkaPt8kygTESgw6MHtnh5oYXotpzjbdZYLtgHqX1RPr6TYx2crVk",
+  "type": "transaction",
+  "rawData": {
+    "signature": "62hHb9BYg1Tzog6rhqzSFyioMp7EKaevDniMgkaPt8kygTESgw6MHtnh5oYXotpzjbdZYLtgHqX1RPr6TYx2crVk",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733380815166,
+    "token": {
+      "address": "4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+      "symbol": "INTJ",
+      "name": "INTJ AI Agent",
+      "priceUsd": 0.0001213,
+      "createdAt": 1733240307,
+      "dexScreenerUrl": "https://dexscreener.com/solana/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/6zubgecKWeYxjDf3pc7keJXXjtrNJAS3sXN87BN8t4Gr?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump"
+      }
+    },
+    "tokenAmount": 1693.4102,
+    "preBalances": {
+      "sol": 0.471167579,
+      "token": 1025.6208
+    },
+    "postBalances": {
+      "sol": 0.471155379,
+      "token": 1032.6456
+    }
+  }
+}
+2024-12-05T06:46:44.605Z - {
+  "timestamp": "2024-12-05T06:46:44.605Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "53y9rAhabX5gjnZtzuEU36j1CbRNAwW8HGBHawEstyftXB7n4NhCnupzNsQgzweTKahsfkHwNjQU1hcu7UL1J7gE",
+  "type": "transaction",
+  "rawData": {
+    "signature": "53y9rAhabX5gjnZtzuEU36j1CbRNAwW8HGBHawEstyftXB7n4NhCnupzNsQgzweTKahsfkHwNjQU1hcu7UL1J7gE",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733381204605,
+    "token": {
+      "address": "4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+      "symbol": "INTJ",
+      "name": "INTJ AI Agent",
+      "priceUsd": 0.0001038,
+      "createdAt": 1733240307,
+      "dexScreenerUrl": "https://dexscreener.com/solana/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/6zubgecKWeYxjDf3pc7keJXXjtrNJAS3sXN87BN8t4Gr?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/4FjL57H2PpUFjoPtoARjSSSNYNQFNaQ4Nnj63uuupump"
+      }
+    },
+    "tokenAmount": 1705.0089,
+    "preBalances": {
+      "sol": 0.469947579,
+      "token": 1032.6456
+    },
+    "postBalances": {
+      "sol": 0.469935379,
+      "token": 1039.6704
+    }
+  }
+}
+2024-12-06T06:57:42.289Z - {
+  "timestamp": "2024-12-06T06:57:42.289Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "3hKdiHK7zX2CJjD1nq3cnLXFhQFN6pURkbdYGY8AnZfqr3MkwYEzMmuxxVU3McVoLnvMxG2S5GYAoF5egFEHh1f8",
+  "type": "transaction",
+  "rawData": {
+    "signature": "3hKdiHK7zX2CJjD1nq3cnLXFhQFN6pURkbdYGY8AnZfqr3MkwYEzMmuxxVU3McVoLnvMxG2S5GYAoF5egFEHh1f8",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733468262288,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00003388,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3398.4191,
+    "preBalances": {
+      "sol": 0.145594573,
+      "token": 1179.2664
+    },
+    "postBalances": {
+      "sol": 0.145582373,
+      "token": 1183.2912
+    }
+  }
+}
+2024-12-06T07:00:09.223Z - {
+  "timestamp": "2024-12-06T07:00:09.223Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "5nBoxUj8GMw4mPLVS98C8TBE8SdVmGEoBmXhEN6bNgaoGs5cnkWwWyY8TL8ufNGAFtqSEV5kEhWWDn5QfnFWUErN",
+  "type": "transaction",
+  "rawData": {
+    "signature": "5nBoxUj8GMw4mPLVS98C8TBE8SdVmGEoBmXhEN6bNgaoGs5cnkWwWyY8TL8ufNGAFtqSEV5kEhWWDn5QfnFWUErN",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733468409223,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00003463,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3410.0178,
+    "preBalances": {
+      "sol": 0.145106573,
+      "token": 1183.2912
+    },
+    "postBalances": {
+      "sol": 0.145094373,
+      "token": 1187.316
+    }
+  }
+}
+2024-12-06T07:02:34.507Z - {
+  "timestamp": "2024-12-06T07:02:34.507Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "5qeVa71RDz4Zx4nDTq9UAHtZvZnXdac6D9sJjwZRHWf9CQJAazK2iSZyqriPQc4ht2zhfBKoPUqDo7KMvhgMygp6",
+  "type": "transaction",
+  "rawData": {
+    "signature": "5qeVa71RDz4Zx4nDTq9UAHtZvZnXdac6D9sJjwZRHWf9CQJAazK2iSZyqriPQc4ht2zhfBKoPUqDo7KMvhgMygp6",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733468554507,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00003442,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3421.6165,
+    "preBalances": {
+      "sol": 0.144618573,
+      "token": 1187.316
+    },
+    "postBalances": {
+      "sol": 0.144606373,
+      "token": 1191.3408
+    }
+  }
+}
+2024-12-06T07:07:42.950Z - {
+  "timestamp": "2024-12-06T07:07:42.949Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "3EPcJFqbkf977miQnptH16cb2pi7TGNkL5urCdndN5Ucj86LGHCfV8EdeYxwRtUkssg7rQoJM5RMetUVup4Q18JX",
+  "type": "transaction",
+  "rawData": {
+    "signature": "3EPcJFqbkf977miQnptH16cb2pi7TGNkL5urCdndN5Ucj86LGHCfV8EdeYxwRtUkssg7rQoJM5RMetUVup4Q18JX",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733468862949,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00003675,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3444.8139,
+    "preBalances": {
+      "sol": 0.143642573,
+      "token": 1195.3656
+    },
+    "postBalances": {
+      "sol": 0.143630373,
+      "token": 1199.3904
+    }
+  }
+}
+2024-12-06T07:09:55.076Z - {
+  "timestamp": "2024-12-06T07:09:55.076Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "ZYnFWssxFwwnG46Jmem6hurfrb4pZWr9VMyCxATQ9ue61gHkvHWYXKjHdqy7xjz3afZBvCppMeAofnNhZv8mMNC",
+  "type": "transaction",
+  "rawData": {
+    "signature": "ZYnFWssxFwwnG46Jmem6hurfrb4pZWr9VMyCxATQ9ue61gHkvHWYXKjHdqy7xjz3afZBvCppMeAofnNhZv8mMNC",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733468995075,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00003675,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3456.4126,
+    "preBalances": {
+      "sol": 0.143154573,
+      "token": 1199.3904
+    },
+    "postBalances": {
+      "sol": 0.143142373,
+      "token": 1203.4152
+    }
+  }
+}
+2024-12-06T07:12:19.611Z - {
+  "timestamp": "2024-12-06T07:12:19.611Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "28uQkQaB9zphV18yZtqwz2BGw3zkRuwmTj8UW6uuLPR8w3UXFXMzaLUofqeyAECbq5ov3GAZRQ493dbbn3n8Jw6J",
+  "type": "transaction",
+  "rawData": {
+    "signature": "28uQkQaB9zphV18yZtqwz2BGw3zkRuwmTj8UW6uuLPR8w3UXFXMzaLUofqeyAECbq5ov3GAZRQ493dbbn3n8Jw6J",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733469139611,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00003675,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3468.0113,
+    "preBalances": {
+      "sol": 0.142666573,
+      "token": 1203.4152
+    },
+    "postBalances": {
+      "sol": 0.142654373,
+      "token": 1207.44
+    }
+  }
+}
+2024-12-06T07:14:59.107Z - {
+  "timestamp": "2024-12-06T07:14:59.107Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "5TfKUv1RQoSqMdYr2ajCfL2U8fzoMH9FyhBtJ4mACCLqpVhnsSunhgfiZrWZJWu6kYbBwP951BXZN7TfY3QduRug",
+  "type": "transaction",
+  "rawData": {
+    "signature": "5TfKUv1RQoSqMdYr2ajCfL2U8fzoMH9FyhBtJ4mACCLqpVhnsSunhgfiZrWZJWu6kYbBwP951BXZN7TfY3QduRug",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733469299107,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00003893,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3479.61,
+    "preBalances": {
+      "sol": 0.142178573,
+      "token": 1207.44
+    },
+    "postBalances": {
+      "sol": 0.142166373,
+      "token": 1211.4648
+    }
+  }
+}
+2024-12-06T07:16:59.836Z - {
+  "timestamp": "2024-12-06T07:16:59.836Z",
+  "wallet": "ECCKBDWX3MkEcf3bULbLBb9FvrEQLsmPMFTKFpvjzqgP",
+  "signature": "5ZDJAer5C6WCsYVjzaXHz2tauhr3zcr9YtDU1Z85CjnmLNnoGsUrajPke5vcNFZ2qmajLDAE3z5j4iBWsSed9eJY",
+  "type": "transaction",
+  "rawData": {
+    "signature": "5ZDJAer5C6WCsYVjzaXHz2tauhr3zcr9YtDU1Z85CjnmLNnoGsUrajPke5vcNFZ2qmajLDAE3z5j4iBWsSed9eJY",
+    "wallet": "ECCKBDWX3MkEcf3bULbLBb9FvrEQLsmPMFTKFpvjzqgP",
+    "type": "transaction",
+    "amount_sol": -2.372009555,
+    "success": true,
+    "timestamp": 1733469419836,
+    "token": {
+      "address": "fJ4QQEHJHU8mYCWmByK3nc2Xn1zpoQ5ipbUcqM3pump",
+      "symbol": "ABULL",
+      "name": "Abull",
+      "priceUsd": 0.0001453,
+      "createdAt": 1733435864,
+      "dexScreenerUrl": "https://dexscreener.com/solana/fJ4QQEHJHU8mYCWmByK3nc2Xn1zpoQ5ipbUcqM3pump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/fJ4QQEHJHU8mYCWmByK3nc2Xn1zpoQ5ipbUcqM3pump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CwKNqXKZkf6CLE3qFRzLCeeUoH3Z72xeynUh8sPet4Xd?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/fJ4QQEHJHU8mYCWmByK3nc2Xn1zpoQ5ipbUcqM3pump"
+      }
+    },
+    "tokenAmount": 3767935.104638,
+    "preBalances": {
+      "sol": 310.021622184,
+      "token": 129.243503036
+    },
+    "postBalances": {
+      "sol": 312.393631739,
+      "token": 126.776821668
+    }
+  }
+}
+2024-12-06T07:17:40.520Z - {
+  "timestamp": "2024-12-06T07:17:40.520Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "2ws4fxTC59ChECprYo1BFtDqxBTcTDqswz8Xq9Ynd9YVbikJjmzjwSLL7vaDUTGpUrGX9R6WVmu3czBBsrpYQqUA",
+  "type": "transaction",
+  "rawData": {
+    "signature": "2ws4fxTC59ChECprYo1BFtDqxBTcTDqswz8Xq9Ynd9YVbikJjmzjwSLL7vaDUTGpUrGX9R6WVmu3czBBsrpYQqUA",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733469460519,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00004004,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3491.2087,
+    "preBalances": {
+      "sol": 0.141703373,
+      "token": 1211.4648
+    },
+    "postBalances": {
+      "sol": 0.141691173,
+      "token": 1215.4896
+    }
+  }
+}
+2024-12-06T07:19:42.783Z - {
+  "timestamp": "2024-12-06T07:19:42.783Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "2ekJTi3anXkueGrBeN9WcAnjc6TymP2QKmvFAgMPmcB8SCZZewzwEyokp8ZPFEhNSAjDTDh4AQX87zqyMtN4wx4e",
+  "type": "transaction",
+  "rawData": {
+    "signature": "2ekJTi3anXkueGrBeN9WcAnjc6TymP2QKmvFAgMPmcB8SCZZewzwEyokp8ZPFEhNSAjDTDh4AQX87zqyMtN4wx4e",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733469582783,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00004036,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3502.8074,
+    "preBalances": {
+      "sol": 0.141215373,
+      "token": 1215.4896
+    },
+    "postBalances": {
+      "sol": 0.141203173,
+      "token": 1219.5144
+    }
+  }
+}
+2024-12-06T07:22:17.106Z - {
+  "timestamp": "2024-12-06T07:22:17.106Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "4eduZ8WVCUFVK3nAcznDXKpsuwAJDCXJqSjEj2xKpjwttzQXSsLrjgN3KXjVKfNBJy1pjLESgtPFF7zUR5Hi9zUV",
+  "type": "transaction",
+  "rawData": {
+    "signature": "4eduZ8WVCUFVK3nAcznDXKpsuwAJDCXJqSjEj2xKpjwttzQXSsLrjgN3KXjVKfNBJy1pjLESgtPFF7zUR5Hi9zUV",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733469737106,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00004353,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3514.4061,
+    "preBalances": {
+      "sol": 0.140727373,
+      "token": 1219.5144
+    },
+    "postBalances": {
+      "sol": 0.140715173,
+      "token": 1223.5392
+    }
+  }
+}
+2024-12-06T07:24:26.424Z - {
+  "timestamp": "2024-12-06T07:24:26.424Z",
+  "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+  "signature": "5e2dc3cBTLFubMEA73XECt9CEvrZysZsQJUB7d5c8cvHjZoyw2uyvCU96QqrQjppdWYuWthtZ4BM6xUzFPFuAF6D",
+  "type": "transaction",
+  "rawData": {
+    "signature": "5e2dc3cBTLFubMEA73XECt9CEvrZysZsQJUB7d5c8cvHjZoyw2uyvCU96QqrQjppdWYuWthtZ4BM6xUzFPFuAF6D",
+    "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+    "type": "transaction",
+    "amount_sol": 0.020005,
+    "success": true,
+    "timestamp": 1733469866424,
+    "token": null,
+    "tokenAmount": null,
+    "preBalances": {
+      "sol": 13.767612024,
+      "token": 0
+    },
+    "postBalances": {
+      "sol": 13.747607024,
+      "token": 0
+    }
+  }
+}
+2024-12-06T07:25:35.576Z - {
+  "timestamp": "2024-12-06T07:25:35.576Z",
+  "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+  "signature": "4KKYqRoGyfy5yHz5dURR4294mc1FxJ6BtbEGKKfeFkxxtUD6K5Xrbmj4y7J2rLAwxngvnNfsB8AfLYm5K3kC9UXf",
+  "type": "transaction",
+  "rawData": {
+    "signature": "4KKYqRoGyfy5yHz5dURR4294mc1FxJ6BtbEGKKfeFkxxtUD6K5Xrbmj4y7J2rLAwxngvnNfsB8AfLYm5K3kC9UXf",
+    "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+    "type": "transaction",
+    "amount_sol": 0.020005,
+    "success": true,
+    "timestamp": 1733469935576,
+    "token": null,
+    "tokenAmount": null,
+    "preBalances": {
+      "sol": 12.738002025,
+      "token": 0
+    },
+    "postBalances": {
+      "sol": 12.717997025,
+      "token": 0
+    }
+  }
+}
+2024-12-06T07:25:46.765Z - {
+  "timestamp": "2024-12-06T07:25:46.765Z",
+  "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+  "signature": "5n9jdkHuUpx7wcN2Ki36AmmTopJy8er4kejLDAAyNcYsmgK3KswpBi7eHKFhuReX5LCpq2ABbX78zJjhRXeK8ffv",
+  "type": "transaction",
+  "rawData": {
+    "signature": "5n9jdkHuUpx7wcN2Ki36AmmTopJy8er4kejLDAAyNcYsmgK3KswpBi7eHKFhuReX5LCpq2ABbX78zJjhRXeK8ffv",
+    "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+    "type": "transaction",
+    "amount_sol": 1.009605001,
+    "success": true,
+    "timestamp": 1733469946765,
+    "token": {
+      "address": "So11111111111111111111111111111111111111112",
+      "symbol": "SOL",
+      "name": "Wrapped SOL",
+      "priceUsd": 238.24,
+      "createdAt": 1723699294,
+      "dexScreenerUrl": "https://dexscreener.com/solana/So11111111111111111111111111111111111111112",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/So11111111111111111111111111111111111111112",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/8sLbNZoA1cfnvMJLPfp98ZLAnFSYCFApfJKMbiXNLwxj?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/So11111111111111111111111111111111111111112"
+      }
+    },
+    "tokenAmount": null,
+    "preBalances": {
+      "sol": 13.747607026,
+      "token": 0
+    },
+    "postBalances": {
+      "sol": 12.738002025,
+      "token": 0
+    }
+  }
+}
+2024-12-06T07:26:21.975Z - {
+  "timestamp": "2024-12-06T07:26:21.975Z",
+  "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+  "signature": "go8tqqCj5cbgQFvPfCLhUEWgZHiwqdpovLy44vFc2nzSL3cBMzJLLJEYquCyasHwLCQzwRBeQrUEyYt5fx8ta1c",
+  "type": "transaction",
+  "rawData": {
+    "signature": "go8tqqCj5cbgQFvPfCLhUEWgZHiwqdpovLy44vFc2nzSL3cBMzJLLJEYquCyasHwLCQzwRBeQrUEyYt5fx8ta1c",
+    "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+    "type": "transaction",
+    "amount_sol": 0.020005,
+    "success": true,
+    "timestamp": 1733469981975,
+    "token": null,
+    "tokenAmount": null,
+    "preBalances": {
+      "sol": 13.57280353,
+      "token": 0
+    },
+    "postBalances": {
+      "sol": 13.55279853,
+      "token": 0
+    }
+  }
+}
+2024-12-06T07:26:22.042Z - {
+  "timestamp": "2024-12-06T07:26:22.042Z",
+  "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+  "signature": "5McyhyWTsWsQyL9iT5aPavtUuxa9LtF6UQJZjetUAq2Gh7Kv4jpaLk8wWo7A3MZwudy2VgHAMn3saeXyb4WpvC2c",
+  "type": "transaction",
+  "rawData": {
+    "signature": "5McyhyWTsWsQyL9iT5aPavtUuxa9LtF6UQJZjetUAq2Gh7Kv4jpaLk8wWo7A3MZwudy2VgHAMn3saeXyb4WpvC2c",
+    "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+    "type": "transaction",
+    "amount_sol": -0.854806505,
+    "success": true,
+    "timestamp": 1733469982042,
+    "token": {
+      "address": "4x86YY4r6tzJGMpXyKr6NPr37MbceUd18b3xUXzpSKex",
+      "symbol": "XRPG",
+      "name": " XRPGOLD",
+      "priceUsd": 5.127e-10,
+      "createdAt": 1733456381,
+      "dexScreenerUrl": "https://dexscreener.com/solana/4x86YY4r6tzJGMpXyKr6NPr37MbceUd18b3xUXzpSKex",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/4x86YY4r6tzJGMpXyKr6NPr37MbceUd18b3xUXzpSKex",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/4x9r5KAGyKgXMGv76ryQCHzKe6BpMvwxL2jNr991WmMt?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/4x86YY4r6tzJGMpXyKr6NPr37MbceUd18b3xUXzpSKex"
+      }
+    },
+    "tokenAmount": 473337224467.962,
+    "preBalances": {
+      "sol": 12.717997025,
+      "token": 473337224467.962
+    },
+    "postBalances": {
+      "sol": 13.57280353,
+      "token": 0
+    }
+  }
+}
+2024-12-06T07:27:12.814Z - {
+  "timestamp": "2024-12-06T07:27:12.814Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "3gyfqrFXKW9BuSK2KeVbbZe5W86n3XhCmKfECaMEmLY1wzxuEgQMtUAML2qso1Jtxf5zaQGdCywJmJYU1AEHBqdk",
+  "type": "transaction",
+  "rawData": {
+    "signature": "3gyfqrFXKW9BuSK2KeVbbZe5W86n3XhCmKfECaMEmLY1wzxuEgQMtUAML2qso1Jtxf5zaQGdCywJmJYU1AEHBqdk",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733470032814,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00004732,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3537.6035,
+    "preBalances": {
+      "sol": 0.139751373,
+      "token": 1227.564
+    },
+    "postBalances": {
+      "sol": 0.139739173,
+      "token": 1231.5888
+    }
+  }
+}
+2024-12-06T07:27:30.739Z - {
+  "timestamp": "2024-12-06T07:27:30.739Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "Xzv37pfw66s9ia93M4oKCpy8PJ6xGpnUUWwhHboHprNDprnw8F4mKyycSTcPRAaJaA1ZQeDvQtz7TA3XGNkhDaD",
+  "type": "transaction",
+  "rawData": {
+    "signature": "Xzv37pfw66s9ia93M4oKCpy8PJ6xGpnUUWwhHboHprNDprnw8F4mKyycSTcPRAaJaA1ZQeDvQtz7TA3XGNkhDaD",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.030005,
+    "success": true,
+    "timestamp": 1733470050739,
+    "token": null,
+    "tokenAmount": null,
+    "preBalances": {
+      "sol": 1081.301602063,
+      "token": 0
+    },
+    "postBalances": {
+      "sol": 1081.271597063,
+      "token": 0
+    }
+  }
+}
+2024-12-06T07:27:30.808Z - {
+  "timestamp": "2024-12-06T07:27:30.808Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "2nk2gkAJb3ED7JwW5wwVo61bMX8wCN4YZ72m6Q5SuYKYET14v4DGVEXBFvdR2n1i4H7zpDsbQ7ny8HchPVAa9F8",
+  "type": "transaction",
+  "rawData": {
+    "signature": "2nk2gkAJb3ED7JwW5wwVo61bMX8wCN4YZ72m6Q5SuYKYET14v4DGVEXBFvdR2n1i4H7zpDsbQ7ny8HchPVAa9F8",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": -10.571034413,
+    "success": true,
+    "timestamp": 1733470050808,
+    "token": {
+      "address": "AhnCaNPQ8dojT5vMENjVLQrNrhM4bWDgDF2fUbNWpump",
+      "symbol": "CAT",
+      "name": "Adopt a Cat",
+      "priceUsd": 0.0002505,
+      "createdAt": 1733469545,
+      "dexScreenerUrl": "https://dexscreener.com/solana/AhnCaNPQ8dojT5vMENjVLQrNrhM4bWDgDF2fUbNWpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/AhnCaNPQ8dojT5vMENjVLQrNrhM4bWDgDF2fUbNWpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/AemYmyZLV6oN4evn9X1R2ZXhBzq8WCADkBCiDbM5JPYT?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/AhnCaNPQ8dojT5vMENjVLQrNrhM4bWDgDF2fUbNWpump"
+      }
+    },
+    "tokenAmount": 19195421.361957,
+    "preBalances": {
+      "sol": 1070.73056765,
+      "token": 200.209596951
+    },
+    "postBalances": {
+      "sol": 1081.301602063,
+      "token": 189.518603782
+    }
+  }
+}
+2024-12-06T07:28:10.254Z - {
+  "timestamp": "2024-12-06T07:28:10.254Z",
+  "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+  "signature": "2xN8rmhyA3ifFwmLxk7mDUfj1waHVtY4FwTDJAZVjVnj3dJ8HnpTnYAJDHBFy7gdYPdGk12af7icf81T4AVAjShG",
+  "type": "transaction",
+  "rawData": {
+    "signature": "2xN8rmhyA3ifFwmLxk7mDUfj1waHVtY4FwTDJAZVjVnj3dJ8HnpTnYAJDHBFy7gdYPdGk12af7icf81T4AVAjShG",
+    "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+    "type": "transaction",
+    "amount_sol": 0.020005,
+    "success": true,
+    "timestamp": 1733470090254,
+    "token": null,
+    "tokenAmount": null,
+    "preBalances": {
+      "sol": 15.620530478,
+      "token": 0
+    },
+    "postBalances": {
+      "sol": 15.600525478,
+      "token": 0
+    }
+  }
+}
+2024-12-06T07:28:11.149Z - {
+  "timestamp": "2024-12-06T07:28:11.149Z",
+  "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+  "signature": "4MpHwjMf9Uyz1cReyGqKJyXeQLpmVq1X79999w7k8g1V2u6B7HcZRJF5Dsmgy3jH49V8aDjG2wqsB3XiabJfrH5w",
+  "type": "transaction",
+  "rawData": {
+    "signature": "4MpHwjMf9Uyz1cReyGqKJyXeQLpmVq1X79999w7k8g1V2u6B7HcZRJF5Dsmgy3jH49V8aDjG2wqsB3XiabJfrH5w",
+    "wallet": "B34d2jderbLUKK6E49MsRHPdkCD9JzWqFxc6P6CcjmGR",
+    "type": "transaction",
+    "amount_sol": -2.067731948,
+    "success": true,
+    "timestamp": 1733470091149,
+    "token": {
+      "address": "39Npcv3e6fxHcNUuEKwF42o8T3xdz3jCLtvyDx7upump",
+      "symbol": "TRUMP",
+      "name": "TRUMP WIF HAT",
+      "priceUsd": 0,
+      "createdAt": 1733469012,
+      "dexScreenerUrl": "https://dexscreener.com/solana/39Npcv3e6fxHcNUuEKwF42o8T3xdz3jCLtvyDx7upump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/39Npcv3e6fxHcNUuEKwF42o8T3xdz3jCLtvyDx7upump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/39Npcv3e6fxHcNUuEKwF42o8T3xdz3jCLtvyDx7upump?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/39Npcv3e6fxHcNUuEKwF42o8T3xdz3jCLtvyDx7upump"
+      }
+    },
+    "tokenAmount": 13774650.171098,
+    "preBalances": {
+      "sol": 13.55279853,
+      "token": 378675115.167662
+    },
+    "postBalances": {
+      "sol": 15.620530478,
+      "token": 392449765.33876
+    }
+  }
+}
+2024-12-06T07:29:48.135Z - {
+  "timestamp": "2024-12-06T07:29:48.135Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "46xk9jstdcZaKFTo8wQ6L3NT8eUQJCLuvVeCe5R7g7Q8LZagVtoVyUpKPmfpuhvAWpsqUrMASaDcdGxd841QBVNR",
+  "type": "transaction",
+  "rawData": {
+    "signature": "46xk9jstdcZaKFTo8wQ6L3NT8eUQJCLuvVeCe5R7g7Q8LZagVtoVyUpKPmfpuhvAWpsqUrMASaDcdGxd841QBVNR",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733470188135,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00004147,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3549.2022,
+    "preBalances": {
+      "sol": 0.139263373,
+      "token": 1231.5888
+    },
+    "postBalances": {
+      "sol": 0.139251173,
+      "token": 1235.6136
+    }
+  }
+}
+2024-12-06T07:32:25.204Z - {
+  "timestamp": "2024-12-06T07:32:25.204Z",
+  "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+  "signature": "4FKoMPmLMxiQC1oXAkLHWvH5A39fPXn88XHbAKb6KAffMjC1ynZfwrrwC1QkMFRCkWHTdXrTh8HAgrDuJwPFrktZ",
+  "type": "transaction",
+  "rawData": {
+    "signature": "4FKoMPmLMxiQC1oXAkLHWvH5A39fPXn88XHbAKb6KAffMjC1ynZfwrrwC1QkMFRCkWHTdXrTh8HAgrDuJwPFrktZ",
+    "wallet": "9UWZFoiCHeYRLmzmDJhdMrP7wgrTw7DMSpPiT2eHgJHe",
+    "type": "transaction",
+    "amount_sol": 0.0000122,
+    "success": true,
+    "timestamp": 1733470345203,
+    "token": {
+      "address": "2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "symbol": "AKANE",
+      "name": "Akane AI а ạ ą ä à á ą",
+      "priceUsd": 0.00003924,
+      "createdAt": 1733382900,
+      "dexScreenerUrl": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/CZpwdcp8biiG3iUSHDKJJaKET2EgTQR6dZ9h8AayPRD3?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/2shsNrx8TzgJBDj869656HRMpqvSZQ7SC1sKPGeEpump"
+      }
+    },
+    "tokenAmount": 3560.8009,
+    "preBalances": {
+      "sol": 0.138775373,
+      "token": 1235.6136
+    },
+    "postBalances": {
+      "sol": 0.138763173,
+      "token": 1239.6384
+    }
+  }
+}
