@@ -5350,3 +5350,75 @@
     }
   }
 }
+2024-12-18T08:31:37.731Z - {
+  "timestamp": "2024-12-18T08:31:37.731Z",
+  "wallet": "ECCKBDWX3MkEcf3bULbLBb9FvrEQLsmPMFTKFpvjzqgP",
+  "signature": "SxNEeF1erhFJNjJ1E32yVt1CbARcbbo9N1ayDyqehtfFbfhTEmW9E7q92pmGQAP1yomyGuiASTav7E5nZJoCqxS",
+  "type": "transaction",
+  "rawData": {
+    "signature": "SxNEeF1erhFJNjJ1E32yVt1CbARcbbo9N1ayDyqehtfFbfhTEmW9E7q92pmGQAP1yomyGuiASTav7E5nZJoCqxS",
+    "wallet": "ECCKBDWX3MkEcf3bULbLBb9FvrEQLsmPMFTKFpvjzqgP",
+    "type": "transaction",
+    "amount_sol": 3.094044279,
+    "success": true,
+    "timestamp": 1734510697730,
+    "token": {
+      "address": "E2hy2bgdspvimgR8JWtXRxCxqjewMb7JTsC3r7DJpump",
+      "symbol": "Gdroyd",
+      "name": "George Droyd",
+      "priceUsd": 0,
+      "createdAt": 1731981122,
+      "dexScreenerUrl": "https://dexscreener.com/solana/E2hy2bgdspvimgR8JWtXRxCxqjewMb7JTsC3r7DJpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/E2hy2bgdspvimgR8JWtXRxCxqjewMb7JTsC3r7DJpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/E2hy2bgdspvimgR8JWtXRxCxqjewMb7JTsC3r7DJpump?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/E2hy2bgdspvimgR8JWtXRxCxqjewMb7JTsC3r7DJpump"
+      }
+    },
+    "tokenAmount": 95786293.900125,
+    "preBalances": {
+      "sol": 743.797658271,
+      "token": 999999999.773912
+    },
+    "postBalances": {
+      "sol": 740.703613992,
+      "token": 95786293.900125
+    }
+  }
+}
+2024-12-18T08:33:48.745Z - {
+  "timestamp": "2024-12-18T08:33:48.745Z",
+  "wallet": "ECCKBDWX3MkEcf3bULbLBb9FvrEQLsmPMFTKFpvjzqgP",
+  "signature": "M3vJpLeGLtVMxCdSR17YEwCfifNSHHH5DfUsFYjb4PxbJBETLnuFZKY7djh5RGpYbjh8G1cwqJnus6u4j5Z4AbN",
+  "type": "transaction",
+  "rawData": {
+    "signature": "M3vJpLeGLtVMxCdSR17YEwCfifNSHHH5DfUsFYjb4PxbJBETLnuFZKY7djh5RGpYbjh8G1cwqJnus6u4j5Z4AbN",
+    "wallet": "ECCKBDWX3MkEcf3bULbLBb9FvrEQLsmPMFTKFpvjzqgP",
+    "type": "transaction",
+    "amount_sol": -8.318053339,
+    "success": true,
+    "timestamp": 1734510828745,
+    "token": {
+      "address": "FLQCWMsmgPxKeXxCy6bbdMtZK2Ropjcq2zmcZMahpump",
+      "symbol": "DRONE",
+      "name": "drone",
+      "priceUsd": 0,
+      "createdAt": 1734508800,
+      "dexScreenerUrl": "https://dexscreener.com/solana/FLQCWMsmgPxKeXxCy6bbdMtZK2Ropjcq2zmcZMahpump",
+      "links": {
+        "dexscreener": "https://dexscreener.com/solana/FLQCWMsmgPxKeXxCy6bbdMtZK2Ropjcq2zmcZMahpump",
+        "photon": "https://photon-sol.tinyastro.io/en/lp/FLQCWMsmgPxKeXxCy6bbdMtZK2Ropjcq2zmcZMahpump?handle=1791547328df5c98cbbb7",
+        "rugcheck": "https://rugcheck.xyz/tokens/FLQCWMsmgPxKeXxCy6bbdMtZK2Ropjcq2zmcZMahpump"
+      }
+    },
+    "tokenAmount": 32076407.950658,
+    "preBalances": {
+      "sol": 733.603959629,
+      "token": 258863594.337389
+    },
+    "postBalances": {
+      "sol": 741.922012968,
+      "token": 290940002.288047
+    }
+  }
+}

@@ -70,15 +70,28 @@ const Row = ({ tx }: { tx: Transaction }) => {
         </TableCell>
         <TableCell>
           {tx.token && (
-            <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Tooltip title="Copia indirizzo token">
+                <IconButton 
+                  size="small" 
+                  onClick={() => copyToClipboard(tx.token?.address || '')}
+                >
+                  <ContentCopy fontSize="small" />
+                </IconButton>
+              </Tooltip>
               <Link 
                 href={tx.token.dexScreenerUrl} 
                 target="_blank" 
                 rel="noopener"
-                sx={{ display: 'flex', alignItems: 'center' }}
+                sx={{ 
+                  color: 'primary.main', 
+                  textDecoration: 'none', 
+                  '&:hover': { 
+                    textDecoration: 'underline' 
+                  } 
+                }}
               >
                 {tx.token.symbol}
-                <OpenInNew fontSize="small" sx={{ ml: 0.5 }} />
               </Link>
             </Box>
           )}

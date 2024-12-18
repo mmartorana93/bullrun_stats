@@ -2,17 +2,18 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs').promises;
 const path = require('path');
-const { logger } = require('../config/logger');
+const { logger, writeLogToFile } = require('../config/logger');
 
 // GET /api/logs
 router.get('/', async (req, res) => {
     try {
-        const logFiles = await fs.readdir(path.join(__dirname, '../../logs'));
+        const logsDir = path.join(__dirname, '../../logs');
+        const logFiles = await fs.readdir(logsDir);
         const logs = [];
         
         for (const file of logFiles) {
             if (file.endsWith('.log')) {
-                const content = await fs.readFile(path.join(__dirname, '../../logs', file), 'utf8');
+                const content = await fs.readFile(path.join(logsDir, file), 'utf8');
                 logs.push({
                     filename: file,
                     content: content.split('\n').filter(Boolean)
@@ -43,12 +44,9 @@ router.post('/transaction', async (req, res) => {
         
         // Usa il logger Winston
         logger.info(logMessage);
-
-        // Scrivi anche nel file specifico per le transazioni
-        await fs.appendFile(
-            path.join(__dirname, '../../../logs', 'transaction-logs.log'),
-            `[${new Date(timestamp).toISOString()}] ${logMessage}\n`
-        );
+        
+        // Scrivi nel file specifico per le transazioni
+        await writeLogToFile('transaction-logs.log', logMessage);
 
         res.status(200).json({ message: 'Log saved successfully' });
     } catch (error) {
@@ -75,12 +73,9 @@ router.post('/lptracking', async (req, res) => {
         
         // Usa il logger Winston
         logger.info(logMessage);
-
-        // Scrivi anche nel file specifico per LP tracking
-        await fs.appendFile(
-            path.join(__dirname, '../../../logs', 'lp-tracking-logs.log'),
-            `[${new Date(timestamp).toISOString()}] ${logMessage}\n`
-        );
+        
+        // Scrivi nel file specifico per LP tracking
+        await writeLogToFile('lp-tracking-logs.log', logMessage);
 
         res.status(200).json({ message: 'Log saved successfully' });
     } catch (error) {
