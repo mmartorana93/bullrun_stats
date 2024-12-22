@@ -1,102 +1,94 @@
-require('dotenv').config();
-const http = require('http');
-const { logger, ensureLogDirectory } = require('./src/config/logger');
-const setupExpress = require('./src/config/express');
-const SocketManager = require('./src/websocket/socketManager');
-const initializeWalletRoutes = require('./src/routes/walletRoutes');
-const logRoutes = require('./src/routes/logRoutes');
-const WalletService = require('./src/services/walletService');
-const LPTracker = require('./lpTracker');
-const config = require('./src/config/config');
-const featureRoutes = require('./src/routes/featureRoutes');
-const healthRoutes = require('./src/routes/healthRoutes');
-const snipingRoutes = require('./src/routes/snipingRoutes');
-const holdingsRoutes = require('./src/routes/holdingsRoutes'); // Aggiunto import
+const express = require('express');
 const cors = require('cors');
+const { spawn } = require('child_process');
+const path = require('path');
 
-try {
-    // Inizializza l'app Express
-    const app = setupExpress();
+const app = express();
+const port = 5001;
 
-    // Configura CORS
-    app.use(cors({
-        origin: process.env.FRONTEND_URL || "http://localhost:3000",
-        methods: ["GET", "POST"],
-        credentials: true
-    }));
+app.use(cors());
+app.use(express.json());
 
-    // Crea il server HTTP
-    const server = http.createServer(app);
+let lastRanking = null;
+let lastUpdate = null;
 
-    // Prima crea il WalletService senza socketManager
-    const walletService = new WalletService();
-
-    // Poi crea il SocketManager con il walletService
-    const socketManager = new SocketManager(server, walletService);
-
-    // Infine collega il socketManager al walletService
-    walletService.setSocketManager(socketManager);
-
-    // Aggiungi middleware di logging per tutte le richieste
-    app.use((req, res, next) => {
-        logger.info(`[${req.method}] ${req.path}`);
-        next();
-    });
-
-    // Test route per verificare che Express funzioni
-    app.get('/test', (req, res) => {
-        res.json({ message: 'Test route ok' });
-    });
-
-    // Modifica l'inizializzazione del LP Tracker
-    if (config.ENABLE_LP_TRACKING) {
-        global.lpTracker = new LPTracker(socketManager.io);
-    } else {
-        logger.info('LP Tracking feature disabilitata');
+const getRanking = (force = false) => {
+  return new Promise((resolve, reject) => {
+    // Se abbiamo già un ranking e non è richiesto un aggiornamento forzato
+    if (lastRanking && !force) {
+      return resolve({
+        ranking: lastRanking,
+        timestamp: lastUpdate
+      });
     }
 
-    // Assicurati che la directory dei log esista
-    ensureLogDirectory();
+    const pythonProcess = spawn('python3', [path.join(__dirname, 'coinbaseScraper.py')]);
+    let dataString = '';
 
-    // Configura le routes
-    app.use('/health', healthRoutes);
-    app.use('/api/wallets', initializeWalletRoutes(socketManager, walletService));
-    app.use('/api/sniper', snipingRoutes);
-    app.use('/api/holdings', holdingsRoutes); // Aggiunta registrazione rotte holdings
-
-    // Aggiungi handler per route non trovate
-    app.use((req, res) => {
-        logger.warn(`Route non trovata: ${req.method} ${req.path}`);
-        res.status(404).json({ error: 'Route non trovata' });
+    pythonProcess.stdout.on('data', (data) => {
+      dataString += data.toString();
     });
 
-    // Avvia il server
-    const PORT = process.env.PORT || 5001;
-    server.listen(PORT, () => {
-        logger.info(`Server in ascolto sulla porta ${PORT}`);
-        // Log tutte le route registrate
-        app._router.stack.forEach(r => {
-            if (r.route && r.route.path) {
-                logger.info(`Route registrata: ${Object.keys(r.route.methods)} ${r.route.path}`);
-            }
+    pythonProcess.stderr.on('data', (data) => {
+      console.error(`Error from Python script: ${data}`);
+    });
+
+    pythonProcess.on('close', (code) => {
+      if (code !== 0) {
+        return reject(new Error(`Python script exited with code ${code}`));
+      }
+
+      try {
+        const ranking = parseInt(dataString.trim());
+        if (isNaN(ranking)) {
+          return reject(new Error('Invalid ranking value'));
+        }
+
+        lastRanking = ranking;
+        lastUpdate = new Date().toISOString();
+
+        resolve({
+          ranking: lastRanking,
+          timestamp: lastUpdate
         });
-    }).on('error', (error) => {
-        logger.error('Errore durante l\'avvio del server:', error);
-        process.exit(1);
+      } catch (error) {
+        reject(error);
+      }
     });
+  });
+};
 
-} catch (error) {
-    logger.error('Errore durante l\'inizializzazione del server:', error);
-    process.exit(1);
-}
-
-// Gestione degli errori non catturati
-process.on('uncaughtException', (error) => {
-    logger.error('Errore non catturato:', error);
-    process.exit(1);
+app.get('/api/crypto/coinbase-ranking', async (req, res) => {
+  try {
+    const force = req.query.force === 'true';
+    const data = await getRanking(force);
+    res.json({ data });
+  } catch (error) {
+    console.error('Error getting Coinbase ranking:', error);
+    res.status(500).json({ 
+      error: 'Failed to get Coinbase ranking',
+      message: error.message 
+    });
+  }
 });
 
-process.on('unhandledRejection', (reason, promise) => {
-    logger.error('Promise rejection non gestita:', reason);
-    process.exit(1);
+// Funzione per aggiornare il ranking periodicamente
+const updateRankingPeriodically = async () => {
+  try {
+    console.log('Aggiornamento automatico del ranking...');
+    const data = await getRanking(true); // force=true per forzare l'aggiornamento
+    console.log('Ranking aggiornato:', data);
+  } catch (error) {
+    console.error('Errore nell\'aggiornamento automatico del ranking:', error);
+  }
+};
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+  
+  // Esegui subito il primo aggiornamento
+  updateRankingPeriodically();
+  
+  // Imposta l'aggiornamento automatico ogni ora
+  setInterval(updateRankingPeriodically, 60 * 60 * 1000); // 60 minuti * 60 secondi * 1000 millisecondi
 });

@@ -46,4 +46,4 @@ export const useMarketStore = create<MarketState>((set) => ({
     console.log('Aggiornamento Total:', value);
     set({ total: value });
   },
-})) 
+}))

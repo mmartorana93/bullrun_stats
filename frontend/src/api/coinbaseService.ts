@@ -5,4 +5,4 @@ export const getCoinbaseRanking = async (force: boolean = false) => {
     params: { force }
   });
   return response.data;
-}; 
+};

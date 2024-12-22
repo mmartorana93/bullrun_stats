@@ -29,10 +29,4 @@ api.interceptors.response.use(
     }
 );
 
-export const getCoinbaseRanking = (force: boolean = false) => {
-    return api.get('/api/crypto/coinbase-ranking', {
-        params: { force }
-    });
-};
-
 export default api;
