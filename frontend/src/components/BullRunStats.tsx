@@ -152,20 +152,40 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ symbol, title, on
     <Paper 
       elevation={3} 
       sx={{ 
-        p: 2, 
+        p: 3,
         height: '350px',
-        mb: 1,
+        mb: 2,
         overflow: 'hidden',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        background: 'linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%)',
+        borderRadius: '16px',
+        transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.12)'
+        }
       }}
     >
-      <Typography variant="h6" gutterBottom>{title}</Typography>
+      <Typography 
+        variant="h6" 
+        gutterBottom 
+        sx={{ 
+          fontWeight: 600,
+          color: '#f0f0f0',
+          fontSize: '1.25rem',
+          letterSpacing: '0.5px'
+        }}
+      >
+        {title}
+      </Typography>
       <Box sx={{ 
         flex: 1,
         minHeight: 0,
         position: 'relative',
-        mb: 1
+        mb: 1,
+        borderRadius: '12px',
+        overflow: 'hidden'
       }}>
         <div
           ref={container}
@@ -199,16 +219,31 @@ const IndicatorItem: React.FC<IndicatorItemProps> = ({
   error,
   children
 }) => (
-  <Box sx={{ py: 1.5 }}>
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+  <Paper
+    elevation={0}
+    sx={{
+      p: 2.5,
+      height: '100%',
+      background: 'linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%)',
+      borderRadius: '16px',
+      transition: 'all 0.3s ease',
+      '&:hover': {
+        transform: 'translateY(-2px)',
+        boxShadow: '0 8px 30px rgba(0,0,0,0.12)'
+      }
+    }}
+  >
+    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
       <Box sx={{ 
-        width: 32, 
-        height: 32, 
-        borderRadius: '50%',
+        width: 48, 
+        height: 48, 
+        borderRadius: '12px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        background: 'rgba(255,255,255,0.05)',
+        padding: '8px'
       }}>
         <img 
           src={icon} 
@@ -216,23 +251,31 @@ const IndicatorItem: React.FC<IndicatorItemProps> = ({
           style={{
             width: '100%',
             height: '100%',
-            objectFit: 'cover'
+            objectFit: 'contain'
           }}
         />
       </Box>
 
       <Box sx={{ flex: 1 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="body2" color="text.secondary">
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+          <Typography 
+            variant="body1" 
+            sx={{ 
+              color: '#a0a0a0',
+              fontWeight: 500,
+              fontSize: '0.95rem',
+              letterSpacing: '0.5px'
+            }}
+          >
             {title}
           </Typography>
           {children}
         </Box>
         
         {isLoading ? (
-          <CircularProgress size={20} />
+          <CircularProgress size={24} sx={{ color: '#3f51b5' }} />
         ) : error ? (
-          <Typography color="error" variant="body2">{error}</Typography>
+          <Typography color="error" variant="body2" sx={{ fontWeight: 500 }}>{error}</Typography>
         ) : (
           <>
             <AnimatePresence mode="wait">
@@ -243,18 +286,45 @@ const IndicatorItem: React.FC<IndicatorItemProps> = ({
                 exit={{ opacity: 0, y: 10 }}
                 transition={{ duration: 0.3 }}
               >
-                <Typography variant="h6" sx={{ lineHeight: 1.2 }}>
+                <Typography 
+                  variant="h4" 
+                  sx={{ 
+                    lineHeight: 1.2,
+                    fontWeight: 700,
+                    background: 'linear-gradient(45deg, #3f51b5, #2196f3)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    letterSpacing: '0.5px',
+                    mb: 1
+                  }}
+                >
                   {value || '---'}
                 </Typography>
               </motion.div>
             </AnimatePresence>
             {target && (
-              <Typography variant="caption" color="primary">
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  color: '#4caf50',
+                  fontWeight: 600,
+                  display: 'block',
+                  fontSize: '0.85rem',
+                  mb: 0.5
+                }}
+              >
                 Target: {target}
               </Typography>
             )}
             {lastUpdate && (
-              <Typography variant="caption" color="text.secondary" display="block">
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  color: '#a0a0a0',
+                  display: 'block',
+                  fontSize: '0.75rem'
+                }}
+              >
                 Ultimo aggiornamento: {lastUpdate}
               </Typography>
             )}
@@ -262,7 +332,7 @@ const IndicatorItem: React.FC<IndicatorItemProps> = ({
         )}
       </Box>
     </Box>
-  </Box>
+  </Paper>
 );
 
 const LastUpdateIndicator: React.FC = () => {
@@ -373,7 +443,7 @@ const BullRunStats: React.FC = () => {
   return (
     <Box 
       sx={{ 
-        bgcolor: '#000000',
+        background: 'linear-gradient(135deg, #0a0a0a 0%, #000000 100%)',
         minHeight: '100vh',
         width: '100%',
         margin: 0,
@@ -381,42 +451,106 @@ const BullRunStats: React.FC = () => {
         position: 'absolute',
         top: 0,
         left: 0,
-        color: 'white',
+        color: '#f0f0f0',
         overflowX: 'hidden'
       }}
     >
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: { xs: 2, md: 3 } }}>
         <Box 
           sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            mb: 4,
-            mt: 2
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            mb: 3,
+            mt: 1
           }}
         >
-          <img 
-            src={bullrunLogo} 
-            alt="BullRun Logo" 
-            style={{
-              width: '200px',
-              height: 'auto'
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <img 
+              src={bullrunLogo} 
+              alt="BullRun Logo" 
+              style={{
+                width: '180px',
+                height: 'auto',
+                marginBottom: '16px'
+              }}
+            />
+          </motion.div>
+          <Typography 
+            variant="h3" 
+            component="h1" 
+            sx={{ 
+              fontWeight: 800,
+              fontSize: { xs: '1.75rem', md: '2.25rem' },
+              textAlign: 'center',
+              background: 'linear-gradient(45deg, #f0f0f0, #ffffff)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              letterSpacing: '1px',
+              mb: 0.5
             }}
-          />
+          >
+            BullRun Stats
+          </Typography>
+          <Typography 
+            variant="subtitle1" 
+            sx={{ 
+              color: '#a0a0a0',
+              textAlign: 'center',
+              maxWidth: '600px',
+              mb: 1,
+              fontSize: '0.9rem'
+            }}
+          >
+            Monitora in tempo reale le metriche chiave del mercato crypto
+          </Typography>
+          <LastUpdateIndicator />
         </Box>
 
-        <Typography variant="h5" component="h2" gutterBottom sx={{ color: 'white' }}>
-          BullRun Stats
-          <LastUpdateIndicator />
-        </Typography>
-
         {/* Sezione Indicatori */}
-        <Paper elevation={3} sx={{ p: 2, mb: 3, bgcolor: '#121212' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Indicatori
+        <Paper 
+          elevation={0} 
+          sx={{ 
+            p: { xs: 1.5, md: 2.5 }, 
+            mb: 3, 
+            background: 'rgba(255,255,255,0.02)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '24px',
+            border: '1px solid rgba(255,255,255,0.05)'
+          }}
+        >
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            mb: 2,
+            px: 1
+          }}>
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                fontWeight: 700,
+                color: '#f0f0f0',
+                letterSpacing: '0.5px',
+                fontSize: { xs: '1.25rem', md: '1.5rem' }
+              }}
+            >
+              Indicatori di Mercato
             </Typography>
             <Tooltip title="Aggiorna dati">
-              <IconButton onClick={updateMarketData} size="small">
+              <IconButton 
+                onClick={updateMarketData} 
+                sx={{ 
+                  background: 'rgba(255,255,255,0.05)',
+                  '&:hover': {
+                    background: 'rgba(255,255,255,0.1)'
+                  }
+                }}
+              >
                 <RefreshIcon />
               </IconButton>
             </Tooltip>
