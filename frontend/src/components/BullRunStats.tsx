@@ -1,12 +1,15 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Box, Typography, Paper, CircularProgress, Grid, Divider, IconButton, Tooltip } from '@mui/material';
 import { getCoinbaseRanking } from '../api/coinbaseService';
 import { getBitcoinDominance, BitcoinDominanceData } from '../services/cryptoService';
 import coinbaseIcon from '../assets/images/coinbase.png';
+import bullrunLogo from '../assets/images/image-5.png';
 import { useMarketStore } from '../store/marketStore';
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { getGlobalMarketData } from '../services/coingeckoService';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface RankingData {
   ranking: number;
@@ -232,9 +235,19 @@ const IndicatorItem: React.FC<IndicatorItemProps> = ({
           <Typography color="error" variant="body2">{error}</Typography>
         ) : (
           <>
-            <Typography variant="h6" sx={{ lineHeight: 1.2 }}>
-              {value || '---'}
-            </Typography>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={value}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Typography variant="h6" sx={{ lineHeight: 1.2 }}>
+                  {value || '---'}
+                </Typography>
+              </motion.div>
+            </AnimatePresence>
             {target && (
               <Typography variant="caption" color="primary">
                 Target: {target}
@@ -311,12 +324,24 @@ const BullRunStats: React.FC = () => {
   } = useMarketStore();
 
   const [rankingData, setRankingData] = useState<RankingData | null>(null);
-  const [btcDominanceData, setBtcDominanceData] = useState<BitcoinDominanceData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [btcDominanceLoading, setBtcDominanceLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [btcDominanceError, setBtcDominanceError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+
+  const updateMarketData = useCallback(async () => {
+    try {
+      const data = await getGlobalMarketData();
+      updateBtcPrice(data.btcPrice);
+      updateBtcDominance(data.btcDominance);
+      updateTotal(data.totalMarketCap);
+      updateTotal2(data.total2MarketCap);
+      updateUsdtDominance(data.usdtDominance);
+      updateTotal3(data.totalMarketCap - data.total2MarketCap);
+      setLastUpdate(new Date());
+    } catch (err) {
+      console.error('Errore nel recupero dei dati di mercato:', err);
+    }
+  }, [updateBtcPrice, updateBtcDominance, updateTotal, updateTotal2, updateUsdtDominance, updateTotal3]);
 
   useEffect(() => {
     const fetchRanking = async () => {
@@ -339,147 +364,193 @@ const BullRunStats: React.FC = () => {
     fetchRanking();
   }, []);
 
+  useEffect(() => {
+    updateMarketData();
+    const interval = setInterval(updateMarketData, 30000); // Aggiorna ogni 30 secondi
+    return () => clearInterval(interval);
+  }, [updateMarketData]);
+
   return (
-    <Box>
-      <Typography variant="h5" component="h2" gutterBottom>
-        BullRun Stats
-        <LastUpdateIndicator />
-      </Typography>
+    <Box 
+      sx={{ 
+        bgcolor: '#000000',
+        minHeight: '100vh',
+        width: '100%',
+        margin: 0,
+        padding: 0,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        color: 'white',
+        overflowX: 'hidden'
+      }}
+    >
+      <Box sx={{ p: 3 }}>
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            mb: 4,
+            mt: 2
+          }}
+        >
+          <img 
+            src={bullrunLogo} 
+            alt="BullRun Logo" 
+            style={{
+              width: '200px',
+              height: 'auto'
+            }}
+          />
+        </Box>
 
-      {/* Sezione Indicatori */}
-      <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
-        <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
-          Indicatori
+        <Typography variant="h5" component="h2" gutterBottom sx={{ color: 'white' }}>
+          BullRun Stats
+          <LastUpdateIndicator />
         </Typography>
-        <Grid container spacing={2}>
-          {/* Prima riga di indicatori */}
-          <Grid item xs={12} md={3}>
-            <IndicatorItem
-              title="Ranking Coinbase App Store"
-              icon={coinbaseIcon}
-              value={rankingData?.ranking ? `#${rankingData.ranking}` : undefined}
-              lastUpdate={rankingData?.lastUpdate ? formatLastUpdate(rankingData.lastUpdate) : undefined}
-              isLoading={loading}
-              error={error}
-            >
-              <Tooltip title="Force refresh ranking">
-                <IconButton 
-                  size="small" 
-                  onClick={async () => {
-                    const fetchRanking = async () => {
-                      setLoading(true);
-                      setError(null);
-                      try {
-                        const response = await getCoinbaseRanking(true);
-                        setRankingData({
-                          ranking: response.data.ranking,
-                          lastUpdate: response.data.timestamp
-                        });
-                      } catch (err) {
-                        console.error('Errore nel recupero del ranking Coinbase:', err);
-                        setError('Errore nel caricamento del ranking');
-                      } finally {
-                        setLoading(false);
-                      }
-                    };
-                    await fetchRanking();
-                  }}
-                  disabled={loading}
-                  sx={{ 
-                    padding: '4px',
-                    '& svg': { fontSize: '1rem' }
-                  }}
-                >
-                  <RefreshIcon />
-                </IconButton>
-              </Tooltip>
-            </IndicatorItem>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <IndicatorItem
-              title="Dominanza Bitcoin"
-              icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
-              value={btcDominance ? `${btcDominance.toFixed(2)}%` : undefined}
-              target="43.87%"
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <IndicatorItem
-              title="Prezzo Bitcoin"
-              icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
-              value={btcPrice ? `$${btcPrice.toLocaleString()}` : undefined}
-              target="87K/109K"
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <IndicatorItem
-              title="Total 2"
-              icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
-              value={total2 ? `$${(total2 / 1e12).toFixed(1)}T` : undefined}
-              target="2T/2.5T"
-            />
-          </Grid>
 
-          {/* Seconda riga di indicatori */}
-          <Grid item xs={12} md={3}>
-            <IndicatorItem
-              title="Others (Total 3)"
-              icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
-              value={total3 ? `$${(total3 / 1e9).toFixed(0)}B` : undefined}
-              target="600B/685B"
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <IndicatorItem
-              title="USDT Dominance"
-              icon="https://assets.coingecko.com/coins/images/325/small/Tether.png"
-              value={usdtDominance ? `${usdtDominance.toFixed(2)}%` : undefined}
-              target="3.80%"
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <IndicatorItem
-              title="Total"
-              icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
-              value={total ? `$${(total / 1e12).toFixed(1)}T` : undefined}
-              target="4T/4.5T"
-            />
-          </Grid>
-        </Grid>
-      </Paper>
+        {/* Sezione Indicatori */}
+        <Paper elevation={3} sx={{ p: 2, mb: 3, bgcolor: '#121212' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Indicatori
+            </Typography>
+            <Tooltip title="Aggiorna dati">
+              <IconButton onClick={updateMarketData} size="small">
+                <RefreshIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+          <Grid container spacing={2}>
+            {/* Prima riga di indicatori */}
+            <Grid item xs={12} md={3}>
+              <IndicatorItem
+                title="Ranking Coinbase App Store"
+                icon={coinbaseIcon}
+                value={rankingData?.ranking ? `#${rankingData.ranking}` : undefined}
+                lastUpdate={rankingData?.lastUpdate ? formatLastUpdate(rankingData.lastUpdate) : undefined}
+                isLoading={loading}
+                error={error}
+              >
+                <Tooltip title="Force refresh ranking">
+                  <IconButton 
+                    size="small" 
+                    onClick={async () => {
+                      const fetchRanking = async () => {
+                        setLoading(true);
+                        setError(null);
+                        try {
+                          const response = await getCoinbaseRanking(true);
+                          setRankingData({
+                            ranking: response.data.ranking,
+                            lastUpdate: response.data.timestamp
+                          });
+                        } catch (err) {
+                          console.error('Errore nel recupero del ranking Coinbase:', err);
+                          setError('Errore nel caricamento del ranking');
+                        } finally {
+                          setLoading(false);
+                        }
+                      };
+                      await fetchRanking();
+                    }}
+                    disabled={loading}
+                    sx={{ 
+                      padding: '4px',
+                      '& svg': { fontSize: '1rem' }
+                    }}
+                  >
+                    <RefreshIcon />
+                  </IconButton>
+                </Tooltip>
+              </IndicatorItem>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <IndicatorItem
+                title="Dominanza Bitcoin"
+                icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
+                value={btcDominance ? `${btcDominance.toFixed(2)}%` : undefined}
+                target="43.87%"
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <IndicatorItem
+                title="Prezzo Bitcoin"
+                icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
+                value={btcPrice ? `$${btcPrice.toLocaleString()}` : undefined}
+                target="87K/109K"
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <IndicatorItem
+                title="Total 2"
+                icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
+                value={total2 ? `$${(total2 / 1e12).toFixed(1)}T` : undefined}
+                target="2T/2.5T"
+              />
+            </Grid>
 
-      {/* Sezione Grafici */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <TradingViewWidget 
-          symbol="BTC.D"
-          title="Bitcoin Dominance"
-          onPriceUpdate={updateBtcDominance}
-        />
-        <TradingViewWidget 
-          symbol="BINANCE:BTCUSDT"
-          title="Prezzo Bitcoin"
-          onPriceUpdate={updateBtcPrice}
-        />
-        <TradingViewWidget 
-          symbol="CRYPTOCAP:TOTAL2"
-          title="Total 2"
-          onPriceUpdate={updateTotal2}
-        />
-        <TradingViewWidget 
-          symbol="CRYPTOCAP:TOTAL3"
-          title="Others (Total 3)"
-          onPriceUpdate={updateTotal3}
-        />
-        <TradingViewWidget 
-          symbol="USDT.D"
-          title="USDT Dominance"
-          onPriceUpdate={updateUsdtDominance}
-        />
-        <TradingViewWidget 
-          symbol="CRYPTOCAP:TOTAL"
-          title="Total"
-          onPriceUpdate={updateTotal}
-        />
+            {/* Seconda riga di indicatori */}
+            <Grid item xs={12} md={3}>
+              <IndicatorItem
+                title="Others (Total 3)"
+                icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
+                value={total3 ? `$${(total3 / 1e9).toFixed(0)}B` : undefined}
+                target="600B/685B"
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <IndicatorItem
+                title="USDT Dominance"
+                icon="https://assets.coingecko.com/coins/images/325/small/Tether.png"
+                value={usdtDominance ? `${usdtDominance.toFixed(2)}%` : undefined}
+                target="3.80%"
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <IndicatorItem
+                title="Total"
+                icon="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
+                value={total ? `$${(total / 1e12).toFixed(1)}T` : undefined}
+                target="4T/4.5T"
+              />
+            </Grid>
+          </Grid>
+        </Paper>
+
+        {/* Sezione Grafici */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TradingViewWidget 
+            symbol="BTC.D"
+            title="Bitcoin Dominance"
+            onPriceUpdate={updateBtcDominance}
+          />
+          <TradingViewWidget 
+            symbol="BINANCE:BTCUSDT"
+            title="Prezzo Bitcoin"
+            onPriceUpdate={updateBtcPrice}
+          />
+          <TradingViewWidget 
+            symbol="CRYPTOCAP:TOTAL2"
+            title="Total 2"
+            onPriceUpdate={updateTotal2}
+          />
+          <TradingViewWidget 
+            symbol="CRYPTOCAP:TOTAL3"
+            title="Others (Total 3)"
+            onPriceUpdate={updateTotal3}
+          />
+          <TradingViewWidget 
+            symbol="USDT.D"
+            title="USDT Dominance"
+            onPriceUpdate={updateUsdtDominance}
+          />
+          <TradingViewWidget 
+            symbol="CRYPTOCAP:TOTAL"
+            title="Total"
+            onPriceUpdate={updateTotal}
+          />
+        </Box>
       </Box>
     </Box>
   );
