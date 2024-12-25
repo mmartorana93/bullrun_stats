@@ -650,12 +650,70 @@ const Header: React.FC = () => {
           <Typography component="a" href="#" sx={{ opacity: 1 }}>
             Dashboard
           </Typography>
-          <Typography component="a" href="#" sx={{ opacity: 0.7 }}>
-            Analytics
-          </Typography>
-          <Typography component="a" href="#" sx={{ opacity: 0.7 }}>
-            Reports
-          </Typography>
+          <Box sx={{ 
+            position: 'relative', 
+            display: 'flex', 
+            alignItems: 'center',
+            opacity: 0.5,
+            cursor: 'not-allowed'
+          }}>
+            <Typography sx={{ color: 'rgba(255,255,255,0.5)' }}>
+              Analytics
+            </Typography>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: -10,
+                right: -12,
+                background: 'linear-gradient(135deg, rgba(75, 150, 255, 0.2), rgba(75, 150, 255, 0.1))',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                fontSize: '0.6rem',
+                color: 'rgba(75, 150, 255, 0.9)',
+                border: '1px solid rgba(75, 150, 255, 0.2)',
+                backdropFilter: 'blur(4px)',
+                whiteSpace: 'nowrap',
+                fontWeight: 600,
+                letterSpacing: '0.5px',
+                transform: 'scale(0.85)',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}
+            >
+              SOON
+            </Box>
+          </Box>
+          <Box sx={{ 
+            position: 'relative', 
+            display: 'flex', 
+            alignItems: 'center',
+            opacity: 0.5,
+            cursor: 'not-allowed'
+          }}>
+            <Typography sx={{ color: 'rgba(255,255,255,0.5)' }}>
+              Reports
+            </Typography>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: -10,
+                right: -12,
+                background: 'linear-gradient(135deg, rgba(75, 150, 255, 0.2), rgba(75, 150, 255, 0.1))',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                fontSize: '0.6rem',
+                color: 'rgba(75, 150, 255, 0.9)',
+                border: '1px solid rgba(75, 150, 255, 0.2)',
+                backdropFilter: 'blur(4px)',
+                whiteSpace: 'nowrap',
+                fontWeight: 600,
+                letterSpacing: '0.5px',
+                transform: 'scale(0.85)',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}
+            >
+              SOON
+            </Box>
+          </Box>
           <Box
             sx={{
               ml: 2,
@@ -839,19 +897,6 @@ const BullRunStats: React.FC = () => {
             >
               Indicatori di Mercato
             </Typography>
-            <Tooltip title="Aggiorna dati">
-              <IconButton 
-                onClick={updateMarketData} 
-                sx={{ 
-                  background: 'rgba(255,255,255,0.07)',
-                  '&:hover': {
-                    background: 'rgba(255,255,255,0.12)'
-                  }
-                }}
-              >
-                <RefreshIcon />
-              </IconButton>
-            </Tooltip>
           </Box>
           <Grid container spacing={2} sx={{ width: '100%', m: 0 }}>
             {/* Prima riga di indicatori */}
