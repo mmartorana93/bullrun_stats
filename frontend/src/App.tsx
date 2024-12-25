@@ -1,18 +1,17 @@
 import React from 'react';
-import { Box, Container } from '@mui/material';
+import { Box } from '@mui/material';
 import BullRunStats from './components/BullRunStats';
 
 const App: React.FC = () => {
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ 
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
-        <BullRunStats />
-      </Box>
-    </Container>
+    <Box sx={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%'
+    }}>
+      <BullRunStats />
+    </Box>
   );
 };
 

@@ -242,17 +242,44 @@ const IndicatorItem: React.FC<IndicatorItemProps> = ({
       p: 2.5,
       height: '100%',
       minHeight: '180px',
-      background: 'linear-gradient(145deg, #242424 0%, #1a1a1a 100%)',
+      background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
+      backdropFilter: 'blur(10px)',
       borderRadius: '16px',
-      border: '1px solid rgba(255,255,255,0.07)',
-      boxShadow: '0 4px 20px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.1)',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      boxShadow: `
+        0 4px 20px rgba(0, 0, 0, 0.3),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.5)
+      `,
       transform: 'perspective(1000px) translateZ(0)',
-      transition: 'all 0.3s ease',
+      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      position: 'relative',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        borderRadius: '16px',
+        background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0))',
+        opacity: 0,
+        transition: 'opacity 0.3s ease'
+      },
       '&:hover': {
-        transform: 'perspective(1000px) translateZ(10px) translateY(-2px)',
-        boxShadow: '0 8px 30px rgba(0,0,0,0.4), inset 0 2px 0 rgba(255,255,255,0.15)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        background: 'linear-gradient(145deg, #282828 0%, #1e1e1e 100%)'
+        transform: 'perspective(1000px) translateZ(20px) translateY(-5px)',
+        boxShadow: `
+          0 20px 40px rgba(0, 0, 0, 0.4),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+          inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+          inset 0 -1px 0 0 rgba(0, 0, 0, 0.5)
+        `,
+        border: '1px solid rgba(255, 255, 255, 0.15)',
+        background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%)',
+        '&::before': {
+          opacity: 1
+        }
       },
       display: 'flex',
       flexDirection: 'column'
@@ -468,7 +495,7 @@ const Header: React.FC = () => {
     >
       <Box
         sx={{
-          maxWidth: '1400px',
+          width: '100%',
           margin: '0 auto',
           padding: '1rem 2rem',
           display: 'flex',
@@ -618,7 +645,7 @@ const BullRunStats: React.FC = () => {
   return (
     <Box 
       sx={{ 
-        background: '#1a1a1a',
+        background: 'linear-gradient(135deg, #111827 0%, #0F172A 100%)',
         minHeight: '100vh',
         width: '100%',
         margin: 0,
@@ -630,7 +657,15 @@ const BullRunStats: React.FC = () => {
       }}
     >
       <Header />
-      <Box sx={{ p: { xs: 2, md: 3 } }}>
+      <Box 
+        sx={{ 
+          width: '100%', 
+          maxWidth: '100%',
+          px: { xs: 2, md: 4 },
+          mx: 'auto',
+          boxSizing: 'border-box'
+        }}
+      >
         <Box sx={{ mb: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           </Box>
@@ -642,7 +677,13 @@ const BullRunStats: React.FC = () => {
           sx={{ 
             p: { xs: 1.5, md: 2.5 }, 
             mb: 3, 
-            background: '#1a1a1a'
+            background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.7) 100%)',
+            backdropFilter: 'blur(10px)',
+            width: '100%',
+            boxSizing: 'border-box',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.05)',
+            boxShadow: '0 4px 24px -1px rgba(0, 0, 0, 0.2), 0 2px 16px -1px rgba(0, 0, 0, 0.1)'
           }}
         >
           <Box sx={{ 
@@ -650,7 +691,8 @@ const BullRunStats: React.FC = () => {
             justifyContent: 'space-between', 
             alignItems: 'center', 
             mb: 2,
-            px: 1
+            px: 1,
+            width: '100%'
           }}>
             <Typography 
               variant="h5" 
@@ -677,7 +719,7 @@ const BullRunStats: React.FC = () => {
               </IconButton>
             </Tooltip>
           </Box>
-          <Grid container spacing={2} sx={{ width: '100%', m: 0, p: 0 }}>
+          <Grid container spacing={2} sx={{ width: '100%', m: 0 }}>
             {/* Prima riga di indicatori */}
             <Grid item xs={12} md={3}>
               <IndicatorItem
@@ -775,7 +817,7 @@ const BullRunStats: React.FC = () => {
         </Paper>
 
         {/* Sezione Grafici */}
-        <Grid container spacing={2}>
+        <Grid container spacing={2} sx={{ width: '100%', m: 0 }}>
           <Grid item xs={12} md={6}>
             <TradingViewWidget 
               symbol="BTC.D"
