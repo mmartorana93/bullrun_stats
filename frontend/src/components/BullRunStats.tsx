@@ -150,59 +150,95 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ symbol, title, on
 
   return (
     <Paper 
-      elevation={3} 
+      elevation={0} 
       sx={{ 
-        p: 3,
+        p: 2.5,
         height: '350px',
         mb: 2,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        background: 'linear-gradient(145deg, #1e1e1e 0%, #141414 100%)',
+        background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%)',
+        backdropFilter: 'blur(10px)',
         borderRadius: '16px',
-        border: '1px solid rgba(255,255,255,0.03)',
-        transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: `
+          0 4px 20px rgba(0, 0, 0, 0.3),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+          inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+          inset 0 -1px 0 0 rgba(0, 0, 0, 0.5)
+        `,
+        transform: 'perspective(1000px) translateZ(0)',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        position: 'relative',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          borderRadius: '16px',
+          background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0))',
+          opacity: 0,
+          transition: 'opacity 0.3s ease'
+        },
         '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
-          border: '1px solid rgba(255,255,255,0.05)'
+          transform: 'perspective(1000px) translateZ(20px) translateY(-5px)',
+          boxShadow: `
+            0 20px 40px rgba(0, 0, 0, 0.4),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+            inset 0 -1px 0 0 rgba(0, 0, 0, 0.5)
+          `,
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%)',
+          '&::before': {
+            opacity: 1
+          }
         }
       }}
     >
-      <Typography 
-        variant="h6" 
-        gutterBottom 
-        sx={{ 
-          fontWeight: 700,
-          fontSize: '1.25rem',
-          letterSpacing: '0.5px',
-          background: 'linear-gradient(45deg, #f0f0f0, #bdbdbd)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          textShadow: '0 2px 4px rgba(0,0,0,0.2)',
-          mb: 2,
-          position: 'relative',
-          '&:after': {
-            content: '""',
-            position: 'absolute',
-            bottom: -8,
-            left: 0,
-            width: '40px',
-            height: '2px',
-            background: 'linear-gradient(90deg, #5c6bc0, transparent)',
-            borderRadius: '2px'
-          }
-        }}
-      >
-        {title}
-      </Typography>
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: 2,
+        mb: 2,
+        px: 1
+      }}>
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            fontWeight: 700,
+            background: 'linear-gradient(45deg, #f0f0f0, #bdbdbd)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            letterSpacing: '0.5px',
+            fontSize: '1.1rem',
+            position: 'relative',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: -4,
+              left: 0,
+              width: '30px',
+              height: '2px',
+              background: 'linear-gradient(90deg, rgba(75, 150, 255, 0.8), transparent)',
+              borderRadius: '2px'
+            }
+          }}
+        >
+          {title}
+        </Typography>
+      </Box>
       <Box sx={{ 
         flex: 1,
         minHeight: 0,
         position: 'relative',
-        mb: 1,
         borderRadius: '12px',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        background: 'rgba(15, 23, 42, 0.3)',
+        border: '1px solid rgba(255, 255, 255, 0.05)'
       }}>
         <div
           ref={container}
@@ -817,50 +853,85 @@ const BullRunStats: React.FC = () => {
         </Paper>
 
         {/* Sezione Grafici */}
-        <Grid container spacing={2} sx={{ width: '100%', m: 0 }}>
-          <Grid item xs={12} md={6}>
-            <TradingViewWidget 
-              symbol="BTC.D"
-              title="Bitcoin Dominance"
-              onPriceUpdate={updateBtcDominance}
-            />
+        <Paper 
+          elevation={0} 
+          sx={{ 
+            p: { xs: 1.5, md: 2.5 }, 
+            mb: 3, 
+            background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.7) 100%)',
+            backdropFilter: 'blur(10px)',
+            width: '100%',
+            boxSizing: 'border-box',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.05)',
+            boxShadow: '0 4px 24px -1px rgba(0, 0, 0, 0.2), 0 2px 16px -1px rgba(0, 0, 0, 0.1)'
+          }}
+        >
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            mb: 2,
+            px: 1,
+            width: '100%'
+          }}>
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                fontWeight: 700,
+                color: '#f0f0f0',
+                letterSpacing: '0.5px',
+                fontSize: { xs: '1.25rem', md: '1.5rem' }
+              }}
+            >
+              Grafici di Mercato
+            </Typography>
+          </Box>
+          <Grid container spacing={2} sx={{ width: '100%', m: 0 }}>
+            <Grid item xs={12} md={6}>
+              <TradingViewWidget 
+                symbol="BTC.D"
+                title="Bitcoin Dominance"
+                onPriceUpdate={updateBtcDominance}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TradingViewWidget 
+                symbol="BINANCE:BTCUSDT"
+                title="Prezzo Bitcoin"
+                onPriceUpdate={updateBtcPrice}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TradingViewWidget 
+                symbol="CRYPTOCAP:TOTAL2"
+                title="Total 2"
+                onPriceUpdate={updateTotal2}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TradingViewWidget 
+                symbol="CRYPTOCAP:TOTAL3"
+                title="Others (Total 3)"
+                onPriceUpdate={updateTotal3}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TradingViewWidget 
+                symbol="USDT.D"
+                title="USDT Dominance"
+                onPriceUpdate={updateUsdtDominance}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TradingViewWidget 
+                symbol="CRYPTOCAP:TOTAL"
+                title="Total"
+                onPriceUpdate={updateTotal}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <TradingViewWidget 
-              symbol="BINANCE:BTCUSDT"
-              title="Prezzo Bitcoin"
-              onPriceUpdate={updateBtcPrice}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TradingViewWidget 
-              symbol="CRYPTOCAP:TOTAL2"
-              title="Total 2"
-              onPriceUpdate={updateTotal2}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TradingViewWidget 
-              symbol="CRYPTOCAP:TOTAL3"
-              title="Others (Total 3)"
-              onPriceUpdate={updateTotal3}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TradingViewWidget 
-              symbol="USDT.D"
-              title="USDT Dominance"
-              onPriceUpdate={updateUsdtDominance}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TradingViewWidget 
-              symbol="CRYPTOCAP:TOTAL"
-              title="Total"
-              onPriceUpdate={updateTotal}
-            />
-          </Grid>
-        </Grid>
+        </Paper>
       </Box>
     </Box>
   );
