@@ -3,7 +3,7 @@ import { Box, Typography, Paper, CircularProgress, Grid, Divider, IconButton, To
 import { getCoinbaseRanking } from '../api/coinbaseService';
 import { getBitcoinDominance, BitcoinDominanceData } from '../services/cryptoService';
 import coinbaseIcon from '../assets/images/coinbase.png';
-import bullrunLogo from '../assets/images/image-5.png';
+import bullicon from '../assets/images/bullicon.png';
 import { useMarketStore } from '../store/marketStore';
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
@@ -517,16 +517,35 @@ const Header: React.FC = () => {
         right: 0,
         zIndex: 1000,
         transition: 'all 0.3s ease',
-        background: scrolled 
-          ? 'rgba(28, 28, 35, 0.95)'
-          : 'transparent',
-        backdropFilter: scrolled ? 'blur(10px)' : 'none',
-        borderBottom: scrolled 
-          ? '1px solid rgba(255,255,255,0.1)'
-          : 'none',
+        background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
         boxShadow: scrolled 
-          ? '0 4px 30px rgba(0, 0, 0, 0.1)'
-          : 'none',
+          ? '0 5px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+          : '0 4px 12px -2px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          bottom: -2,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: scrolled ? '40%' : '60%',
+          height: '2px',
+          background: 'linear-gradient(90deg, transparent, rgba(75, 150, 255, 0.6), transparent)',
+          filter: 'blur(1px)',
+          transition: 'all 0.3s ease'
+        },
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          bottom: -1,
+          left: 0,
+          right: 0,
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(75, 150, 255, 0.2) 50%, transparent 100%)',
+          opacity: scrolled ? 1 : 0.7,
+          transition: 'opacity 0.3s ease'
+        }
       }}
     >
       <Box
@@ -537,19 +556,64 @@ const Header: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: -2,
+            height: '4px',
+            background: 'linear-gradient(90deg, transparent, rgba(75, 150, 255, 0.3), transparent)',
+            filter: 'blur(2px)'
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: -12,
+            height: '10px',
+            background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%)',
+            filter: 'blur(4px)',
+            opacity: scrolled ? 0.8 : 0.4,
+            transition: 'opacity 0.3s ease'
+          }
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography
-            variant="h5"
+          <Box
+            component="a"
+            href="#"
             sx={{
-              fontWeight: 800,
-              color: '#ffffff',
-              letterSpacing: '0.5px',
+              display: 'flex',
+              alignItems: 'center',
+              height: '45px',
+              width: '45px',
+              position: 'relative',
+              cursor: 'pointer',
+              '& img': {
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                filter: 'brightness(1)',
+                transition: 'all 0.3s ease',
+              },
+              '&:hover img': {
+                transform: 'scale(1.05)',
+                filter: 'brightness(1.2)',
+              }
             }}
           >
-            BullRun Stats
-          </Typography>
+            <img 
+              src={bullicon} 
+              alt="BullRun Stats Logo" 
+              style={{
+                maxWidth: '100%',
+                maxHeight: '100%'
+              }}
+            />
+          </Box>
         </Box>
 
         <Box sx={{ 
@@ -557,13 +621,29 @@ const Header: React.FC = () => {
           alignItems: 'center', 
           gap: 3,
           '& > *': {
-            color: '#f0f0f0',
+            color: '#ffffff',
             textDecoration: 'none',
             fontSize: '0.9rem',
             fontWeight: 500,
-            transition: 'color 0.2s ease',
+            transition: 'all 0.2s ease',
+            position: 'relative',
             '&:hover': {
-              color: '#4B96FF'
+              color: 'rgba(75, 150, 255, 0.9)',
+              '&::after': {
+                width: '100%',
+                opacity: 1
+              }
+            },
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: -4,
+              left: 0,
+              width: '0%',
+              height: '1px',
+              background: 'rgba(75, 150, 255, 0.9)',
+              transition: 'all 0.2s ease',
+              opacity: 0
             }
           }
         }}>
@@ -586,7 +666,25 @@ const Header: React.FC = () => {
               border: '1px solid rgba(75, 150, 255, 0.2)',
               display: 'flex',
               alignItems: 'center',
-              gap: 1
+              gap: 1,
+              backdropFilter: 'blur(4px)',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'linear-gradient(45deg, transparent, rgba(75, 150, 255, 0.1), transparent)',
+                transform: 'translateX(-100%)',
+                transition: 'transform 0.6s ease',
+              },
+              '&:hover::before': {
+                transform: 'translateX(100%)'
+              }
             }}
           >
             <Box
@@ -601,7 +699,7 @@ const Header: React.FC = () => {
             <Typography
               sx={{
                 fontSize: '0.85rem',
-                color: '#4B96FF',
+                color: 'rgba(75, 150, 255, 0.9)',
                 fontWeight: 600
               }}
             >
