@@ -290,7 +290,8 @@ const IndicatorItem: React.FC<IndicatorItemProps> = ({
         flex: 1, 
         minWidth: 0,
         display: 'flex',
-        alignItems: 'center'
+        flexDirection: 'column',
+        justifyContent: 'center'
       }}>
         <Box sx={{ 
           display: 'flex', 
@@ -308,12 +309,7 @@ const IndicatorItem: React.FC<IndicatorItemProps> = ({
               background: 'linear-gradient(45deg, #f0f0f0, #bdbdbd)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              lineHeight: 1.2,
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              wordBreak: 'break-word'
+              lineHeight: 1.2
             }}
           >
             {title}
@@ -435,6 +431,127 @@ const LastUpdateIndicator: React.FC = () => {
   );
 };
 
+const Header: React.FC = () => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 10;
+      setScrolled(isScrolled);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <Box
+      component="header"
+      sx={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        transition: 'all 0.3s ease',
+        background: scrolled 
+          ? 'rgba(28, 28, 35, 0.95)'
+          : 'transparent',
+        backdropFilter: scrolled ? 'blur(10px)' : 'none',
+        borderBottom: scrolled 
+          ? '1px solid rgba(255,255,255,0.1)'
+          : 'none',
+        boxShadow: scrolled 
+          ? '0 4px 30px rgba(0, 0, 0, 0.1)'
+          : 'none',
+      }}
+    >
+      <Box
+        sx={{
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '1rem 2rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 800,
+              color: '#ffffff',
+              letterSpacing: '0.5px',
+            }}
+          >
+            BullRun Stats
+          </Typography>
+        </Box>
+
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 3,
+          '& > *': {
+            color: '#f0f0f0',
+            textDecoration: 'none',
+            fontSize: '0.9rem',
+            fontWeight: 500,
+            transition: 'color 0.2s ease',
+            '&:hover': {
+              color: '#4B96FF'
+            }
+          }
+        }}>
+          <Typography component="a" href="#" sx={{ opacity: 1 }}>
+            Dashboard
+          </Typography>
+          <Typography component="a" href="#" sx={{ opacity: 0.7 }}>
+            Analytics
+          </Typography>
+          <Typography component="a" href="#" sx={{ opacity: 0.7 }}>
+            Reports
+          </Typography>
+          <Box
+            sx={{
+              ml: 2,
+              px: 2,
+              py: 1,
+              borderRadius: '8px',
+              background: 'rgba(75, 150, 255, 0.1)',
+              border: '1px solid rgba(75, 150, 255, 0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}
+          >
+            <Box
+              sx={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                backgroundColor: '#4caf50',
+                animation: 'pulse 2s infinite'
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: '0.85rem',
+                color: '#4B96FF',
+                fontWeight: 600
+              }}
+            >
+              Market Live
+            </Typography>
+            <LastUpdateIndicator />
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
 const BullRunStats: React.FC = () => {
   const { 
     updateBtcDominance, 
@@ -501,72 +618,22 @@ const BullRunStats: React.FC = () => {
   return (
     <Box 
       sx={{ 
-        background: 'linear-gradient(135deg, #111111 0%, #0a0a0a 100%)',
+        background: '#1a1a1a',
         minHeight: '100vh',
         width: '100%',
         margin: 0,
         padding: 0,
-        position: 'absolute',
-        top: 0,
-        left: 0,
+        position: 'relative',
         color: '#f0f0f0',
-        overflowX: 'hidden'
+        overflowX: 'hidden',
+        pt: '80px'
       }}
     >
+      <Header />
       <Box sx={{ p: { xs: 2, md: 3 } }}>
-        <Box 
-          sx={{ 
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            mb: 3,
-            mt: 1
-          }}
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <img 
-              src={bullrunLogo} 
-              alt="BullRun Logo" 
-              style={{
-                width: '180px',
-                height: 'auto',
-                marginBottom: '16px'
-              }}
-            />
-          </motion.div>
-          <Typography 
-            variant="h3" 
-            component="h1" 
-            sx={{ 
-              fontWeight: 800,
-              fontSize: { xs: '1.75rem', md: '2.25rem' },
-              textAlign: 'center',
-              background: 'linear-gradient(45deg, #f0f0f0, #ffffff)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              letterSpacing: '1px',
-              mb: 0.5
-            }}
-          >
-            BullRun Stats
-          </Typography>
-          <Typography 
-            variant="subtitle1" 
-            sx={{ 
-              color: '#a0a0a0',
-              textAlign: 'center',
-              maxWidth: '600px',
-              mb: 1,
-              fontSize: '0.9rem'
-            }}
-          >
-            Monitora in tempo reale le metriche chiave del mercato crypto
-          </Typography>
-          <LastUpdateIndicator />
+        <Box sx={{ mb: 3 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          </Box>
         </Box>
 
         {/* Sezione Indicatori */}
@@ -575,10 +642,7 @@ const BullRunStats: React.FC = () => {
           sx={{ 
             p: { xs: 1.5, md: 2.5 }, 
             mb: 3, 
-            background: 'linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '24px',
-            border: '1px solid rgba(255,255,255,0.05)'
+            background: '#1a1a1a'
           }}
         >
           <Box sx={{ 
@@ -613,7 +677,7 @@ const BullRunStats: React.FC = () => {
               </IconButton>
             </Tooltip>
           </Box>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} sx={{ width: '100%', m: 0, p: 0 }}>
             {/* Prima riga di indicatori */}
             <Grid item xs={12} md={3}>
               <IndicatorItem
