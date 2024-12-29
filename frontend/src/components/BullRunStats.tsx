@@ -490,6 +490,7 @@ const LastUpdateIndicator: React.FC = () => {
 
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -497,8 +498,17 @@ const Header: React.FC = () => {
       setScrolled(isScrolled);
     };
 
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   return (
@@ -528,17 +538,6 @@ const Header: React.FC = () => {
           background: 'linear-gradient(90deg, transparent, rgba(75, 150, 255, 0.6), transparent)',
           filter: 'blur(1px)',
           transition: 'all 0.3s ease'
-        },
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          bottom: -1,
-          left: 0,
-          right: 0,
-          height: '1px',
-          background: 'linear-gradient(90deg, transparent 0%, rgba(75, 150, 255, 0.2) 50%, transparent 100%)',
-          opacity: scrolled ? 1 : 0.7,
-          transition: 'opacity 0.3s ease'
         }
       }}
     >
@@ -546,36 +545,19 @@ const Header: React.FC = () => {
         sx={{
           width: '100%',
           margin: '0 auto',
-          padding: '1rem 2rem',
+          padding: { xs: '0.5rem 1rem', md: '1rem 2rem' },
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          position: 'relative',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: -2,
-            height: '4px',
-            background: 'linear-gradient(90deg, transparent, rgba(75, 150, 255, 0.3), transparent)',
-            filter: 'blur(2px)'
-          },
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: -12,
-            height: '10px',
-            background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%)',
-            filter: 'blur(4px)',
-            opacity: scrolled ? 0.8 : 0.4,
-            transition: 'opacity 0.3s ease'
-          }
+          flexWrap: { xs: 'wrap', md: 'nowrap' },
+          gap: { xs: 1, md: 2 }
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          minWidth: { xs: '45px', md: 'auto' }
+        }}>
           <Box
             component="a"
             href="#"
@@ -599,164 +581,127 @@ const Header: React.FC = () => {
               }
             }}
           >
-            <img 
-              src={bullicon} 
-              alt="BullRun Stats Logo" 
-              style={{
-                maxWidth: '100%',
-                maxHeight: '100%'
-              }}
-            />
+            <img src={bullicon} alt="BullRun Stats Logo" />
           </Box>
         </Box>
 
         <Box sx={{ 
           display: 'flex', 
-          alignItems: 'center', 
-          gap: 3,
-          '& > *': {
-            color: '#ffffff',
-            textDecoration: 'none',
-            fontSize: '0.9rem',
-            fontWeight: 500,
-            transition: 'all 0.2s ease',
-            position: 'relative',
-            '&:hover': {
-              color: 'rgba(75, 150, 255, 0.9)',
-              '&::after': {
-                width: '100%',
-                opacity: 1
-              }
-            },
-            '&::after': {
-              content: '""',
-              position: 'absolute',
-              bottom: -4,
-              left: 0,
-              width: '0%',
-              height: '1px',
-              background: 'rgba(75, 150, 255, 0.9)',
-              transition: 'all 0.2s ease',
-              opacity: 0
-            }
-          }
+          alignItems: 'center',
+          gap: { xs: 2, md: 3 },
+          order: { xs: 3, md: 2 },
+          width: { xs: '100%', md: 'auto' },
+          justifyContent: { xs: 'center', md: 'flex-start' },
+          borderTop: { xs: '1px solid rgba(255,255,255,0.1)', md: 'none' },
+          pt: { xs: 1, md: 0 },
+          mt: { xs: 1, md: 0 }
         }}>
-          <Typography component="a" href="#" sx={{ opacity: 1 }}>
-            Dashboard
-          </Typography>
-          <Box sx={{ 
-            position: 'relative', 
-            display: 'flex', 
-            alignItems: 'center',
-            opacity: 0.5,
-            cursor: 'not-allowed'
-          }}>
-            <Typography sx={{ color: 'rgba(255,255,255,0.5)' }}>
-              Analytics
-            </Typography>
-            <Box
-              sx={{
-                position: 'absolute',
-                top: -10,
-                right: -12,
-                background: 'linear-gradient(135deg, rgba(75, 150, 255, 0.2), rgba(75, 150, 255, 0.1))',
-                padding: '2px 6px',
-                borderRadius: '4px',
-                fontSize: '0.6rem',
-                color: 'rgba(75, 150, 255, 0.9)',
-                border: '1px solid rgba(75, 150, 255, 0.2)',
-                backdropFilter: 'blur(4px)',
-                whiteSpace: 'nowrap',
-                fontWeight: 600,
-                letterSpacing: '0.5px',
-                transform: 'scale(0.85)',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-              }}
-            >
-              SOON
-            </Box>
-          </Box>
-          <Box sx={{ 
-            position: 'relative', 
-            display: 'flex', 
-            alignItems: 'center',
-            opacity: 0.5,
-            cursor: 'not-allowed'
-          }}>
-            <Typography sx={{ color: 'rgba(255,255,255,0.5)' }}>
-              Reports
-            </Typography>
-            <Box
-              sx={{
-                position: 'absolute',
-                top: -10,
-                right: -12,
-                background: 'linear-gradient(135deg, rgba(75, 150, 255, 0.2), rgba(75, 150, 255, 0.1))',
-                padding: '2px 6px',
-                borderRadius: '4px',
-                fontSize: '0.6rem',
-                color: 'rgba(75, 150, 255, 0.9)',
-                border: '1px solid rgba(75, 150, 255, 0.2)',
-                backdropFilter: 'blur(4px)',
-                whiteSpace: 'nowrap',
-                fontWeight: 600,
-                letterSpacing: '0.5px',
-                transform: 'scale(0.85)',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-              }}
-            >
-              SOON
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              ml: 2,
-              px: 2,
-              py: 1,
-              borderRadius: '8px',
-              background: 'rgba(75, 150, 255, 0.1)',
-              border: '1px solid rgba(75, 150, 255, 0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              backdropFilter: 'blur(4px)',
-              boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-              position: 'relative',
-              overflow: 'hidden',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'linear-gradient(45deg, transparent, rgba(75, 150, 255, 0.1), transparent)',
-                transform: 'translateX(-100%)',
-                transition: 'transform 0.6s ease',
-              },
-              '&:hover::before': {
-                transform: 'translateX(100%)'
+          <Typography 
+            component="a" 
+            href="#" 
+            sx={{ 
+              opacity: 1,
+              fontSize: { xs: '0.85rem', md: '0.9rem' },
+              color: '#ffffff',
+              textDecoration: 'none',
+              '&:hover': {
+                color: 'rgba(75, 150, 255, 0.9)'
               }
             }}
           >
-            <Box
-              sx={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: '#4caf50',
-                animation: 'pulse 2s infinite'
-              }}
-            />
-            <Typography
-              sx={{
-                fontSize: '0.85rem',
-                color: 'rgba(75, 150, 255, 0.9)',
-                fontWeight: 600
-              }}
-            >
-              Market Live
+            Dashboard
+          </Typography>
+          
+          <Box sx={{ 
+            position: 'relative', 
+            display: 'flex', 
+            alignItems: 'center',
+            opacity: 0.5,
+            cursor: 'not-allowed'
+          }}>
+            <Typography sx={{ 
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: { xs: '0.85rem', md: '0.9rem' }
+            }}>
+              Analytics
             </Typography>
+            <Box sx={{
+              position: 'absolute',
+              top: -10,
+              right: -12,
+              background: 'linear-gradient(135deg, rgba(75, 150, 255, 0.2), rgba(75, 150, 255, 0.1))',
+              padding: '2px 6px',
+              borderRadius: '4px',
+              fontSize: '0.6rem',
+              display: { xs: 'none', md: 'block' }
+            }}>
+              SOON
+            </Box>
+          </Box>
+
+          <Box sx={{ 
+            position: 'relative',
+            display: 'flex', 
+            alignItems: 'center',
+            opacity: 0.5,
+            cursor: 'not-allowed'
+          }}>
+            <Typography sx={{ 
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: { xs: '0.85rem', md: '0.9rem' }
+            }}>
+              Reports
+            </Typography>
+            <Box sx={{
+              position: 'absolute',
+              top: -10,
+              right: -12,
+              background: 'linear-gradient(135deg, rgba(75, 150, 255, 0.2), rgba(75, 150, 255, 0.1))',
+              padding: '2px 6px',
+              borderRadius: '4px',
+              fontSize: '0.6rem',
+              display: { xs: 'none', md: 'block' }
+            }}>
+              SOON
+            </Box>
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            order: { xs: 2, md: 3 },
+            px: { xs: 1.5, md: 2 },
+            py: 1,
+            borderRadius: '8px',
+            background: 'rgba(75, 150, 255, 0.1)',
+            border: '1px solid rgba(75, 150, 255, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            ml: { xs: 0, md: 2 },
+            flexShrink: 0
+          }}
+        >
+          <Box
+            sx={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: '#4caf50',
+              animation: 'pulse 2s infinite'
+            }}
+          />
+          <Typography
+            sx={{
+              fontSize: { xs: '0.75rem', md: '0.85rem' },
+              color: 'rgba(75, 150, 255, 0.9)',
+              fontWeight: 600,
+              whiteSpace: 'nowrap'
+            }}
+          >
+            Market Live
+          </Typography>
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <LastUpdateIndicator />
           </Box>
         </Box>
