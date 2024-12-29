@@ -1,16 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const cheerio = require('cheerio');
-const fs = require('fs');
-const path = require('path');
+import { NextApiRequest, NextApiResponse } from 'next';
+import * as cheerio from 'cheerio';
+import fs from 'fs';
+import path from 'path';
 
-const app = express();
-const port = 5001;
-
-app.use(cors());
-app.use(express.json());
-
-const CACHE_FILE = path.join(__dirname, 'coinbase_ranking.json');
+const CACHE_FILE = path.join(process.cwd(), 'coinbase_ranking.json');
 
 function getStoredData() {
   try {
@@ -25,7 +18,7 @@ function getStoredData() {
   }
 }
 
-function saveRanking(ranking) {
+function saveRanking(ranking: number) {
   const data = {
     ranking: ranking,
     timestamp: new Date().toISOString()
@@ -37,11 +30,15 @@ function saveRanking(ranking) {
   }
 }
 
-function shouldUpdate(force = false) {
-  if (force) return true;
+async function shouldUpdate(force = false) {
+  if (force) {
+    return true;
+  }
 
   const storedData = getStoredData();
-  if (!storedData) return true;
+  if (!storedData) {
+    return true;
+  }
 
   const lastUpdate = new Date(storedData.timestamp);
   const hoursSinceUpdate = (new Date().getTime() - lastUpdate.getTime()) / (1000 * 60 * 60);
@@ -74,46 +71,22 @@ async function fetchRanking() {
   }
 }
 
-app.get('/api/crypto/coinbase-ranking', async (req, res) => {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    console.log("Endpoint chiamato");
     const force = req.query.force === 'true';
-    console.log("Force update:", force);
     const storedData = getStoredData();
-    console.log("Stored data:", storedData);
 
-    if (shouldUpdate(force)) {
-      console.log("Fetching new ranking...");
+    if (await shouldUpdate(force)) {
       const ranking = await fetchRanking();
-      console.log("New ranking fetched:", ranking);
       saveRanking(ranking);
-      console.log("Ranking saved");
-      res.json({ 
-        data: {
-          ranking, 
-          timestamp: new Date().toISOString() 
-        }
-      });
+      console.log(ranking);
+      return res.status(200).json(ranking);
     } else {
-      console.log("Using stored ranking:", storedData.ranking);
-      res.json({ 
-        data: {
-          ranking: storedData.ranking, 
-          timestamp: storedData.timestamp 
-        }
-      });
+      console.log(storedData.ranking);
+      return res.status(200).json(storedData.ranking);
     }
   } catch (e) {
-    console.log("Error occurred:", e);
-    res.json({ 
-      data: {
-        ranking: 0, 
-        timestamp: new Date().toISOString() 
-      }
-    });
+    console.log("0");
+    return res.status(200).json(0);
   }
-});
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+} 

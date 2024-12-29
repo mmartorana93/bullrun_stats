@@ -10,6 +10,7 @@ import { it } from 'date-fns/locale';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { getGlobalMarketData } from '../services/coingeckoService';
 import { motion, AnimatePresence } from 'framer-motion';
+import CacheService from '../services/cacheService';
 
 interface RankingData {
   ranking: number;
@@ -794,14 +795,16 @@ const BullRunStats: React.FC = () => {
 
   const updateMarketData = useCallback(async () => {
     try {
-      const data = await getGlobalMarketData();
-      updateBtcPrice(data.btcPrice);
-      updateBtcDominance(data.btcDominance);
-      updateTotal(data.totalMarketCap);
-      updateTotal2(data.total2MarketCap);
-      updateUsdtDominance(data.usdtDominance);
-      updateTotal3(data.totalMarketCap - data.total2MarketCap);
-      setLastUpdate(new Date());
+      if (CacheService.isExpired('market-data')) {
+        const data = await getGlobalMarketData();
+        updateBtcPrice(data.btcPrice);
+        updateBtcDominance(data.btcDominance);
+        updateTotal(data.totalMarketCap);
+        updateTotal2(data.total2MarketCap);
+        updateUsdtDominance(data.usdtDominance);
+        updateTotal3(data.totalMarketCap - data.total2MarketCap);
+        setLastUpdate(new Date());
+      }
     } catch (err) {
       console.error('Errore nel recupero dei dati di mercato:', err);
     }
@@ -812,10 +815,10 @@ const BullRunStats: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await getCoinbaseRanking();
+        const response = await getCoinbaseRanking(true);
         setRankingData({
-          ranking: response.data.ranking,
-          lastUpdate: response.data.timestamp
+          ranking: response.ranking,
+          lastUpdate: response.timestamp
         });
       } catch (err) {
         console.error('Errore nel recupero del ranking Coinbase:', err);
@@ -830,7 +833,7 @@ const BullRunStats: React.FC = () => {
 
   useEffect(() => {
     updateMarketData();
-    const interval = setInterval(updateMarketData, 30000); // Aggiorna ogni 30 secondi
+    const interval = setInterval(updateMarketData, 60000); // Ogni minuto
     return () => clearInterval(interval);
   }, [updateMarketData]);
 
@@ -919,8 +922,8 @@ const BullRunStats: React.FC = () => {
                         try {
                           const response = await getCoinbaseRanking(true);
                           setRankingData({
-                            ranking: response.data.ranking,
-                            lastUpdate: response.data.timestamp
+                            ranking: response.ranking,
+                            lastUpdate: response.timestamp
                           });
                         } catch (err) {
                           console.error('Errore nel recupero del ranking Coinbase:', err);
