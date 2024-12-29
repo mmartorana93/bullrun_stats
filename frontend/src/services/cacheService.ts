@@ -15,9 +15,8 @@ class CacheService {
   };
 
   private static configs: { [key: string]: CacheConfig } = {
-    'coinbase-ranking': { ttl: 24 * 60 * 60 * 1000 },  // 24 ore
-    'market-data': { ttl: 60000 },                      // 1 minuto
-    'bitcoin-dominance': { ttl: 60000 }                 // 1 minuto
+    'market-data': { ttl: 60000 },        // 1 minuto
+    'bitcoin-dominance': { ttl: 60000 }   // 1 minuto
   };
 
   static set(key: string, data: any): void {

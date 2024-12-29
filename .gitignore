@@ -42,7 +42,6 @@ get-pip.py
 
 # Specific project files
 backend/wallets.json
-backend/coinbase_ranking.json
 
 # Log files
 *.log

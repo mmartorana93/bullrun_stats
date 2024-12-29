@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Box, Typography, Paper, CircularProgress, Grid, Divider, IconButton, Tooltip } from '@mui/material';
-import { getCoinbaseRanking } from '../api/coinbaseService';
 import { getBitcoinDominance, BitcoinDominanceData } from '../services/cryptoService';
-import coinbaseIcon from '../assets/images/coinbase.png';
 import bullicon from '../assets/images/bullicon.png';
 import { useMarketStore } from '../store/marketStore';
 import { format } from 'date-fns';
@@ -11,11 +9,6 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import { getGlobalMarketData } from '../services/coingeckoService';
 import { motion, AnimatePresence } from 'framer-motion';
 import CacheService from '../services/cacheService';
-
-interface RankingData {
-  ranking: number;
-  lastUpdate: string;
-}
 
 interface TradingViewWidgetProps {
   symbol: string;
@@ -788,7 +781,6 @@ const BullRunStats: React.FC = () => {
     total
   } = useMarketStore();
 
-  const [rankingData, setRankingData] = useState<RankingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
@@ -809,27 +801,6 @@ const BullRunStats: React.FC = () => {
       console.error('Errore nel recupero dei dati di mercato:', err);
     }
   }, [updateBtcPrice, updateBtcDominance, updateTotal, updateTotal2, updateUsdtDominance, updateTotal3]);
-
-  useEffect(() => {
-    const fetchRanking = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await getCoinbaseRanking(true);
-        setRankingData({
-          ranking: response.ranking,
-          lastUpdate: response.timestamp
-        });
-      } catch (err) {
-        console.error('Errore nel recupero del ranking Coinbase:', err);
-        setError('Errore nel caricamento del ranking');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRanking();
-  }, []);
 
   useEffect(() => {
     updateMarketData();
@@ -902,49 +873,6 @@ const BullRunStats: React.FC = () => {
             </Typography>
           </Box>
           <Grid container spacing={2} sx={{ width: '100%', m: 0 }}>
-            {/* Prima riga di indicatori */}
-            <Grid item xs={12} md={3}>
-              <IndicatorItem
-                title="Ranking Coinbase"
-                icon={coinbaseIcon}
-                value={rankingData?.ranking ? `#${rankingData.ranking}` : undefined}
-                lastUpdate={rankingData?.lastUpdate ? formatLastUpdate(rankingData.lastUpdate) : undefined}
-                isLoading={loading}
-                error={error}
-              >
-                <Tooltip title="Force refresh ranking">
-                  <IconButton 
-                    size="small" 
-                    onClick={async () => {
-                      const fetchRanking = async () => {
-                        setLoading(true);
-                        setError(null);
-                        try {
-                          const response = await getCoinbaseRanking(true);
-                          setRankingData({
-                            ranking: response.ranking,
-                            lastUpdate: response.timestamp
-                          });
-                        } catch (err) {
-                          console.error('Errore nel recupero del ranking Coinbase:', err);
-                          setError('Errore nel caricamento del ranking');
-                        } finally {
-                          setLoading(false);
-                        }
-                      };
-                      await fetchRanking();
-                    }}
-                    disabled={loading}
-                    sx={{ 
-                      padding: '4px',
-                      '& svg': { fontSize: '1rem' }
-                    }}
-                  >
-                    <RefreshIcon />
-                  </IconButton>
-                </Tooltip>
-              </IndicatorItem>
-            </Grid>
             <Grid item xs={12} md={3}>
               <IndicatorItem
                 title="Dominanza Bitcoin"
